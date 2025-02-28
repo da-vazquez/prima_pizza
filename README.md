@@ -30,7 +30,7 @@
 | Category   | Technologies |
 |------------|-------------|
 | Frontend   | Next.js + React, Docusaurus |
-| Backend    | FastAPI + MongoDB |
+| Backend    | FastAPI |
 | Database   | PostgreSQL (via SQLAlchemy) |
 | Deployment | Linode or Rasp Pi self-hosted |
 | Tools      | Docker, pytest, python black, GitHub Actions |
