@@ -2,6 +2,7 @@
 Default Imports
 """
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required
 import math
 
 """
@@ -10,6 +11,7 @@ Custom Imports
 from services.prima_pizza.db import pizzas_collection, toppings_collection
 from services.prima_pizza.models import Pizza
 from utils.db import all_variations
+from utils.auth import check_role
 from config import settings
 
 pizzas_bp = Blueprint("pizzas", __name__, url_prefix="/api/v1/pizzas")
@@ -22,19 +24,24 @@ def get_pizzas():
 
 
 @pizzas_bp.route("/", methods=["POST"])
+@jwt_required()
 def add_pizza():
+    auth_error = check_role(["chef"])
+    if auth_error:
+        return auth_error
+
     data = request.get_json()
     pizza = Pizza(**data)
-    crust, sauce, cheese = pizza.crust, pizza.sauce, pizza.cheese
 
     if pizzas_collection.find_one({"name": all_variations(pizza.name)}):
         return jsonify({"message": "Pizza already exists"}), 400
 
-    ingredient_names = pizza.toppings + [crust, sauce, cheese]
+    ingredient_names = pizza.toppings + [pizza.crust, pizza.sauce, pizza.cheese]
     ingredients = {
         i["name"]: i
         for i in toppings_collection.find({"name": {"$in": ingredient_names}})
     }
+
     missing_ingredients = [i for i in ingredient_names if i not in ingredients]
 
     if missing_ingredients:
@@ -57,9 +64,7 @@ def add_pizza():
             {"message": f"Toppings {', '.join(invalid_toppings)} are invalid"}, 400
         )
 
-    base_price = sum(
-        ingredients[i]["price"] for i in pizza.toppings + [crust, sauce, cheese]
-    )
+    base_price = sum(ingredients[i]["price"] for i in ingredient_names)
 
     def round_up(price):
         return math.ceil(price) - 0.01
@@ -74,13 +79,18 @@ def add_pizza():
     pizza_data["price"] = price
 
     pizzas_collection.insert_one(pizza_data)
-    return jsonify({"message": "Pizza added", "price": price}), 201
+    return jsonify({"message": f"Pizza {pizza.name} added"}), 201
 
 
 @pizzas_bp.route("/<string:name>", methods=["DELETE"])
+@jwt_required()
 def delete_pizza(name):
-    result = pizzas_collection.delete_one({"name": all_variations(name)})
+    auth_error = check_role(["chef"])
+    if auth_error:
+        return auth_error
 
+    result = pizzas_collection.delete_one({"name": all_variations(name)})
     if result.deleted_count == 0:
         return jsonify({"message": "Pizza not found"}), 404
-    return jsonify({"message": "Pizza deleted"}), 200
+
+    return jsonify({"message": f"Pizza {name} deleted"}), 200

@@ -31,3 +31,8 @@ print(f"MESSAGE: {settings.ENV_WARNING[ENV]}")
 MongoDB 
 """
 DATABASE_URL = os.getenv("DATABASE_URL", "")
+
+"""
+Auth
+"""
+JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "")
