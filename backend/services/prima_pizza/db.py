@@ -13,3 +13,4 @@ db = client["prima_pizza"]
 
 toppings_collection = db.toppings
 pizzas_collection = db.pizzas
+users_collection = db.users

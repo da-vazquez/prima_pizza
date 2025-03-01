@@ -27,3 +27,12 @@ class Pizza(BaseModel):
 
     class Config:
         json_encoders = {datetime: lambda v: v.isoformat()}
+
+
+class User(BaseModel):
+    username: str = Field(..., min_length=3, max_length=20)
+    password_hash: str = Field(..., required=True)
+    role: str = Field(..., required=True)
+
+    class Config:
+        json_encoders = {datetime: lambda v: v.isoformat()}

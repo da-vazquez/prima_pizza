@@ -2,6 +2,7 @@
 Default Imports
 """
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required
 
 """
 Custom Imports
@@ -9,6 +10,7 @@ Custom Imports
 from services.prima_pizza.db import toppings_collection
 from services.prima_pizza.models import Topping
 from utils.db import all_variations
+from utils.auth import check_role
 
 toppings_bp = Blueprint("toppings", __name__, url_prefix="/api/v1/toppings")
 
@@ -20,7 +22,12 @@ def get_toppings():
 
 
 @toppings_bp.route("/", methods=["POST"])
+@jwt_required()
 def add_topping():
+    auth_error = check_role(["owner"])
+    if auth_error:
+        return auth_error
+
     data = request.get_json()
     topping = Topping(**data)
 
@@ -36,9 +43,13 @@ def add_topping():
 
 
 @toppings_bp.route("/<string:name>", methods=["DELETE"])
+@jwt_required()
 def delete_topping(name):
-    result = toppings_collection.delete_one({"name": all_variations(name)})
+    auth_error = check_role(["owner"])
+    if auth_error:
+        return auth_error
 
+    result = toppings_collection.delete_one({"name": all_variations(name)})
     if result.deleted_count == 0:
         return jsonify({"message": f"Topping {name} not found"}), 404
 
