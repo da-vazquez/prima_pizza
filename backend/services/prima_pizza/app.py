@@ -1,11 +1,8 @@
 """
 Default Imports
 """
-from flask import Flask, jsonify, request, render_template, send_from_directory
+from flask import Flask
 from flask_cors import CORS
-import os
-import requests
-import json
 import warnings
 
 """
@@ -13,23 +10,18 @@ Custom Imports
 """
 from config import settings
 from instance import secrets
+from services.prima_pizza.routes.toppings import toppings_bp
+from services.prima_pizza.routes.pizzas import pizzas_bp
 
 app = Flask(__name__)
 CORS(app)
-app.config.from_pyfile("instance/secrets.py", silent=True)
-app.logger.setLevel(secrets.LOG_LEVEL)
 
 warnings.filterwarnings("ignore")
 
-# TODO: We're just going to use React for frontend, but added for testing
-@app.route("/", methods=["GET"])
-def index():
-    return render_template("index.html")
-
-
-@app.route("/api/v1/status", methods=["GET"])
-def status():
-    return jsonify({"message": "Prima Pizza API is currently up and running!"}), 200
+app.config.from_pyfile("instance/secrets.py", silent=True)
+app.logger.setLevel(secrets.LOG_LEVEL)
+app.register_blueprint(toppings_bp)
+app.register_blueprint(pizzas_bp)
 
 
 if __name__ == "__main__":

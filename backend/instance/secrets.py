@@ -25,3 +25,9 @@ LOG_LEVEL = os.getenv("LOG_LEVEL", "WARNING")
 print(f"DEBUG: {DEBUG}")
 print(f"LOG_LEVEL: {LOG_LEVEL}")
 print(f"MESSAGE: {settings.ENV_WARNING[ENV]}")
+
+
+"""
+MongoDB 
+"""
+DATABASE_URL = os.getenv("DATABASE_URL", "")
