@@ -56,7 +56,32 @@ const Requests = {
         "Authorization": `Bearer ${token}`,
       },
     }),
-};
 
+  getPizzas: (): Promise<any> => request.get(`${baseUrl}/api/v1/pizzas`),
+
+  addPizza: (data: { name: string; price: number; toppings: string[]; crust: string; sauce: string; cheese: string }, token: string): Promise<any> =>
+    request.post(`${baseUrl}/api/v1/pizzas/`, data, {
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+    }),
+
+  updatePizza: (name: string, data: { name?: string; price?: number; toppings?: string[]; crust?: string; sauce?: string; cheese?: string }, token: string): Promise<any> =>
+    request.put(`${baseUrl}/api/v1/pizzas/${name}`, data, {
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+    }),
+
+  deletePizza: (name: string, token: string): Promise<any> => 
+    request.delete(`${baseUrl}/api/v1/pizzas/${name}`, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+    }),
+};
 
 export default { Requests };
