@@ -18,7 +18,17 @@ from services.prima_pizza.routes.auth import auth_bp
 app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = secrets.JWT_SECRET_KEY
 jwt = JWTManager(app)
-CORS(app)
+CORS(
+    app,
+    resources={
+        r"/*": {
+            "origins": "*",
+            "allow_headers": ["Content-Type", "Authorization"],
+            "methods": ["GET", "POST", "OPTIONS"],
+        }
+    },
+)
+
 
 warnings.filterwarnings("ignore")
 

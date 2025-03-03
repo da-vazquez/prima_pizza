@@ -9,7 +9,7 @@ import { jwtDecode } from "jwt-decode";
 import globalStyles from "../globals.css";
 import { styles } from "./styles";
 import Home from "../../components/dashHome";
-
+import ToppingsTable from "../../components/dashToppings";
 
 interface User {
   username: string;
@@ -77,18 +77,13 @@ const DashboardPage = () => {
         return (
           <Home user={user} pizzaToppingData={pizzaToppingData}/>
         );
-      case "createPizza":
-        // TODO: Create Component
-        return <h2>Create Pizza</h2>;
       case "modifyPizza":
         // TODO: Create Component
         return <h2>View/Modify Pizza</h2>;
-      case "createTopping":
-        // TODO: Create Component
-        return <h2>Create Topping</h2>;
       case "modifyTopping":
-        // TODO: Create Component
-        return <h2>View/Modify Topping</h2>;
+        return (
+          <ToppingsTable />
+        );
       case "accountSettings":
         // TODO: Create Component
         return <h2>Account Settings</h2>;
@@ -113,24 +108,10 @@ const DashboardPage = () => {
                 </button>
                 <button
                   style={user.role !== "chef" ? styles.navButtonDisabled : styles.navButton}
-                  onClick={() => setCurrentView("createPizza")}
-                  disabled={user.role !== "chef"}
-                >
-                  Create Pizza
-                </button>
-                <button
-                  style={user.role !== "chef" ? styles.navButtonDisabled : styles.navButton}
                   onClick={() => setCurrentView("modifyPizza")}
                   disabled={user.role !== "chef"}
                 >
                   View/Modify Pizzas
-                </button>
-                <button
-                  style={user.role !== "owner" ? styles.navButtonDisabled : styles.navButton}
-                  onClick={() => setCurrentView("createTopping")}
-                  disabled={user.role !== "owner"}
-                >
-                  Create Topping
                 </button>
                 <button
                   style={user.role !== "owner" ? styles.navButtonDisabled : styles.navButton}

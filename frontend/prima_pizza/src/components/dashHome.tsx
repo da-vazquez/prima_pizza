@@ -4,7 +4,7 @@ import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, Title, Tooltip, Legend, CategoryScale, LinearScale, BarElement } from "chart.js";
 
 // Custom Imports
-import { styles } from "../app/dashboard/styles";
+import { styles } from "./styles";
 import Card from "./card";
 
 ChartJS.register(Title, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
@@ -86,10 +86,14 @@ const Home = ({ user }) => {
 
   return (
     <div>
-      <p style={{ fontSize: "30px", fontWeight: 800, fontFamily: "sans-serif" }}>Welcome {user?.username.toUpperCase()}!</p>
-      <button disabled={true} style={{ backgroundColor: "black", padding: "5px", color: "white", fontWeight: 800, borderRadius: "20px" }}>{user?.role}</button>
+      <p style={styles.welcomeMessage}>Welcome {user?.username.toUpperCase()}!</p>
+      <button disabled={true} 
+        style={styles.roleBadge}
+        >
+          {user?.role}
+        </button>
 
-      <div style={{ marginTop: "40px" }}>
+      <div style={styles.statsContainer}>
         <h3>Pizza & Topping Statistics</h3>
         {pizzaToppingData ? (
           <div>
@@ -104,7 +108,7 @@ const Home = ({ user }) => {
             </div>
 
             {chartData && (
-              <div style={{ marginTop: "40px", width: "100%", height: "300px" }}>
+              <div style={styles.chartContainer}>
                 <h4>Statistics Overview</h4>
                 <Bar data={chartData} options={chartOptions} />
               </div>
@@ -117,5 +121,6 @@ const Home = ({ user }) => {
     </div>
   );
 };
+
 
 export default Home;

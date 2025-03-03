@@ -28,7 +28,7 @@ const Login = () => {
       const { access_token } = response.data;
 
       if (access_token) {
-        localStorage.setItem("jwt_token", access_token);
+        localStorage.setItem("token", access_token);
         setSuccess(true);
         setLoading(false);
         router.push("/dashboard");

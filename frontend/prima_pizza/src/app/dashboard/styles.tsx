@@ -5,7 +5,7 @@ export const styles = {
     backgroundColor: "#f8f8f8",
   },
   sidebar: {
-    width: "15%",
+    width: "20%",
     backgroundColor: "#333",
     color: "#fff",
     padding: "20px",
@@ -45,7 +45,7 @@ export const styles = {
     textAlign: "center",
   },
   mainContent: {
-    width: "85%",
+    width: "80%",
     padding: "10px",
     overflowY: "auto",
   },
