@@ -111,39 +111,38 @@ const DashboardPage = () => {
           {user && (
             <>
               <nav style={styles.nav}>
-                <button
-                  style={styles.navButton}
-                  onClick={() => setCurrentView("home")}
-                >
-                  Home
-                </button>
-                <button
-                  style={user.role !== "chef" ? styles.navButtonDisabled : styles.navButton}
-                  onClick={() => setCurrentView("modifyPizza")}
-                  disabled={user.role !== "chef"}
-                >
-                  View/Modify Pizzas
-                </button>
-                <button
-                  style={user.role !== "owner" ? styles.navButtonDisabled : styles.navButton}
-                  onClick={() => setCurrentView("modifyTopping")}
-                  disabled={user.role !== "owner"}
-                >
-                  View/Modify Toppings
-                </button>
-                <button
-                  style={styles.navButton}
-                  onClick={() => setCurrentView("accountSettings")}
-                >
-                  Account Settings
-                </button>
-
-                <button
-                  style={styles.navButtonLogout}
-                  onClick={handleLogout}
-                >
-                  Logout
-                </button>
+              <button
+                style={styles.navButton}
+                onClick={() => setCurrentView("home")}
+              >
+                Home
+              </button>
+              <button
+                style={user.role !== "chef" ? styles.navButtonDisabled : styles.navButton}
+                onClick={() => setCurrentView("modifyPizza")}
+                disabled={user.role !== "chef"}
+              >
+                View/Modify Pizzas
+              </button>
+              <button
+                style={user.role !== "owner" ? styles.navButtonDisabled : styles.navButton}
+                onClick={() => setCurrentView("modifyTopping")}
+                disabled={user.role !== "owner"}
+              >
+                View/Modify Toppings
+              </button>
+              <button
+                style={styles.navButton}
+                onClick={() => setCurrentView("accountSettings")}
+              >
+                Account Settings
+              </button>
+              <button
+                style={styles.navButtonLogout}
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
               </nav>
             </>
           )}

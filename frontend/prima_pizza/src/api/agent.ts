@@ -2,7 +2,7 @@
 import axios, { AxiosResponse } from "axios";
 
 const baseUrl = "http://localhost:5005";
-const responseBody = <T>(response: AxiosResponse<T>) => response;
+const responseBody = <T>(response: AxiosResponse<T>) => response.data;
 
 // Helper for requests
 const request = {
@@ -12,10 +12,10 @@ const request = {
   post: (url: string, body: object, config?: { headers: { Authorization?: string; "Content-Type": string } }) =>
     axios.post(url, body, config).then(responseBody),
 
-  put: (url: string, body: object, config?: { headers: { Authorization: string; "Content-Type": string } }) =>
+  put: (url: string, body: object, config?: { headers: { Authorization?: string; "Content-Type": string } }) =>
     axios.put(url, body, config).then(responseBody),
 
-  delete: (url: string, config?: { headers: { Authorization: string; "Content-Type": string } }) =>
+  delete: (url: string, config?: { headers: { Authorization?: string; "Content-Type": string } }) =>
     axios.delete(url, config).then(responseBody),
 };
 
@@ -59,7 +59,7 @@ const Requests = {
 
   getPizzas: (): Promise<any> => request.get(`${baseUrl}/api/v1/pizzas`),
 
-  addPizza: (data: { name: string; price: number; toppings: string[]; crust: string; sauce: string; cheese: string }, token: string): Promise<any> =>
+  addPizza: (data: { name: string; toppings: string[]; crust: string; sauce: string; cheese: string }, token: string): Promise<any> =>
     request.post(`${baseUrl}/api/v1/pizzas/`, data, {
       headers: { 
         "Content-Type": "application/json",
@@ -67,7 +67,7 @@ const Requests = {
       },
     }),
 
-  updatePizza: (name: string, data: { name?: string; price?: number; toppings?: string[]; crust?: string; sauce?: string; cheese?: string }, token: string): Promise<any> =>
+  updatePizza: (name: string, data: { name?: string; toppings?: string[]; crust?: string; sauce?: string; cheese?: string }, token: string): Promise<any> =>
     request.put(`${baseUrl}/api/v1/pizzas/${name}`, data, {
       headers: { 
         "Content-Type": "application/json",
@@ -82,8 +82,6 @@ const Requests = {
         "Authorization": `Bearer ${token}`,
       },
     }),
-  };
 };
-
 
 export default { Requests };

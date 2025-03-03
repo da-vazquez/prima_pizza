@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import agent from "../api/agent";
 import { styles } from "./styles";
 
-
 const ToppingsTable = () => {
   const [toppings, setToppings] = useState([]);
   const [newTopping, setNewTopping] = useState({ name: "", price: "", topping_type: "" });
@@ -34,7 +33,7 @@ const ToppingsTable = () => {
   const fetchToppings = async () => {
     try {
       const response = await agent.Requests.getToppings();
-      setToppings(Array.isArray(response.data) ? response.data : []);
+      setToppings(Array.isArray(response) ? response : []);
     } catch (error) {
       console.error("Error fetching toppings:", error);
       setToppings([]);
@@ -108,12 +107,18 @@ const ToppingsTable = () => {
     setUpdatedTopping({ name: topping.name, price: topping.price, topping_type: topping.topping_type });
     setStep(2);
     setShowModal(true);
-
   };
 
   const handleUpdateTopping = async () => {
     if (!updatedTopping.price || !updatedTopping.topping_type) {
       setNotification(`Please complete all steps before updating the topping. 🥲 (${Date.now()})`);
+      setActiveToast(true);
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setNotification("No token found! Please log in again. 🥲");
       setActiveToast(true);
       return;
     }
@@ -134,24 +139,6 @@ const ToppingsTable = () => {
 
       await agent.Requests.updateTopping(oldToppingName, updatedToppingData, token);
 
-      setNotification(`Topping updated successfully! 👍 (${Date.now()})`);
-      setActiveToast(true);
-  
-    try {
-      const oldToppingName = editingTopping.name;
-      
-      const updatedToppingData = { 
-        price: updatedTopping.price, 
-        topping_type: updatedTopping.topping_type,
-        date_added: new Date().toISOString()
-      };
-  
-      if (updatedTopping.name !== oldToppingName) {
-        updatedToppingData.name = updatedTopping.name;
-      }
-  
-      await agent.Requests.updateTopping(oldToppingName, updatedToppingData, token); 
-      
       setNotification(`Topping updated successfully! 👍 (${Date.now()})`);
       setActiveToast(true);
       fetchToppings();
@@ -342,6 +329,5 @@ const ToppingsTable = () => {
     </div>
   );
 };
-
 
 export default ToppingsTable;
