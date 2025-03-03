@@ -82,6 +82,8 @@ const Requests = {
         "Authorization": `Bearer ${token}`,
       },
     }),
+  };
 };
+
 
 export default { Requests };

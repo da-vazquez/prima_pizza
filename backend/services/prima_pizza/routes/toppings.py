@@ -7,6 +7,7 @@ from flask_cors import cross_origin
 from datetime import datetime
 import math
 
+
 """
 Custom Imports
 """
@@ -59,6 +60,7 @@ def delete_topping(name):
     if result.deleted_count == 0:
         return jsonify({"message": f"Topping {name} not found"}), 404
 
+
     pizzas = pizzas_collection.find({"toppings": name})
     for pizza in pizzas:
         updated_toppings = [t for t in pizza["toppings"] if t != name]
@@ -89,6 +91,8 @@ def delete_topping(name):
         )
 
     return jsonify({"message": f"Topping {name} deleted and pizzas updated"}), 200
+
+
 
 
 @toppings_bp.route("/<string:name>", methods=["PUT"])

@@ -108,18 +108,12 @@ const ToppingsTable = () => {
     setUpdatedTopping({ name: topping.name, price: topping.price, topping_type: topping.topping_type });
     setStep(2);
     setShowModal(true);
+
   };
 
   const handleUpdateTopping = async () => {
     if (!updatedTopping.price || !updatedTopping.topping_type) {
       setNotification(`Please complete all steps before updating the topping. 🥲 (${Date.now()})`);
-      setActiveToast(true);
-      return;
-    }
-
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setNotification(`No token found! Please log in again. 🥲 (${Date.now()})`);
       setActiveToast(true);
       return;
     }
@@ -142,7 +136,24 @@ const ToppingsTable = () => {
 
       setNotification(`Topping updated successfully! 👍 (${Date.now()})`);
       setActiveToast(true);
-
+  
+    try {
+      const oldToppingName = editingTopping.name;
+      
+      const updatedToppingData = { 
+        price: updatedTopping.price, 
+        topping_type: updatedTopping.topping_type,
+        date_added: new Date().toISOString()
+      };
+  
+      if (updatedTopping.name !== oldToppingName) {
+        updatedToppingData.name = updatedTopping.name;
+      }
+  
+      await agent.Requests.updateTopping(oldToppingName, updatedToppingData, token); 
+      
+      setNotification(`Topping updated successfully! 👍 (${Date.now()})`);
+      setActiveToast(true);
       fetchToppings();
       setEditingTopping(null);
       setStep(1);
@@ -331,5 +342,6 @@ const ToppingsTable = () => {
     </div>
   );
 };
+
 
 export default ToppingsTable;

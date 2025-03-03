@@ -34,6 +34,7 @@ const DashboardPage = () => {
 
     if (!token) {
       router.push("/");
+
     } else {
       try {
         const decoded: any = jwtDecode(token);
@@ -84,9 +85,11 @@ const DashboardPage = () => {
           <Home user={user} pizzaToppingData={pizzaToppingData}/>
         );
       case "modifyPizza":
+
         return (
           <PizzaTable />
         );
+
       case "modifyTopping":
         return (
           <ToppingsTable />
@@ -94,6 +97,7 @@ const DashboardPage = () => {
       case "accountSettings":
         // TODO: Create Component
         return <h2>Coming soon!</h2>;
+
       default:
         return <h2>Dashboard</h2>;
     }
@@ -133,6 +137,7 @@ const DashboardPage = () => {
                 >
                   Account Settings
                 </button>
+
                 <button
                   style={styles.navButtonLogout}
                   onClick={handleLogout}
@@ -153,5 +158,6 @@ const DashboardPage = () => {
     </div>
   );
 };
+
 
 export default DashboardPage;
