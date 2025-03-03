@@ -22,18 +22,18 @@ const Login = () => {
     setLoading(true);
     setError(null);
     setSuccess(false);
-
+  
     try {
       const response = await agent.Requests.login({ username, password });
-      const { access_token } = response.data;
-
+      const { access_token } = response;
+  
       if (access_token) {
         localStorage.setItem("token", access_token);
         setSuccess(true);
         setLoading(false);
         router.push("/dashboard");
       }
-    } catch {
+    } catch (error) {
       setLoading(false);
       setError("Invalid credentials or account does not exist");
     }
