@@ -14,7 +14,7 @@ export const styles = {
     fontSize: "20px",
     width: "400px",
     height: "100px", 
-    right: "40px",
+    right: "20px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -77,7 +77,8 @@ export const styles = {
     cursor: "pointer",
   },
   editContainer: {
-    height: "300px",
+    minHeight: "300px",
+    height: "auto",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
@@ -144,7 +145,8 @@ export const styles = {
     border: "1px solid black", 
     textAlign: "left", 
     padding: "5px", 
-    backgroundColor: "rgb(1, 1, 1, 0.05"
+    backgroundColor: "rgb(1, 1, 1, 0.05",
+    maxWidth: "300px"
   },
   tableEditBtn: {
     width: "45%" , 

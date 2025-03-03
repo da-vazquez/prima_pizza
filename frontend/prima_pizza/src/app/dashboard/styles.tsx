@@ -34,6 +34,17 @@ export const styles = {
     width: "100%",
     textAlign: "center",
   },
+  navButtonLogout: {
+    backgroundColor: "orangered",
+    color: "white",
+    border: "none",
+    borderRadius: "4px",
+    padding: "10px",
+    margin: "10px 0",
+    cursor: "pointer",
+    width: "100%",
+    textAlign: "center",
+  },
   navButtonDisabled: {
     backgroundColor: "grey",
     color: "white",

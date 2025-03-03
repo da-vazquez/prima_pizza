@@ -5,14 +5,17 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
 from flask_cors import cross_origin
 from datetime import datetime
+import math
+
 
 """
 Custom Imports
 """
-from services.prima_pizza.db import toppings_collection
+from services.prima_pizza.db import toppings_collection, pizzas_collection
 from services.prima_pizza.models import Topping
 from utils.db import all_variations
 from utils.auth import check_role
+from config import settings
 
 toppings_bp = Blueprint("toppings", __name__, url_prefix="/api/v1/toppings")
 
@@ -57,7 +60,39 @@ def delete_topping(name):
     if result.deleted_count == 0:
         return jsonify({"message": f"Topping {name} not found"}), 404
 
-    return jsonify({"message": f"Topping {name} deleted"}), 200
+
+    pizzas = pizzas_collection.find({"toppings": name})
+    for pizza in pizzas:
+        updated_toppings = [t for t in pizza["toppings"] if t != name]
+        ingredient_names = updated_toppings + [
+            pizza["crust"],
+            pizza["sauce"],
+            pizza["cheese"],
+        ]
+        ingredients = {
+            i["name"]: i
+            for i in toppings_collection.find({"name": {"$in": ingredient_names}})
+        }
+
+        base_price = sum(ingredients[i]["price"] for i in ingredient_names)
+
+        def round_up(price):
+            return math.ceil(price) - 0.01
+
+        price = {
+            "s": round_up(base_price * settings.PIZZA_SIZE_SURCHARGE["s"]),
+            "m": round_up(base_price * settings.PIZZA_SIZE_SURCHARGE["m"]),
+            "l": round_up(base_price * settings.PIZZA_SIZE_SURCHARGE["l"]),
+        }
+
+        pizzas_collection.update_one(
+            {"_id": pizza["_id"]},
+            {"$set": {"toppings": updated_toppings, "price": price}},
+        )
+
+    return jsonify({"message": f"Topping {name} deleted and pizzas updated"}), 200
+
+
 
 
 @toppings_bp.route("/<string:name>", methods=["PUT"])

@@ -10,6 +10,8 @@ import globalStyles from "../globals.css";
 import { styles } from "./styles";
 import Home from "../../components/dashHome";
 import ToppingsTable from "../../components/dashToppings";
+import PizzaTable from "@/components/dashPizza";
+
 
 interface User {
   username: string;
@@ -31,7 +33,8 @@ const DashboardPage = () => {
     const token = localStorage.getItem("token");
 
     if (!token) {
-      router.push("/login");
+      router.push("/");
+
     } else {
       try {
         const decoded: any = jwtDecode(token);
@@ -49,6 +52,10 @@ const DashboardPage = () => {
     }
   }, [router]);
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    router.push("/");
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -78,15 +85,19 @@ const DashboardPage = () => {
           <Home user={user} pizzaToppingData={pizzaToppingData}/>
         );
       case "modifyPizza":
-        // TODO: Create Component
-        return <h2>View/Modify Pizza</h2>;
+
+        return (
+          <PizzaTable />
+        );
+
       case "modifyTopping":
         return (
           <ToppingsTable />
         );
       case "accountSettings":
         // TODO: Create Component
-        return <h2>Account Settings</h2>;
+        return <h2>Coming soon!</h2>;
+
       default:
         return <h2>Dashboard</h2>;
     }
@@ -125,6 +136,13 @@ const DashboardPage = () => {
                   onClick={() => setCurrentView("accountSettings")}
                 >
                   Account Settings
+                </button>
+
+                <button
+                  style={styles.navButtonLogout}
+                  onClick={handleLogout}
+                >
+                  Logout
                 </button>
               </nav>
             </>

@@ -57,10 +57,3 @@ def get_users():
     users = users_collection.find({}, {"password_hash": 0})
     users_list = [{**user, "_id": str(user["_id"])} for user in users]
     return jsonify(users_list), 200
-
-
-@auth_bp.route("/protected", methods=["GET"])
-@jwt_required()
-def protected():
-    current_user = json.loads(get_jwt_identity())
-    return jsonify(logged_in_as=current_user), 200
