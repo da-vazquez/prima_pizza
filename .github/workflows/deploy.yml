@@ -14,7 +14,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-        
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -44,12 +44,16 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
-          slot-name: 'production'
+          slot-name: 'development'
           publish-profile: ${{ secrets.AZURE_CREDENTIALS }}
-          package: backend
+          package: ./backend
 
       - name: Set environment variables and startup command
         run: |
           az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
-          az webapp config appsettings set --resource-group prima-pizza-rg --name ${{ secrets.AZURE_WEBAPP_NAME }} --settings FLASK_APP=services/prima_pizza/app.py FLASK_ENV=production ENV=PROD JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} DATABASE_URL=${{ secrets.DATABASE_URL }}
-          az webapp config set --resource-group prima-pizza-rg --name ${{ secrets.AZURE_WEBAPP_NAME }} --startup-file "cd /home/site/wwwroot/backend && . antenv/bin/activate && export PATH=$HOME/.local/bin:$PATH && exec gunicorn -w 4 -b 0.0.0.0:8000 startup:app"
+          az webapp config appsettings set --resource-group prima-pizza-rg --name ${{ secrets.AZURE_WEBAPP_NAME }} --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
+          az webapp config set --resource-group prima-pizza-rg --name ${{ secrets.AZURE_WEBAPP_NAME }} --startup-file "gunicorn -w 4 -b 0.0.0.0:8000 startup:app"
+        
+      - name: Debug - Check deployed files on Azure
+        run: |
+          az webapp ssh --resource-group prima-pizza-rg --name ${{ secrets.AZURE_WEBAPP_NAME }} --command "ls -R /home/site/wwwroot"
