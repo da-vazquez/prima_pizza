@@ -160,3 +160,8 @@ cython_debug/
 
 # Misc
 /node_modules
+
+# Deploiyment
+deploy*
+*.zip
+web.config
