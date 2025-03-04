@@ -28,13 +28,17 @@ jobs:
         run: |
           python -m venv venv
           . venv/bin/activate
-      
+
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        working-directory: ./backend
+        run: |
+          . venv/bin/activate
+          pip install -r requirements.txt
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
       - name: Zip artifact for deployment
+        working-directory: ./backend
         run: zip release.zip ./* -r
 
       - name: Upload artifact for deployment jobs
@@ -42,8 +46,8 @@ jobs:
         with:
           name: python-app
           path: |
-            release.zip
-            !venv/
+            backend/release.zip
+            !backend/venv/
 
   deploy:
     runs-on: ubuntu-latest
@@ -62,14 +66,13 @@ jobs:
           name: python-app
 
       - name: Unzip artifact for deployment
-        run: unzip release.zip
+        run: unzip backend/release.zip
 
-      
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_F4F2062E020A4279AC6BC8884DC6420F }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_70C6C674ABC141A9AFB3E84F09DC97A5 }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_3FF819E089D84784A23EA98624BB4A1A }}
 
       - name: 'Deploy to Azure Web App'
@@ -78,4 +81,3 @@ jobs:
         with:
           app-name: 'prima-pizza-backend-west'
           slot-name: 'Production'
-          
