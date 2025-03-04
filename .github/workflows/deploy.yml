@@ -30,9 +30,6 @@ jobs:
           curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
           python3 get-pip.py
           pip install -r requirements.txt
-          pip install --upgrade pydantic
-          pip install pymongo[srv]
-          pip install werkzeug==2.0.0
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
