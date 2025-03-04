@@ -1,7 +1,7 @@
 """
 Environments
 """
-ENV_OPTIONS = ["LOCAL", "PROD"]
+ENV_OPTIONS = ["LOCAL", "PROD", "TEST"]
 
 """
 Service Layer
@@ -14,6 +14,7 @@ Env Warnings
 ENV_WARNING = {
     "LOCAL": "IN LOCAL ENV, HAPPY CODING!",
     "PROD": "IN PROD ENV! PROCEED WITH CAUTION!",
+    "TEST": "IN TEST ENV! FIND THOSE BUGS!",
 }
 
 """

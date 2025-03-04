@@ -43,7 +43,7 @@ Ensure that your MongoDB instance is running. If you’re using a local instance
 
 Alternatively, you can use a cloud provider like MongoDB Atlas and update the connection string in your configuration.
 
-#### 6. Create and set enironment variables in backend/instance
+#### 6. Create and set environment variables in backend/instance
 
 If in LOCAL development:
 ```bash
@@ -66,7 +66,7 @@ JWT_SECRET_KEY=your_jwt_secret_key
 DATABASE_URL="your_database_url"
 ```
 
-#### 7. In your terminal, set the ENV variable to either "LOCAL" or "DEV"
+#### 7. In your terminal, set the ENV variable to either "LOCAL" ,"DEV", or "TEST"
 ```bash
 export ENV=LOCAL
 ```
@@ -74,6 +74,20 @@ OR
 ```bash
 export ENV=DEV
 ``` 
+OR
+```bash
+export ENV=TEST
+``` 
+
+> You'll get an error running tests in any other env other than TEST instructing to switch ENV's
+
+```bash
+ImportError while loading conftest '/Users/user/prima_pizza/backend/services/prima_pizza/tests/conftest.py'.
+services/prima_pizza/tests/conftest.py:13: in <module>
+    pytest.exit("Tests can only be run in the TEST environment. Please set the ENV environment variable to 'TEST'.", returncode=1)
+E   _pytest.outcomes.Exit: Tests can only be run in the TEST environment. Please set the ENV environment variable to 'TEST'.
+```
+
 
 #### 8. Start the application from /backend root
 ```bash
@@ -122,8 +136,8 @@ Method: GET
 Headers:
 Authorization: Bearer <jwt_token>
 Response:
-	Success: JSON array of user objects
-	Failure: {"message": "Missing or invalid token"}
+  Success: JSON array of user objects
+  Failure: {"message": "Missing or invalid token"}
 ```
 
 Example Successful Response:
@@ -254,8 +268,8 @@ URL: /api/v1/toppings/<string:name>
 Method: DELETE
 Headers: Authorization: Bearer <jwt_token>
 Response:
-	Success: {"message": "Topping <name> deleted"}, 200
-	Failure: {"message": "Topping <name> not found"}, 404
+  Success: {"message": "Topping <name> deleted"}, 200
+  Failure: {"message": "Topping <name> not found"}, 404
 ```
 
 
@@ -305,4 +319,60 @@ Chef: Can add or delete pizzas.
 
 ## 6. Testing
 
-Coming Soon.
+### 6.1 Check for Installed Dependencies
+
+Ensure you have all the required dependencies installed. You can install them using:
+```bash
+pip3 install -r requirements.txt
+```
+
+### 6.2 Running Tests
+
+To run the tests, use the following command:
+```bash
+venv/bin/python -m pytest services/prima_pizza/tests
+```
+
+This will execute all the tests in the tests directory and provide a summary of the test results.
+
+### 6.3 Checking Test Coverage
+
+To check the test coverage, you can use the `pytest-cov` plugin. Install it using:
+```bash
+pip install pytest-cov
+```
+
+To run standard tests without coverage reporting:
+```bash
+venv/bin/python -m pytest services/prima_pizza/tests
+```
+
+To run tests WITH coverage reporting:
+```bash
+venv/bin/python pytest --cov=services/prima_pizza/tests/
+```
+
+This will provide a detailed report of your test coverage.
+
+### 6.4 Debugging Test Failures
+
+If your tests do not pass, follow these steps to debug:
+
+1. **Check Environment Variables**: Ensure that the `ENV` environment variable is set to `TEST`.
+   ```bash
+   export ENV=TEST
+   ```
+
+2. **Check Database Configuration**: Ensure that your test database is correctly configured in `backend/instance/test.env`.
+
+3. **Review Test Output**: Look at the test output to identify which tests are failing and why. The output will provide details on the assertions that failed.
+
+4. **Run Individual Tests**: Run individual tests to isolate issues.
+   ```bash
+   venv/bin/pytest -m path/to/test_file.py::test_function_name
+   ```
+
+5. **Use Debugging Tools**: Use debugging tools like `pdb` to step through your code and identify issues.
+   ```python
+   import pdb; pdb.set_trace()
+   ```

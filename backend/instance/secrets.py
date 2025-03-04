@@ -31,6 +31,7 @@ print(f"MESSAGE: {settings.ENV_WARNING[ENV]}")
 MongoDB 
 """
 DATABASE_URL = os.getenv("DATABASE_URL", "")
+TEST_DATABASE_URL = os.getenv("TEST_DATABASE_URL", "")
 
 """
 Auth

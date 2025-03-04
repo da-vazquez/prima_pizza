@@ -61,6 +61,7 @@ Description: Displays the login page for user authentication.
 ```
 
 > Credentials for Demo
+> Casing is important! Enter exactly as shown below
 
 To login as an <b>OWNER</b>
 <ul>

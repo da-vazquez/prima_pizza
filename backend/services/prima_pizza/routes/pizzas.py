@@ -34,7 +34,11 @@ def add_pizza():
         return auth_error
 
     data = request.get_json()
-    pizza = Pizza(**data)
+
+    try:
+        pizza = Pizza(**data)
+    except Exception as e:
+        return jsonify({"message": "Invalid data"}), 400
 
     if pizzas_collection.find_one({"name": all_variations(pizza.name)}):
         return jsonify({"message": "Pizza already exists"}), 400
@@ -78,7 +82,7 @@ def add_pizza():
         "l": round_up(base_price * settings.PIZZA_SIZE_SURCHARGE["l"]),
     }
 
-    pizza_data = pizza.dict()
+    pizza_data = pizza.model_dump()
     pizza_data["price"] = price
 
     pizzas_collection.insert_one(pizza_data)
