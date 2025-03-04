@@ -27,11 +27,12 @@ jobs:
         run: |
           python3 -m venv antenv
           . antenv/bin/activate
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python3 get-pip.py
           pip install -r requirements.txt
-
-      - name: Set permissions for startup script
-        working-directory: ./backend
-        run: chmod +x startup.sh
+          pip install --upgrade pydantic
+          pip install pymongo[srv]
+          pip install werkzeug==2.0.0
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
@@ -39,10 +40,10 @@ jobs:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
           slot-name: 'production'
           publish-profile: ${{ secrets.AZURE_CREDENTIALS }}
-          package: ./backend
+          package: .
 
       - name: Set environment variables and startup command
         run: |
           az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
           az webapp config appsettings set --resource-group prima-pizza-rg --name ${{ secrets.AZURE_WEBAPP_NAME }} --settings FLASK_APP=services/prima_pizza/app.py FLASK_ENV=production JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} DATABASE_URL=${{ secrets.DATABASE_URL }}
-          az webapp config set --resource-group prima-pizza-rg --name prima-pizza-backend --startup-file "./startup.sh"
+          az webapp config set --resource-group prima-pizza-rg --name ${{ secrets.AZURE_WEBAPP_NAME }} --startup-file ". antenv/bin/activate && export PATH=$HOME/.local/bin:$PATH && gunicorn -w 4 -b 0.0.0.0:8000 services.prima_pizza.app:app"

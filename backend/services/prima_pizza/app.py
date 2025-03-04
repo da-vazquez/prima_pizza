@@ -42,6 +42,12 @@ def create_app():
     return app
 
 
+app = create_app()
+
 if __name__ == "__main__":
-    app = create_app()
-    app.run(host="0.0.0.0", port=settings.LAYER_PORT, debug=secrets.DEBUG)
+    app.run(
+        host="0.0.0.0",
+        port=settings.LAYER_PORT,
+        debug=secrets.DEBUG,
+        ssl_context=("cert.pem", "key.pem"),
+    )
