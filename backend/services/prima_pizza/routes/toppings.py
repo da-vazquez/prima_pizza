@@ -35,17 +35,17 @@ def add_topping():
         return auth_error
 
     data = request.get_json()
-    topping = Topping(**data)
 
-    existing_topping = toppings_collection.find_one(
-        {"name": all_variations(topping.name)}
-    )
+    try:
+        topping = Topping(**data)
+    except Exception as e:
+        return jsonify({"message": "Invalid data"}), 400
 
-    if existing_topping:
+    if toppings_collection.find_one({"name": topping.name}):
         return jsonify({"message": "Topping already exists"}), 400
 
-    toppings_collection.insert_one(topping.dict())
-    return jsonify({"message": "Topping added"}), 201
+    toppings_collection.insert_one(topping.model_dump())
+    return jsonify({"message": f"Topping {topping.name} added"}), 201
 
 
 @toppings_bp.route("/<string:name>", methods=["DELETE"])
@@ -59,7 +59,6 @@ def delete_topping(name):
     result = toppings_collection.delete_one({"name": all_variations(name)})
     if result.deleted_count == 0:
         return jsonify({"message": f"Topping {name} not found"}), 404
-
 
     pizzas = pizzas_collection.find({"toppings": name})
     for pizza in pizzas:
@@ -91,8 +90,6 @@ def delete_topping(name):
         )
 
     return jsonify({"message": f"Topping {name} deleted and pizzas updated"}), 200
-
-
 
 
 @toppings_bp.route("/<string:name>", methods=["PUT"])

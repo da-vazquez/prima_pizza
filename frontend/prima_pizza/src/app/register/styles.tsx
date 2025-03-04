@@ -1,0 +1,31 @@
+export const styles = {
+  container: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100vh",
+  },
+  card: {
+    padding: "20px",
+    border: "1px solid #ccc",
+    borderRadius: "8px",
+    boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+    textAlign: "center",
+    width: "450px",
+    height: "250px",
+    color: "white",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "column",
+  },
+  button: {
+    marginTop: "20px",
+    padding: "10px 20px",
+    backgroundColor: "limegreen",
+    color: "white",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
+  },
+};
