@@ -3,7 +3,7 @@ name: Deploy to Azure App Service (Backend)
 on:
   push:
     branches:
-      - prod
+      - dev
     paths:
       - 'backend/**'
 
@@ -18,7 +18,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.13'
+          python-version: '3.13' 
 
       - name: Change to backend directory
         working-directory: ./backend
