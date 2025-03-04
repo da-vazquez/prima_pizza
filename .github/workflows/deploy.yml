@@ -16,13 +16,17 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.8'
+          python-version: '3.13'
+      - name: Change to backend directory
+        working-directory: ./backend
+        run: echo "Changed to backend directory"
 
       - name: Install dependencies
+        working-directory: ./backend
         run: |
-          python -m venv antenv
+          python3 -m venv antenv
           source antenv/bin/activate
-          pip install -r ${{ secrets.AZURE_WEBAPP_PACKAGE_PATH }}/requirements.txt
+          pip3 install -r requirements.txt
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
@@ -30,4 +34,8 @@ jobs:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
           slot-name: 'production'
           publish-profile: ${{ secrets.AZURE_CREDENTIALS }}
-          package: ${{ secrets.AZURE_WEBAPP_PACKAGE_PATH }}
+          package: .
+
+      - name: Set environment variables
+        run: |
+          az webapp config appsettings set --resource-group prima-pizza-rg --name ${{ secrets.AZURE_WEBAPP_NAME }} --settings FLASK_APP=services/prima_pizza/app.py FLASK_ENV=production JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} DATABASE_URL=${{ secrets.DATABASE_URL }}
