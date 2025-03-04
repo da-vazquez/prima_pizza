@@ -21,11 +21,11 @@ jobs:
           python-version: '3.10'
 
       - name: Change to backend directory
-        working-directory: ./backend
+        working-directory: backend
         run: echo "Changed to backend directory"
 
       - name: Install dependencies
-        working-directory: ./backend
+        working-directory: .
         run: |
           python3 -m venv antenv
           . antenv/bin/activate
