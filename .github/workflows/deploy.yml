@@ -36,8 +36,8 @@ jobs:
           slot-name: 'production'
           publish-profile: ${{ secrets.AZURE_CREDENTIALS }}
           package: .
-          app-settings: |
-            FLASK_APP=services/prima_pizza/app.py
-            FLASK_ENV=production
-            JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
-            DATABASE_URL=${{ secrets.DATABASE_URL }}
+
+      - name: Set environment variables
+        run: |
+          az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+          az webapp config appsettings set --resource-group prima-pizza-rg --name ${{ secrets.AZURE_WEBAPP_NAME }} --settings FLASK_APP=services/prima_pizza/app.py FLASK_ENV=production JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} DATABASE_URL=${{ secrets.DATABASE_URL }}
