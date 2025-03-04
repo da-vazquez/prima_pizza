@@ -3,9 +3,7 @@ name: Deploy to Azure App Service (Backend)
 on:
   push:
     branches:
-      - dev
-    paths:
-      - 'backend/**'
+      - prod
 
 jobs:
   build-and-deploy:
