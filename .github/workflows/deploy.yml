@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.13' 
+          python-version: '3.13'
 
       - name: Change to backend directory
         working-directory: ./backend
@@ -36,6 +36,9 @@ jobs:
           slot-name: 'production'
           publish-profile: ${{ secrets.AZURE_CREDENTIALS }}
           package: .
+          startup-command: |
+            source antenv/bin/activate
+            gunicorn -w 4 -b 0.0.0.0:8000 services.prima_pizza.app:app
 
       - name: Set environment variables
         run: |
