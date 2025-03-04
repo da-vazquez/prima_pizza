@@ -3,15 +3,19 @@ Default Imports
 """
 from pymongo import MongoClient
 import os
+from dotenv import load_dotenv
 
 """
 Custom Imports
 """
 from instance import secrets
 
+load_dotenv()
 
 database_url = (
-    secrets.TEST_DATABASE_URL if os.getenv("ENV") == "TEST" else secrets.DATABASE_URL
+    os.getenv("TEST_DATABASE_URL")
+    if os.getenv("ENV") == "TEST"
+    else os.getenv("DATABASE_URL")
 )
 
 client = MongoClient(database_url)

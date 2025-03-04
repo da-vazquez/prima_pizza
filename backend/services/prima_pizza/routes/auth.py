@@ -4,8 +4,8 @@ Default Imports
 import json
 from datetime import timedelta
 from flask import Blueprint, request, jsonify
-from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_bcrypt import Bcrypt
 
 """
 Custom Imports
@@ -13,6 +13,7 @@ Custom Imports
 from services.prima_pizza.db import users_collection
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/v1/auth")
+bcrypt = Bcrypt()
 
 
 @auth_bp.route("/register", methods=["POST"])
@@ -21,7 +22,7 @@ def register():
     if users_collection.find_one({"username": data["username"]}):
         return jsonify({"message": "User already exists"}), 400
 
-    hashed_password = generate_password_hash(data["password"])
+    hashed_password = bcrypt.generate_password_hash(data["password"]).decode("utf-8")
     user = {
         "username": data["username"],
         "password_hash": hashed_password,
@@ -37,7 +38,9 @@ def login():
     data = request.get_json()
     user = users_collection.find_one({"username": data["username"]})
 
-    if not user or not check_password_hash(user["password_hash"], data["password"]):
+    if not user or not bcrypt.check_password_hash(
+        user["password_hash"], data["password"]
+    ):
         return (
             jsonify({"message": "Invalid credentials or account does not exist"}),
             401,
