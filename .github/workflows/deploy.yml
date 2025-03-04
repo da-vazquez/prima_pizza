@@ -34,13 +34,17 @@ jobs:
           pip install --upgrade pydantic
           pip install gunicorn
 
+      - name: Debug - List backend files
+        working-directory: ./backend
+        run: ls -R
+
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
           slot-name: 'production'
           publish-profile: ${{ secrets.AZURE_CREDENTIALS }}
-          package: .
+          package: backend
 
       - name: Set environment variables and startup command
         run: |
