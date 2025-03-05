@@ -11,15 +11,15 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/:path*",
-        has: [{ type: "host", value: "prima-pizza-i0apt531l-davazquezs-projects.vercel.app" }],
+        has: [{ type: "host", value: "https://prima-pizza.vercel.app/" }],
         permanent: true,
-        destination: "https://prima-pizza-i0apt531l-davazquezs-projects.vercel.app/:path*",
+        destination: "https://prima-pizza.vercel.app/:path*",
       },
       {
         source: "/:path*",
-        has: [{ type: "host", value: "prima-pizza-i0apt531l-davazquezs-projects.vercel.app" }],
+        has: [{ type: "host", value: "https://prima-pizza.vercel.app/" }],
         permanent: true,
-        destination: "https://prima-pizza-i0apt531l-davazquezs-projects.vercel.app/:path*",
+        destination: "https://prima-pizza.vercel.app/:path*",
       },
     ];
   },
