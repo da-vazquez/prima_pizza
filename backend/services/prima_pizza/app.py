@@ -59,11 +59,6 @@ def create_app():
             code = 302
             return redirect(url, code=code)
 
-    @app.before_request
-    def log_request_info():
-        app.logger.debug("Headers: %s", request.headers)
-        app.logger.debug("Body: %s", request.get_data())
-
     return app
 
 
