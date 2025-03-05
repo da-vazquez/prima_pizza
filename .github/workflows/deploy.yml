@@ -35,6 +35,7 @@ jobs:
           pip install "pymongo[srv]"
           pip install --upgrade pydantic
           pip install gunicorn
+          export ENV=PROD
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
