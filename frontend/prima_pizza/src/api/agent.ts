@@ -18,8 +18,8 @@ const axiosInstance = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
-    withCredentials: false,  // Set to false since credentials are not supported with '*'
-    maxRedirects: 0,
+    withCredentials: false,
+    maxRedirects: 5,
 });
 
 axiosInstance.interceptors.request.use((config) => {
@@ -44,7 +44,6 @@ axiosInstance.interceptors.response.use(
 const responseBody = <T>(response: AxiosResponse<T>) => response.data;
 
 
-// Helper for requests - use axiosInstance instead of axios
 const request = {
   get: (url: string, config?: { headers: { Authorization?: string; "Content-Type": string } }) =>
     axiosInstance.get(url, config).then(responseBody),
@@ -59,7 +58,7 @@ const request = {
     axiosInstance.delete(url, config).then(responseBody),
 };
 
-// Requests to API - remove baseUrl from URLs since it's handled by axiosInstance
+
 const Requests = {
   login: (data: { username: string; password: string }): Promise<any> =>
     request.post(`/api/v1/auth/login`, data, {
