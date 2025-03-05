@@ -53,6 +53,7 @@ def verify_password(stored_password, provided_password, salt):
 def register():
     try:
         data = request.get_json()
+        logger.info(f"Register request data: {data}")
         if users_collection.find_one({"username": data["username"]}):
             return jsonify({"message": "User already exists"}), 400
 
@@ -65,9 +66,10 @@ def register():
         }
 
         users_collection.insert_one(user)
+        logger.info(f"User registered successfully: {user}")
         return jsonify({"message": "User registered successfully"}), 201
     except Exception as e:
-        logger.error(f"Error in register: {e}")
+        logger.error(f"Error in register: {e}", exc_info=True)
         return jsonify({"message": "Internal Server Error"}), 500
 
 
@@ -75,6 +77,7 @@ def register():
 def login():
     try:
         data = request.get_json()
+        logger.info(f"Login request data: {data}")
         user = users_collection.find_one({"username": data["username"]})
 
         if not user or not verify_password(
@@ -90,9 +93,10 @@ def login():
             identity=identity, expires_delta=timedelta(hours=3)
         )
 
+        logger.info(f"User logged in successfully: {user['username']}")
         return jsonify(access_token=access_token), 200
     except Exception as e:
-        logger.error(f"Error in login: {e}")
+        logger.error(f"Error in login: {e}", exc_info=True)
         return jsonify({"message": "Internal Server Error"}), 500
 
 
@@ -102,7 +106,8 @@ def get_users():
     try:
         users = users_collection.find({}, {"password_hash": 0, "salt": 0})
         users_list = [{**user, "_id": str(user["_id"])} for user in users]
+        logger.info(f"Users retrieved successfully: {users_list}")
         return jsonify(users_list), 200
     except Exception as e:
-        logger.error(f"Error in get_users: {e}")
+        logger.error(f"Error in get_users: {e}", exc_info=True)
         return jsonify({"message": "Internal Server Error"}), 500
