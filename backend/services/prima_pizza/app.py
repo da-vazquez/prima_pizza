@@ -2,7 +2,7 @@
 Default Imports
 """
 import logging
-from flask import Flask, request
+from flask import Flask, request, redirect
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 import warnings
@@ -40,6 +40,16 @@ def create_app():
     app.register_blueprint(toppings_bp)
     app.register_blueprint(pizzas_bp)
     app.register_blueprint(auth_bp)
+
+    @app.before_request
+    def redirect_to_https():
+        if (
+            not request.is_secure
+            and request.environ.get("HTTP_X_FORWARDED_PROTO", "http") == "http"
+        ):
+            if request.url.startswith("http://"):
+                url = request.url.replace("http://", "https://", 1)
+                return redirect(url, code=301)
 
     @app.before_request
     def log_request_info():
