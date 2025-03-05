@@ -1,6 +1,7 @@
 // Default Imports
 import axios, { AxiosResponse } from "axios";
 
+
 const nodeEnv = process.env.NEXT_PUBLIC_NODE_ENV || "LOCAL"; 
 let baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_DEV;
 
@@ -13,21 +14,32 @@ console.log('DEV URL:', process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_DEV);
 console.log('LOCAL URL:', process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL);
 
 const axiosInstance = axios.create({
-  baseURL: baseUrl,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  withCredentials: false,
-  maxRedirects: 5,
+    baseURL: baseUrl,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    withCredentials: true,
+    maxRedirects: 0,
 });
-
 
 axiosInstance.interceptors.request.use((config) => {
-  delete config.headers['Access-Control-Allow-Origin'];
-  delete config.headers['Access-Control-Allow-Methods'];
-  delete config.headers['Access-Control-Allow-Headers'];
-  return config;
+    if (config.url && config.url.startsWith('http://')) {
+        config.url = config.url.replace('http://', 'https://');
+    }
+    
+    return config;
 });
+
+
+axiosInstance.interceptors.response.use(
+    response => response,
+    error => {
+        if (error.message === 'Network Error') {
+            console.error('Network error occurred');
+        }
+        return Promise.reject(error);
+    }
+);
 
 const responseBody = <T>(response: AxiosResponse<T>) => response.data;
 
