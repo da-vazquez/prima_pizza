@@ -8,17 +8,17 @@ console.log('Current environment:', nodeEnv);
 console.log('DEV URL:', process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_DEV);
 console.log('LOCAL URL:', process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL);
 
-const responseBody = <T>(response: AxiosResponse<T>) => response.data;
-
-// Create axios instance with the correct baseURL
 const axiosInstance = axios.create({
   baseURL: baseUrl,
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: false,
+  withCredentials: true,
   maxRedirects: 5,
 });
+
+const responseBody = <T>(response: AxiosResponse<T>) => response.data;
+
 
 // Helper for requests - use axiosInstance instead of axios
 const request = {
@@ -100,5 +100,6 @@ const Requests = {
       },
     }),
 };
+
 
 export default { Requests };
