@@ -16,21 +16,31 @@ switch (nodeEnv) {
     break;
 }
 
+const axiosInstance = axios.create({
+  baseURL: baseUrl,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  withCredentials: true,
+  maxRedirects: 5,
+  httpsAgent: true
+});
+
 const responseBody = <T>(response: AxiosResponse<T>) => response.data;
 
-// Helper for requests
+// Helper for requests using the configured axios instance
 const request = {
   get: (url: string, config?: { headers: { Authorization?: string; "Content-Type": string } }) =>
-    axios.get(url, config).then(responseBody),
+    axiosInstance.get(url, config).then(responseBody),
 
   post: (url: string, body: object, config?: { headers: { Authorization?: string; "Content-Type": string } }) =>
-    axios.post(url, body, config).then(responseBody),
+    axiosInstance.post(url, body, config).then(responseBody),
 
   put: (url: string, body: object, config?: { headers: { Authorization?: string; "Content-Type": string } }) =>
-    axios.put(url, body, config).then(responseBody),
+    axiosInstance.put(url, body, config).then(responseBody),
 
   delete: (url: string, config?: { headers: { Authorization?: string; "Content-Type": string } }) =>
-    axios.delete(url, config).then(responseBody),
+    axiosInstance.delete(url, config).then(responseBody),
 };
 
 // Requests to API
