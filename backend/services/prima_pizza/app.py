@@ -28,12 +28,7 @@ def create_app():
 
     CORS(
         app,
-        origins=[
-            "https://prima-pizza.vercel.app",
-            "http://localhost:3000",
-            "https://localhost:3000",
-            "https://prima-pizza-git-prod-davazquezs-projects.vercel.app",
-        ],
+        origins="*",
         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allow_headers=["Content-Type", "Authorization"],
         supports_credentials=True,
