@@ -4,6 +4,10 @@ import axios, { AxiosResponse } from "axios";
 const nodeEnv = process.env.NEXT_PUBLIC_NODE_ENV || "LOCAL"; 
 let baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_DEV;
 
+if (baseUrl && baseUrl.startsWith('http://')) {
+    baseUrl = baseUrl.replace('http://', 'https://');
+}
+
 console.log('Current environment:', nodeEnv);
 console.log('DEV URL:', process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_DEV);
 console.log('LOCAL URL:', process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL);
@@ -13,8 +17,16 @@ const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true,
+  withCredentials: false,
   maxRedirects: 5,
+});
+
+
+axiosInstance.interceptors.request.use((config) => {
+  delete config.headers['Access-Control-Allow-Origin'];
+  delete config.headers['Access-Control-Allow-Methods'];
+  delete config.headers['Access-Control-Allow-Headers'];
+  return config;
 });
 
 const responseBody = <T>(response: AxiosResponse<T>) => response.data;
