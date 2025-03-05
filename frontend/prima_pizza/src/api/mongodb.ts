@@ -1,6 +1,6 @@
 import { MongoClient } from "mongodb";
 
-const uri = process.env.NEXT_PUBLIC_MONGODB_URI;
+const uri = process.env.NEXT_PUBLIC_MONGODB_URL;
 
 if (!uri) {
   throw new Error(
@@ -20,7 +20,6 @@ if (process.env.NODE_ENV === "development") {
   }
   clientPromise = global._mongoClientPromise;
 } else {
-  // In production mode, it's best to not use a global variable.
   clientPromise = client.connect();
 }
 
