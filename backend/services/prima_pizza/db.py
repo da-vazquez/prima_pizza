@@ -3,25 +3,40 @@ Default Imports
 """
 from pymongo import MongoClient
 import os
+from dotenv import load_dotenv
+import ssl
 
 """
 Custom Imports
 """
 from instance import secrets
 
+load_dotenv()
 
-database_url = (
-    secrets.TEST_DATABASE_URL if os.getenv("ENV") == "TEST" else secrets.DATABASE_URL
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+client = MongoClient(
+    DATABASE_URL,
+    tls=True,
+    tlsAllowInvalidCertificates=True,
+    ssl_cert_reqs=ssl.CERT_NONE,
 )
 
-client = MongoClient(database_url)
-db = client["prima_pizza"]
+db = client.get_database()
 
-if os.getenv("ENV") == "TEST":
-    toppings_collection = db.test_toppings
-    pizzas_collection = db.test_pizzas
-    users_collection = db.test_users
-else:
-    toppings_collection = db.toppings
-    pizzas_collection = db.pizzas
-    users_collection = db.users
+
+def get_users_collection():
+    return db.get_collection("users")
+
+
+def get_pizzas_collection():
+    return db.get_collection("pizzas")
+
+
+def get_toppings_collection():
+    return db.get_collection("toppings")
+
+
+users_collection = get_users_collection()
+pizzas_collection = get_pizzas_collection()
+toppings_collection = get_toppings_collection()

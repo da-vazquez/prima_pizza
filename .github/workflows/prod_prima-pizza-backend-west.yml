@@ -1,0 +1,102 @@
+name: Build and deploy Python app to Azure Web App - prima-pizza-backend-west
+
+on:
+  push:
+    branches:
+      - prod
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python version
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Create and start virtual environment
+        run: |
+          python -m venv antenv
+          source antenv/bin/activate
+          python -m pip install --upgrade pip wheel setuptools
+
+      - name: Install dependencies
+        run: |
+          source antenv/bin/activate
+          python -m pip install -r backend/requirements.txt
+          python -m pip install flask-cors==3.0.10 gunicorn==23.0.0 pymongo[srv]
+
+      - name: Prepare deployment package
+        run: |
+          cd backend
+          cp -r ../antenv ./
+          zip -r ../release.zip . .env antenv
+
+      - name: Upload artifact for deployment jobs
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-app
+          path: release.zip
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: python-app
+
+      - name: Unzip artifact for deployment
+        run: |
+          unzip release.zip -d .
+          ls -la
+
+      - name: Login to Azure
+        run: |
+          az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+
+      - name: Configure Azure Web App
+        run: |
+          # Set Python version and always-on
+          az webapp config set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west \
+            --linux-fx-version "PYTHON|3.10" \
+            --always-on true
+
+          # Set environment variables and app settings
+          az webapp config appsettings set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --settings \
+            ENV=PROD \
+            DATABASE_URL="${{ secrets.MONGODB_URI }}" \
+            TEST_DATABASE_URL="${{ secrets.TEST_MONGODB_URI }}" \
+            WEBSITES_PORT=8000 \
+            WEBSITE_RUN_FROM_PACKAGE=1 \
+            SCM_DO_BUILD_DURING_DEPLOYMENT=true \
+            ENABLE_ORYX_BUILD=true \
+            FLASK_APP=startup.py \
+            FLASK_ENV=production \
+            JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}"
+
+      - name: Deploy to Azure Web App
+        uses: Azure/webapps-deploy@v2
+        id: deploy-to-webapp
+        with:
+          app-name: 'prima-pizza-backend-west'
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: .
+
+      - name: Set startup command
+        run: |
+          az webapp config set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --startup-file 'gunicorn --bind=0.0.0.0:8000 --timeout 220 startup:app'

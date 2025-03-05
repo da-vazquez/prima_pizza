@@ -3,7 +3,6 @@ Default Imports
 """
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
-from flask_cors import cross_origin
 from datetime import datetime
 import math
 
@@ -11,11 +10,14 @@ import math
 """
 Custom Imports
 """
-from services.prima_pizza.db import toppings_collection, pizzas_collection
+from services.prima_pizza.db import get_toppings_collection, get_pizzas_collection
 from services.prima_pizza.models import Topping
 from utils.db import all_variations
 from utils.auth import check_role
 from config import settings
+
+toppings_collection = get_toppings_collection()
+pizzas_collection = get_pizzas_collection()
 
 toppings_bp = Blueprint("toppings", __name__, url_prefix="/api/v1/toppings")
 
@@ -28,7 +30,6 @@ def get_toppings():
 
 @toppings_bp.route("/", methods=["POST"])
 @jwt_required()
-@cross_origin(origins="*", allow_headers=["Content-Type", "Authorization"])
 def add_topping():
     auth_error = check_role(["owner"])
     if auth_error:
@@ -50,7 +51,6 @@ def add_topping():
 
 @toppings_bp.route("/<string:name>", methods=["DELETE"])
 @jwt_required()
-@cross_origin(origins="*", allow_headers=["Content-Type", "Authorization"])
 def delete_topping(name):
     auth_error = check_role(["owner"])
     if auth_error:
@@ -94,7 +94,6 @@ def delete_topping(name):
 
 @toppings_bp.route("/<string:name>", methods=["PUT"])
 @jwt_required()
-@cross_origin(origins="*", allow_headers=["Content-Type", "Authorization"])
 def update_topping(name):
     auth_error = check_role(["owner"])
     if auth_error:

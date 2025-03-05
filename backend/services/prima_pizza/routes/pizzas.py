@@ -3,18 +3,20 @@ Default Imports
 """
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
-from flask_cors import cross_origin
 from datetime import datetime
 import math
 
 """
 Custom Imports
 """
-from services.prima_pizza.db import pizzas_collection, toppings_collection
+from services.prima_pizza.db import get_pizzas_collection, get_toppings_collection
 from services.prima_pizza.models import Pizza
 from utils.db import all_variations
 from utils.auth import check_role
 from config import settings
+
+pizzas_collection = get_pizzas_collection()
+toppings_collection = get_toppings_collection()
 
 pizzas_bp = Blueprint("pizzas", __name__, url_prefix="/api/v1/pizzas")
 
@@ -27,7 +29,6 @@ def get_pizzas():
 
 @pizzas_bp.route("/", methods=["POST"])
 @jwt_required()
-@cross_origin(origins="*", allow_headers=["Content-Type", "Authorization"])
 def add_pizza():
     auth_error = check_role(["chef"])
     if auth_error:
@@ -91,7 +92,6 @@ def add_pizza():
 
 @pizzas_bp.route("/<string:name>", methods=["DELETE"])
 @jwt_required()
-@cross_origin(origins="*", allow_headers=["Content-Type", "Authorization"])
 def delete_pizza(name):
     auth_error = check_role(["chef"])
     if auth_error:
@@ -106,7 +106,6 @@ def delete_pizza(name):
 
 @pizzas_bp.route("/<string:name>", methods=["PUT"])
 @jwt_required()
-@cross_origin(origins="*", allow_headers=["Content-Type", "Authorization"])
 def update_pizza(name):
     auth_error = check_role(["chef"])
     if auth_error:
