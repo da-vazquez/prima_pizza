@@ -15,20 +15,10 @@ const axiosInstance = axios.create({
   },
   withCredentials: true,
   maxRedirects: 5,
-  httpsAgent: true
 });
 
 const responseBody = <T>(response: AxiosResponse<T>) => response.data;
 
-// Create axios instance with the correct baseURL
-const axiosInstance = axios.create({
-  baseURL: baseUrl,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  withCredentials: false,
-  maxRedirects: 5,
-});
 
 // Helper for requests - use axiosInstance instead of axios
 const request = {
@@ -110,5 +100,6 @@ const Requests = {
       },
     }),
 };
+
 
 export default { Requests };
