@@ -5,7 +5,11 @@ import json
 from datetime import timedelta
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from flask_bcrypt import Bcrypt
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.backends import default_backend
+import base64
+import os
 
 """
 Custom Imports
@@ -13,7 +17,31 @@ Custom Imports
 from services.prima_pizza.db import users_collection
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/v1/auth")
-bcrypt = Bcrypt()
+
+
+def hash_password(password):
+    salt = os.urandom(16)
+    kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA256(),
+        length=32,
+        salt=salt,
+        iterations=100000,
+        backend=default_backend(),
+    )
+    key = base64.urlsafe_b64encode(kdf.derive(password.encode()))
+    return (salt, key)
+
+
+def verify_password(stored_password, provided_password, salt):
+    kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA256(),
+        length=32,
+        salt=salt,
+        iterations=100000,
+        backend=default_backend(),
+    )
+    key = base64.urlsafe_b64encode(kdf.derive(provided_password.encode()))
+    return key == stored_password
 
 
 @auth_bp.route("/register", methods=["POST"])
@@ -22,10 +50,11 @@ def register():
     if users_collection.find_one({"username": data["username"]}):
         return jsonify({"message": "User already exists"}), 400
 
-    hashed_password = bcrypt.generate_password_hash(data["password"]).decode("utf-8")
+    salt, hashed_password = hash_password(data["password"])
     user = {
         "username": data["username"],
         "password_hash": hashed_password,
+        "salt": salt,
         "role": data["role"],
     }
 
@@ -38,8 +67,8 @@ def login():
     data = request.get_json()
     user = users_collection.find_one({"username": data["username"]})
 
-    if not user or not bcrypt.check_password_hash(
-        user["password_hash"], data["password"]
+    if not user or not verify_password(
+        user["password_hash"], data["password"], user["salt"]
     ):
         return (
             jsonify({"message": "Invalid credentials or account does not exist"}),
@@ -57,6 +86,6 @@ def login():
 @auth_bp.route("/users", methods=["GET"])
 @jwt_required()
 def get_users():
-    users = users_collection.find({}, {"password_hash": 0})
+    users = users_collection.find({}, {"password_hash": 0, "salt": 0})
     users_list = [{**user, "_id": str(user["_id"])} for user in users]
     return jsonify(users_list), 200
