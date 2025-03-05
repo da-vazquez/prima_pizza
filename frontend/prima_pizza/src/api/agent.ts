@@ -13,8 +13,20 @@ const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true,
+  withCredentials: false,
   maxRedirects: 5,
+});
+
+// Update interceptor to set appropriate origin based on environment
+axiosInstance.interceptors.request.use((config) => {
+  const origin = nodeEnv === 'LOCAL' 
+    ? 'https://localhost:3000' 
+    : 'https://prima-pizza.vercel.app';
+  
+  config.headers['Access-Control-Allow-Origin'] = origin;
+  config.headers['Access-Control-Allow-Methods'] = 'GET,PUT,POST,DELETE,OPTIONS';
+  config.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization';
+  return config;
 });
 
 const responseBody = <T>(response: AxiosResponse<T>) => response.data;
