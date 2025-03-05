@@ -39,15 +39,11 @@ jobs:
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
-      - name: Zip artifact for deployment
-        working-directory: ./backend
-        run: zip -r release.zip ./*
-
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
         with:
           name: python-app
-          path: ./backend/release.zip
+          path: ./backend
 
   deploy:
     runs-on: ubuntu-latest
@@ -64,10 +60,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: python-app
-          path: ./backend/release.zip
-
-      - name: Unzip artifact for deployment
-        run: unzip release.zip
 
       - name: Login to Azure
         run: |
@@ -78,9 +70,9 @@ jobs:
           az webapp config appsettings set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --settings ENV=PROD MONGODB_URI=${{ secrets.MONGODB_URI }}
 
       - name: 'Deploy to Azure Web App'
-        uses: azure/webapps-deploy@v3
+        uses: Azure/webapps-deploy@v2
         id: deploy-to-webapp
         with:
           app-name: 'prima-pizza-backend-west'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: python-app/release.zip
+          package: python-app
