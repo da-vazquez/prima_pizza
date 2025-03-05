@@ -35,6 +35,9 @@ jobs:
         run: |
           . venv/bin/activate
           pip install -r requirements.txt
+          export PORT=${PORT:-8000}
+          chmod +x startup.sh
+
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
