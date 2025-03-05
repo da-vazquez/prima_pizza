@@ -23,18 +23,22 @@ load_dotenv()
 
 def create_app():
     app = Flask(__name__)
-    app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "your-secret-key")
+    app.config["JWT_SECRET_KEY"] = secrets.JWT_SECRET_KEY
     jwt = JWTManager(app)
 
     CORS(
         app,
-        origins="*",
+        origins=[
+            "https://prima-pizza-i0apt531l-davazquezs-projects.vercel.app",
+            "http://localhost:3000",
+        ],
         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allow_headers=["Content-Type", "Authorization"],
+        supports_credentials=True,
+        expose_headers=["Content-Type", "Authorization"],
     )
 
     warnings.filterwarnings("ignore")
-
     app.config.from_pyfile("instance/secrets.py", silent=True)
     app.logger.setLevel(secrets.LOG_LEVEL)
     app.register_blueprint(toppings_bp)
