@@ -37,7 +37,6 @@ jobs:
           pip install -r requirements.txt
           export PORT=${PORT:-8000}
         
-          
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
       - name: Zip artifact for deployment
@@ -75,7 +74,7 @@ jobs:
 
       - name: Set environment variables
         run: |
-          az webapp config appsettings set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --settings ENV=PROD
+          az webapp config appsettings set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --settings ENV=PROD MONGODB_URI=${{ secrets.MONGODB_URI }}
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
