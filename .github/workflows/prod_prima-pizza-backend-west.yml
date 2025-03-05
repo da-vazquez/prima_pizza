@@ -73,7 +73,7 @@ jobs:
 
       - name: Set environment variables
         run: |
-          az webapp config appsettings set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --settings ENV=PROD MONGODB_URI=${{ secrets.MONGODB_URI }}
+          az webapp config appsettings set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --settings ENV=PROD DATABASE_URL="${{ secrets.MONGODB_URI }}"
 
       - name: 'Deploy to Azure Web App'
         uses: Azure/webapps-deploy@v2
