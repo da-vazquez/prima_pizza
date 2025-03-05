@@ -26,16 +26,16 @@ def create_app():
     app.config["JWT_SECRET_KEY"] = secrets.JWT_SECRET_KEY
     jwt = JWTManager(app)
 
+    # Update CORS configuration
     CORS(
         app,
         origins=[
-            "https://prima-pizza-i0apt531l-davazquezs-projects.vercel.app",
+            "https://prima-pizza.vercel.app",
             "http://localhost:3000",
         ],
         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allow_headers=["Content-Type", "Authorization"],
         supports_credentials=True,
-        expose_headers=["Content-Type", "Authorization"],
     )
 
     warnings.filterwarnings("ignore")
@@ -51,9 +51,8 @@ def create_app():
             not request.is_secure
             and request.environ.get("HTTP_X_FORWARDED_PROTO", "http") == "http"
         ):
-            if request.url.startswith("http://"):
-                url = request.url.replace("http://", "https://", 1)
-                return redirect(url, code=301)
+            url = request.url.replace("http://", "https://", 1)
+            return redirect(url, code=301)
 
     @app.before_request
     def log_request_info():
