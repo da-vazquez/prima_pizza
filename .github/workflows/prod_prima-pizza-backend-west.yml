@@ -80,6 +80,7 @@ jobs:
           az webapp config appsettings set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --settings \
             ENV=PROD \
             DATABASE_URL="${{ secrets.MONGODB_URI }}" \
+            TEST_DATABASE_URL="${{ secrets.TEST_MONGODB_URI }}" \
             WEBSITES_PORT=8000 \
             WEBSITE_RUN_FROM_PACKAGE=1 \
             SCM_DO_BUILD_DURING_DEPLOYMENT=true \
