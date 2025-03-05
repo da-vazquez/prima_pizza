@@ -85,9 +85,14 @@ jobs:
 
       - name: Set Python version and startup command
         run: |
+          # Set Python version
           az webapp config set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --linux-fx-version "PYTHON|3.10"
+          
+          # Set port
           az webapp config appsettings set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --settings WEBSITES_PORT=8000
-          az webapp config set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --startup-command "gunicorn --bind=0.0.0.0:8000 startup:app"
+          
+          # Set startup command using app settings
+          az webapp config appsettings set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --settings STARTUP_COMMAND="gunicorn --bind=0.0.0.0:8000 startup:app"
 
       - name: 'Deploy to Azure Web App'
         uses: Azure/webapps-deploy@v2
