@@ -38,7 +38,7 @@ jobs:
       - name: Prepare deployment package
         run: |
           cd backend
-          cp requirements.txt .
+          # Update requirements.txt instead of copying
           echo "gunicorn==21.2.0" >> requirements.txt
           echo "flask-cors==4.0.0" >> requirements.txt
           echo "pymongo[srv]" >> requirements.txt
@@ -87,7 +87,7 @@ jobs:
         run: |
           az webapp config set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west \
             --linux-fx-version "PYTHON|3.10" \
-            --startup-command "gunicorn --bind=0.0.0.0:8000 startup:app"
+            --startup-command "gunicorn --bind=0.0.0.0:8000 startup:app"å
 
       - name: 'Deploy to Azure Web App'
         uses: Azure/webapps-deploy@v2
