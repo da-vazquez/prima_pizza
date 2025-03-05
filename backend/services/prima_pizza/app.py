@@ -55,10 +55,9 @@ def create_app():
     @app.before_request
     def force_https():
         if request.headers.get("X-Forwarded-Proto") == "http":
-
-            code = 301
+            url = request.url.replace("http://", "https://", 1)
+            code = 302
             return redirect(url, code=code)
-
 
     return app
 
