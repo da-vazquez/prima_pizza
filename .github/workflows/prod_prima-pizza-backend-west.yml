@@ -24,22 +24,21 @@ jobs:
         run: |
           python -m venv antenv
           source antenv/bin/activate
+          python -m pip install --upgrade pip wheel setuptools
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install -r backend/requirements.txt
-          pip install flask-cors gunicorn pymongo[srv]
+          python -m pip install -r backend/requirements.txt
+          python -m pip install flask-cors==4.0.0 gunicorn==21.2.0 pymongo[srv]
 
-      - name: Create deployment package
+      - name: Prepare deployment package
         run: |
           cd backend
-          echo "flask-cors==4.0.0" >> requirements.txt
-          echo "gunicorn==21.2.0" >> requirements.txt
-          echo "pymongo[srv]" >> requirements.txt
-          mkdir -p antenv
-          cp -r ../antenv/* antenv/
-          zip -r ../release.zip *
+          # Create site-packages directory
+          mkdir -p antenv/lib/python3.10/site-packages
+          # Copy installed packages
+          cp -r ../antenv/lib/python3.10/site-packages/* antenv/lib/python3.10/site-packages/
+          zip -r ../release.zip * .env
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
@@ -77,7 +76,8 @@ jobs:
           # Set Python version and always-on
           az webapp config set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west \
             --linux-fx-version "PYTHON|3.10" \
-            --always-on true
+            --always-on true \
+            --startup-file "gunicorn --bind=0.0.0.0:8000 startup:app"
 
           # Set environment variables and app settings
           az webapp config appsettings set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --settings \
@@ -86,10 +86,9 @@ jobs:
             WEBSITES_PORT=8000 \
             WEBSITE_RUN_FROM_PACKAGE=1 \
             SCM_DO_BUILD_DURING_DEPLOYMENT=true \
-            ENABLE_ORYX_BUILD=true \
-            STARTUP_COMMAND="gunicorn --bind=0.0.0.0:8000 startup:app"
+            ENABLE_ORYX_BUILD=true
 
-      - name: 'Deploy to Azure Web App'
+      - name: Deploy to Azure Web App
         uses: Azure/webapps-deploy@v2
         id: deploy-to-webapp
         with:
