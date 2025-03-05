@@ -1,18 +1,18 @@
 // Default Imports
 import axios, { AxiosResponse } from "axios";
 
-const nodeEnv = process.env.NEXT_PUBLIC_NODE_ENV || 'LOCAL'; 
+const nodeEnv = process.env.NEXT_PUBLIC_NODE_ENV || "LOCAL"; 
 let baseUrl: string;
 
 switch (nodeEnv) {
-  case 'PROD':
+  case "PROD":
     baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_DEV || '';
     break;
-  case 'LOCAL':
-    baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL || 'http://localhost:5005';
+  case "LOCAL":
+    baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL || "https://localhost:5005";
     break;
   default:
-    baseUrl = 'http://localhost:5005';
+    baseUrl = "https://localhost:5005";
     break;
 }
 
