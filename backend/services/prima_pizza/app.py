@@ -31,7 +31,7 @@ def create_app():
         origins=["*"],
         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allow_headers=["Content-Type", "Authorization"],
-        supports_credentials=True,
+        supports_credentials=False,
     )
 
     warnings.filterwarnings("ignore")
@@ -43,22 +43,13 @@ def create_app():
 
     @app.after_request
     def after_request(response):
-        response.headers.add("Access-Control-Allow-Credentials", "true")
-        response.headers.add(
-            "Access-Control-Allow-Origin", request.headers.get("Origin")
-        )
+        response.headers.add("Access-Control-Allow-Origin", "*")
         response.headers.add(
             "Access-Control-Allow-Headers", "Content-Type,Authorization"
         )
         response.headers.add(
             "Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS"
         )
-
-        if not request.is_secure:
-            url = request.url.replace("http://", "https://", 1)
-            response.headers["Strict-Transport-Security"] = "max-age=31536000"
-            return redirect(url, code=301)
-
         return response
 
     @app.before_request
