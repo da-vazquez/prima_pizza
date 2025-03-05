@@ -39,11 +39,15 @@ jobs:
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
+      - name: Package application files
+        working-directory: ./backend
+        run: zip -r ../backend.zip .
+
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
         with:
           name: python-app
-          path: ./backend
+          path: backend.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -61,6 +65,9 @@ jobs:
         with:
           name: python-app
 
+      - name: Unzip artifact
+        run: unzip backend.zip -d backend
+
       - name: Login to Azure
         run: |
           az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
@@ -75,4 +82,4 @@ jobs:
         with:
           app-name: 'prima-pizza-backend-west'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: python-app
+          package: backend
