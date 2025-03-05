@@ -1,7 +1,21 @@
 // Default Imports
 import axios, { AxiosResponse } from "axios";
 
-const baseUrl = "http://localhost:5005";
+const nodeEnv = process.env.NEXT_PUBLIC_NODE_ENV || "LOCAL"; 
+let baseUrl: string;
+
+switch (nodeEnv) {
+  case "PROD":
+    baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_DEV || '';
+    break;
+  case "LOCAL":
+    baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL || "https://localhost:5005";
+    break;
+  default:
+    baseUrl = "https://localhost:5005";
+    break;
+}
+
 const responseBody = <T>(response: AxiosResponse<T>) => response.data;
 
 // Helper for requests

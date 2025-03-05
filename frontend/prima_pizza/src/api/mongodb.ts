@@ -1,18 +1,20 @@
 import { MongoClient } from "mongodb";
 
-const uri= process.env.NEXT_PUBLIC_MONGODB_URI
-console.log("connection: ", uri)
+const uri = process.env.NEXT_PUBLIC_MONGODB_URL;
 
-const client = new MongoClient(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+if (!uri) {
+  throw new Error(
+    "Please define the NEXT_PUBLIC_MONGODB_URI environment variable inside .env.local"
+  );
+}
 
-console.log("client: ", client)
+const client = new MongoClient(uri);
 
-let clientPromise;
+let clientPromise: Promise<MongoClient>;
 
-if (process.env.NEXT_PUBLIC_NODE_ENV === "development") {
+if (process.env.NODE_ENV === "development") {
+  // In development mode, use a global variable so that the value
+  // is preserved across module reloads caused by HMR (Hot Module Replacement).
   if (!global._mongoClientPromise) {
     global._mongoClientPromise = client.connect();
   }

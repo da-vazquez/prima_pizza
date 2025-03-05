@@ -22,7 +22,9 @@ yarn install
 
 #### 3. Create a .env file in the root of the frontend directory and add the following environment variables:
 ```bash
-NEXT_PUBLIC_MONGODB_URI="your-mongodb-URI"
+NEXT_PUBLIC_MONGODB_URL=""
+NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_DEV=""
+NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL="localhost:5005"
 NEXT_PUBLIC_NODE_ENV=LOCAL
 ```
 
