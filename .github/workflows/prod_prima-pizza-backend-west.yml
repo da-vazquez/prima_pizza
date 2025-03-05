@@ -37,7 +37,7 @@ jobs:
           pip install -r requirements.txt
           export PORT=${PORT:-8000}
 
-        
+          
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
       - name: Zip artifact for deployment
@@ -72,6 +72,10 @@ jobs:
       - name: Login to Azure
         run: |
           az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+
+      - name: Set environment variables
+        run: |
+          az webapp config appsettings set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --settings ENV=PROD
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
