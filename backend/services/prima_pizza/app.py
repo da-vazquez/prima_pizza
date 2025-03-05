@@ -26,12 +26,13 @@ def create_app():
     app.config["JWT_SECRET_KEY"] = secrets.JWT_SECRET_KEY
     jwt = JWTManager(app)
 
-    # Update CORS configuration
     CORS(
         app,
         origins=[
             "https://prima-pizza.vercel.app",
             "http://localhost:3000",
+            "https://localhost:3000",
+            "https://prima-pizza-git-prod-davazquezs-projects.vercel.app",
         ],
         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allow_headers=["Content-Type", "Authorization"],
