@@ -28,12 +28,10 @@ def create_app():
 
     CORS(
         app,
-        origins=["https://prima-pizza.vercel.app", "https://localhost:3000"],
+        origins=["*"],
         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allow_headers=["Content-Type", "Authorization"],
         supports_credentials=True,
-        expose_headers=["Content-Type", "Authorization"],
-        allow_credentials=True,
     )
 
     warnings.filterwarnings("ignore")
@@ -46,15 +44,19 @@ def create_app():
     @app.after_request
     def after_request(response):
         response.headers.add("Access-Control-Allow-Credentials", "true")
-        response.headers.add(
-            "Access-Control-Allow-Origin", "https://prima-pizza.vercel.app"
-        )
+        response.headers.add("Access-Control-Allow-Origin", "*")
         response.headers.add(
             "Access-Control-Allow-Headers", "Content-Type,Authorization"
         )
         response.headers.add(
             "Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS"
         )
+
+        if not request.is_secure:
+            url = request.url.replace("http://", "https://", 1)
+            response.headers["Strict-Transport-Security"] = "max-age=31536000"
+            return redirect(url, code=301)
+
         return response
 
     @app.before_request

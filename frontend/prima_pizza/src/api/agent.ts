@@ -4,6 +4,10 @@ import axios, { AxiosResponse } from "axios";
 const nodeEnv = process.env.NEXT_PUBLIC_NODE_ENV || "LOCAL"; 
 let baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_DEV;
 
+if (baseUrl && baseUrl.startsWith('http://')) {
+    baseUrl = baseUrl.replace('http://', 'https://');
+}
+
 console.log('Current environment:', nodeEnv);
 console.log('DEV URL:', process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_DEV);
 console.log('LOCAL URL:', process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL);
@@ -17,15 +21,11 @@ const axiosInstance = axios.create({
   maxRedirects: 5,
 });
 
-// Update interceptor to set appropriate origin based on environment
+
 axiosInstance.interceptors.request.use((config) => {
-  const origin = nodeEnv === 'LOCAL' 
-    ? 'https://localhost:3000' 
-    : 'https://prima-pizza.vercel.app';
-  
-  config.headers['Access-Control-Allow-Origin'] = origin;
-  config.headers['Access-Control-Allow-Methods'] = 'GET,PUT,POST,DELETE,OPTIONS';
-  config.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization';
+  delete config.headers['Access-Control-Allow-Origin'];
+  delete config.headers['Access-Control-Allow-Methods'];
+  delete config.headers['Access-Control-Allow-Headers'];
   return config;
 });
 
