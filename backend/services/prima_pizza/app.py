@@ -28,10 +28,12 @@ def create_app():
 
     CORS(
         app,
-        origins="*",
+        origins=["https://prima-pizza.vercel.app", "https://localhost:3000"],
         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allow_headers=["Content-Type", "Authorization"],
         supports_credentials=True,
+        expose_headers=["Content-Type", "Authorization"],
+        allow_credentials=True,
     )
 
     warnings.filterwarnings("ignore")
@@ -40,6 +42,20 @@ def create_app():
     app.register_blueprint(toppings_bp)
     app.register_blueprint(pizzas_bp)
     app.register_blueprint(auth_bp)
+
+    @app.after_request
+    def after_request(response):
+        response.headers.add("Access-Control-Allow-Credentials", "true")
+        response.headers.add(
+            "Access-Control-Allow-Origin", "https://prima-pizza.vercel.app"
+        )
+        response.headers.add(
+            "Access-Control-Allow-Headers", "Content-Type,Authorization"
+        )
+        response.headers.add(
+            "Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS"
+        )
+        return response
 
     @app.before_request
     def redirect_to_https():
