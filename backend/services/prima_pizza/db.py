@@ -4,6 +4,7 @@ Default Imports
 from pymongo import MongoClient
 import os
 from dotenv import load_dotenv
+import ssl
 
 """
 Custom Imports
@@ -14,7 +15,12 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-client = MongoClient(DATABASE_URL, tls=True, tlsAllowInvalidCertificates=True)
+client = MongoClient(
+    DATABASE_URL,
+    tls=True,
+    tlsAllowInvalidCertificates=True,
+    ssl_cert_reqs=ssl.CERT_NONE,
+)
 
 db = client.get_database()
 
