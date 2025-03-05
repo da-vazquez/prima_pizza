@@ -53,18 +53,11 @@ def create_app():
         return response
 
     @app.before_request
-    def redirect_to_https():
-        if (
-            not request.is_secure
-            and request.environ.get("HTTP_X_FORWARDED_PROTO", "http") == "http"
-        ):
+    def force_https():
+        if request.headers.get("X-Forwarded-Proto") == "http":
             url = request.url.replace("http://", "https://", 1)
-            return redirect(url, code=301)
-
-    @app.before_request
-    def log_request_info():
-        app.logger.debug("Headers: %s", request.headers)
-        app.logger.debug("Body: %s", request.get_data())
+            code = 301
+            return redirect(url, code=code)
 
     return app
 
