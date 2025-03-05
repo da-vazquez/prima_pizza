@@ -66,7 +66,19 @@ jobs:
           name: python-app
 
       - name: Unzip artifact for deployment
-        run: unzip release.zip
+        run: unzip python-app/release.zip -d python-app
+
+      - name: Create and start virtual environment
+        working-directory: ./python-app
+        run: |
+          python -m venv antenv
+          . antenv/bin/activate
+
+      - name: Install dependencies
+        working-directory: ./python-app
+        run: |
+          . antenv/bin/activate
+          pip install -r requirements.txt
 
       - name: Login to Azure
         run: |
@@ -82,4 +94,4 @@ jobs:
         with:
           app-name: 'prima-pizza-backend-west'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: release.zip
+          package: python-app
