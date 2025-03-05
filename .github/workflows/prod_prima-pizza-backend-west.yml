@@ -99,4 +99,4 @@ jobs:
 
       - name: Set startup command
         run: |
-          az webapp config set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --startup-file 'gunicorn --bind=0.0.0.0:8000 startup:app'
+          az webapp config set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --startup-file 'gunicorn --bind=0.0.0.0:8000 --timeout 220 startup:app'
