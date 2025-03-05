@@ -18,7 +18,7 @@ const axiosInstance = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
-    withCredentials: true,
+    withCredentials: false,  // Set to false since credentials are not supported with '*'
     maxRedirects: 0,
 });
 
