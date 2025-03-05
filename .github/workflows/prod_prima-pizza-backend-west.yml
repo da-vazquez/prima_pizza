@@ -22,20 +22,20 @@ jobs:
 
       - name: Create and start virtual environment
         run: |
-          python -m venv venv
-          source venv/bin/activate
+          python -m venv antenv
+          source antenv/bin/activate
           python -m pip install --upgrade pip wheel setuptools
 
       - name: Install dependencies
         run: |
-          source venv/bin/activate
+          source antenv/bin/activate
           python -m pip install -r backend/requirements.txt
           python -m pip install flask-cors==3.0.10 gunicorn==23.0.0 pymongo[srv]
 
       - name: Prepare deployment package
         run: |
           cd backend
-          zip -r ../release.zip * .env venv
+          zip -r ../release.zip * .env ../antenv
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
