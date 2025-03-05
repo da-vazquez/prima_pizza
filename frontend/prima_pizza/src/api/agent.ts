@@ -18,7 +18,7 @@ const axiosInstance = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
-    withCredentials: false,
+    withCredentials: true,
     maxRedirects: 0,
 });
 
@@ -26,10 +26,6 @@ axiosInstance.interceptors.request.use((config) => {
     if (config.url && config.url.startsWith('http://')) {
         config.url = config.url.replace('http://', 'https://');
     }
-    
-    delete config.headers['Access-Control-Allow-Origin'];
-    delete config.headers['Access-Control-Allow-Methods'];
-    delete config.headers['Access-Control-Allow-Headers'];
     
     return config;
 });

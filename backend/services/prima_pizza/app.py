@@ -44,7 +44,9 @@ def create_app():
     @app.after_request
     def after_request(response):
         response.headers.add("Access-Control-Allow-Credentials", "true")
-        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add(
+            "Access-Control-Allow-Origin", request.headers.get("Origin")
+        )
         response.headers.add(
             "Access-Control-Allow-Headers", "Content-Type,Authorization"
         )
