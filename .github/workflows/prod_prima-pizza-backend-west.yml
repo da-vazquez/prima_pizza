@@ -27,13 +27,13 @@ jobs:
       - name: Create and start virtual environment
         working-directory: ./backend
         run: |
-          python -m venv venv
-          . venv/bin/activate
+          python -m venv antenv
+          . antenv/bin/activate
 
       - name: Install dependencies
         working-directory: ./backend
         run: |
-          . venv/bin/activate
+          . antenv/bin/activate
           pip install -r requirements.txt
           export PORT=${PORT:-8000}
         
@@ -82,3 +82,4 @@ jobs:
         with:
           app-name: 'prima-pizza-backend-west'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ./backend/release.zip
