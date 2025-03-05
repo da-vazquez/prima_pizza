@@ -83,7 +83,10 @@ jobs:
             WEBSITES_PORT=8000 \
             WEBSITE_RUN_FROM_PACKAGE=1 \
             SCM_DO_BUILD_DURING_DEPLOYMENT=true \
-            ENABLE_ORYX_BUILD=true
+            ENABLE_ORYX_BUILD=true \
+            FLASK_APP=startup:app \
+            FLASK_ENV=production \
+            JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}"
 
       - name: Deploy to Azure Web App
         uses: Azure/webapps-deploy@v2
