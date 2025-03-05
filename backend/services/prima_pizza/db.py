@@ -18,4 +18,19 @@ client = MongoClient(DATABASE_URL, tls=True, tlsAllowInvalidCertificates=True)
 
 db = client.get_database()
 
-users_collection = db.get_collection("users")
+
+def get_users_collection():
+    return db.get_collection("users")
+
+
+def get_pizzas_collection():
+    return db.get_collection("pizzas")
+
+
+def get_toppings_collection():
+    return db.get_collection("toppings")
+
+
+users_collection = get_users_collection()
+pizzas_collection = get_pizzas_collection()
+toppings_collection = get_toppings_collection()

@@ -85,7 +85,7 @@ jobs:
             WEBSITE_RUN_FROM_PACKAGE=1 \
             SCM_DO_BUILD_DURING_DEPLOYMENT=true \
             ENABLE_ORYX_BUILD=true \
-            FLASK_APP=startup:app \
+            FLASK_APP=startup.py \
             FLASK_ENV=production \
             JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}"
 

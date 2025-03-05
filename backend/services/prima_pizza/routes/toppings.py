@@ -11,11 +11,14 @@ import math
 """
 Custom Imports
 """
-from services.prima_pizza.db import toppings_collection, pizzas_collection
+from services.prima_pizza.db import get_toppings_collection, get_pizzas_collection
 from services.prima_pizza.models import Topping
 from utils.db import all_variations
 from utils.auth import check_role
 from config import settings
+
+toppings_collection = get_toppings_collection()
+pizzas_collection = get_pizzas_collection()
 
 toppings_bp = Blueprint("toppings", __name__, url_prefix="/api/v1/toppings")
 
