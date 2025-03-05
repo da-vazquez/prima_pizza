@@ -20,15 +20,12 @@ def create_app():
     app = Flask(__name__)
     app.config["JWT_SECRET_KEY"] = secrets.JWT_SECRET_KEY
     jwt = JWTManager(app)
+
     CORS(
         app,
-        resources={
-            r"/*": {
-                "origins": "*",
-                "allow_headers": ["Content-Type", "Authorization"],
-                "methods": ["GET", "POST", "OPTIONS"],
-            }
-        },
+        origins="*",
+        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allow_headers=["Content-Type", "Authorization"],
     )
 
     warnings.filterwarnings("ignore")
