@@ -23,13 +23,8 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use((config) => {
-    if (config.url && config.url.startsWith('http://')) {
-        config.url = config.url.replace('http://', 'https://');
-    }
-    
     return config;
 });
-
 
 axiosInstance.interceptors.response.use(
     response => response,
