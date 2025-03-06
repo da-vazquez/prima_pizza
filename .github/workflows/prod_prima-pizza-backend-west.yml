@@ -71,13 +71,11 @@ jobs:
 
       - name: Configure Azure Web App
         run: |
-          # Configure CORS settings
+          # Configure CORS settings - Note that we removed the invalid --support-credentials parameter
           az webapp cors add --resource-group prima-pizza-rg-west \
             --name prima-pizza-backend-west \
-            --allowed-origins "https://prima-pizza.vercel.app" "https://localhost:3000" \
-            --support-credentials true
+            --allowed-origins "https://prima-pizza.vercel.app" "https://localhost:3000"
 
-          # Set environment variables and app settings
           az webapp config appsettings set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --settings \
             ENV=PROD \
             DATABASE_URL="${{ secrets.MONGODB_URI }}" \
@@ -90,7 +88,12 @@ jobs:
             FLASK_ENV=production \
             JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}" \
             CORS_ALLOWED_ORIGINS="https://prima-pizza.vercel.app,https://prima-pizza-backend-west.azurewebsites.net,https://localhost:3000" \
-            CORS_SUPPORTS_CREDENTIALS=true
+            CORS_SUPPORTS_CREDENTIALS=true \
+            CORS_ENABLE=true
+
+          az webapp config set --resource-group prima-pizza-rg-west \
+            --name prima-pizza-backend-west \
+            --generic-configurations '{"customHeaders": [{"name": "Access-Control-Allow-Credentials", "value": "true"}]}'
 
       - name: Deploy to Azure Web App
         uses: Azure/webapps-deploy@v2
