@@ -8,6 +8,7 @@ from flask_jwt_extended import JWTManager
 import warnings
 import os
 from dotenv import load_dotenv
+from flask_cors import CORS
 
 """
 Logging
@@ -30,40 +31,18 @@ load_dotenv()
 def create_app():
     app = Flask(__name__)
 
-    default_origins = [
-        "https://prima-pizza.vercel.app",
-        "https://prima-pizza-backend-west.azurewebsites.net",
-        "http://localhost:3000",
-        "https://localhost:3000",
-    ]
-
     app.config.update(
         JWT_SECRET_KEY=secrets.JWT_SECRET_KEY,
         JWT_ACCESS_TOKEN_EXPIRES=timedelta(hours=3),
-        CORS_ORIGINS=default_origins,
     )
 
     jwt = JWTManager(app)
 
+    CORS(app, supports_credentials=True, origins="*")
+
     app.register_blueprint(auth_bp)
     app.register_blueprint(toppings_bp)
     app.register_blueprint(pizzas_bp)
-
-    @app.after_request
-    def after_request(response):
-        origin = request.headers.get("Origin")
-        if origin in app.config["CORS_ORIGINS"]:
-            response.headers["Access-Control-Allow-Origin"] = origin
-            response.headers["Access-Control-Allow-Credentials"] = "true"
-            response.headers[
-                "Access-Control-Allow-Methods"
-            ] = "GET, POST, PUT, DELETE, OPTIONS"
-            response.headers[
-                "Access-Control-Allow-Headers"
-            ] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
-        if request.method == "OPTIONS":
-            response.status_code = 200
-        return response
 
     @app.errorhandler(Exception)
     def handle_error(error):

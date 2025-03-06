@@ -1,7 +1,6 @@
 import clientPromise from "../../api/mongodb";
 import { NextApiRequest, NextApiResponse } from 'next';
 
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const origin = req.headers.origin;
   const allowedOrigins = [
