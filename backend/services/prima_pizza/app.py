@@ -4,7 +4,6 @@ Default Imports
 import logging
 from datetime import timedelta
 from flask import Flask, request, redirect, jsonify
-from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 import warnings
 import os
@@ -45,25 +44,6 @@ def create_app():
     )
 
     jwt = JWTManager(app)
-
-    CORS(
-        app,
-        resources={
-            r"/*": {
-                "origins": default_origins,
-                "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-                "allow_headers": [
-                    "Content-Type",
-                    "Authorization",
-                    "Accept",
-                    "Origin",
-                    "X-Requested-With",
-                ],
-                "supports_credentials": True,
-            }
-        },
-        supports_credentials=True,
-    )
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(toppings_bp)
