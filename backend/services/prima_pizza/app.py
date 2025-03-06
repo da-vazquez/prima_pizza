@@ -26,7 +26,16 @@ def create_app():
     app.config["JWT_SECRET_KEY"] = secrets.JWT_SECRET_KEY
     jwt = JWTManager(app)
 
-    CORS(app, resources={r"/*": {"origins": "*", "supports_credentials": True}})
+    allowed_origins = [
+        "https://prima-pizza.vercel.app",
+        "https://prima-pizza-backend-west.azurewebsites.net",
+        "https://localhost:3000",
+    ]
+
+    CORS(
+        app,
+        resources={r"/*": {"origins": allowed_origins, "supports_credentials": True}},
+    )
 
     warnings.filterwarnings("ignore")
     app.config.from_pyfile("instance/secrets.py", silent=True)
@@ -37,13 +46,16 @@ def create_app():
 
     @app.after_request
     def after_request(response):
-        response.headers.add("Access-Control-Allow-Origin", "*")
+        origin = request.headers.get("Origin")
+        if origin in allowed_origins:
+            response.headers.add("Access-Control-Allow-Origin", origin)
         response.headers.add(
             "Access-Control-Allow-Headers", "Content-Type,Authorization"
         )
         response.headers.add(
             "Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS"
         )
+        response.headers.add("Access-Control-Allow-Credentials", "true")
         return response
 
     @app.before_request

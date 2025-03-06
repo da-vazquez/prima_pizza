@@ -22,7 +22,7 @@ const axiosInstance = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
-    withCredentials: true, // Ensure credentials are included in requests
+    withCredentials: true,
     maxRedirects: 5,
 });
 

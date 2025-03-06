@@ -35,7 +35,7 @@ jobs:
       - name: Prepare deployment package
         run: |
           cd backend
-          cp -r ../antenv ./
+          cp -r ../antenv ./ 
           zip -r ../release.zip . .env antenv
 
       - name: Upload artifact for deployment jobs
@@ -87,7 +87,9 @@ jobs:
             ENABLE_ORYX_BUILD=true \
             FLASK_APP=startup.py \
             FLASK_ENV=production \
-            JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}"
+            JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}" \
+            CORS_ALLOWED_ORIGINS="https://prima-pizza.vercel.app,https://prima-pizza-backend-west.azurewebsites.net,https://localhost:3000" \
+            CORS_SUPPORTS_CREDENTIALS=true
 
       - name: Deploy to Azure Web App
         uses: Azure/webapps-deploy@v2
