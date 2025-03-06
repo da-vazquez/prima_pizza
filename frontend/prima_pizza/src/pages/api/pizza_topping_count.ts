@@ -1,14 +1,29 @@
 import clientPromise from "../../api/mongodb";
 import { NextApiRequest, NextApiResponse } from 'next';
 
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const origin = req.headers.origin;
+  const allowedOrigins = [
+    'https://prima-pizza.vercel.app',
+    'https://prima-pizza-backend-west.azurewebsites.net',
+    'https://localhost:3000'
+  ];
+
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+
   res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader(
     'Access-Control-Allow-Headers',
     'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
   );
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
 
   try {
     console.log("Attempting to connect to MongoDB...");
@@ -17,7 +32,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const db = client.db("prima_pizza");
 
     console.log("Connected to MongoDB, executing queries...");
-
     
     const [pizzas, toppings, meats, cheeses, vegetables, sauces, crusts] = await Promise.all([
       db.collection("pizzas").countDocuments(),
