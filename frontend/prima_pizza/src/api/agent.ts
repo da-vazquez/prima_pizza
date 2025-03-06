@@ -5,6 +5,10 @@ import axios, { AxiosResponse } from "axios";
 const nodeEnv = process.env.NEXT_PUBLIC_NODE_ENV || "LOCAL"; 
 let baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_DEV;
 
+if (nodeEnv === "LOCAL") {
+  baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL;
+}
+
 if (baseUrl && baseUrl.startsWith('http://')) {
     baseUrl = baseUrl.replace('http://', 'https://');
 }
@@ -18,7 +22,7 @@ const axiosInstance = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
-    withCredentials: false,
+    withCredentials: true, // Ensure credentials are included in requests
     maxRedirects: 5,
 });
 
@@ -26,10 +30,8 @@ axiosInstance.interceptors.request.use((config) => {
     if (config.url && config.url.startsWith('http://')) {
         config.url = config.url.replace('http://', 'https://');
     }
-    
     return config;
 });
-
 
 axiosInstance.interceptors.response.use(
     response => response,
