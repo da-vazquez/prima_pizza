@@ -24,7 +24,9 @@ pizzas_bp = Blueprint("pizzas", __name__, url_prefix="/api/v1/pizzas")
 @pizzas_bp.route("/", methods=["GET"])
 def get_pizzas():
     pizzas = list(pizzas_collection.find({}, {"_id": 0}))
-    return jsonify(pizzas), 200
+    response = jsonify(pizzas)
+    response.headers["Access-Control-Allow-Credentials"] = "true"
+    return response, 200
 
 
 @pizzas_bp.route("/", methods=["POST"])
