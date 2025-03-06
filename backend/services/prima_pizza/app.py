@@ -26,13 +26,7 @@ def create_app():
     app.config["JWT_SECRET_KEY"] = secrets.JWT_SECRET_KEY
     jwt = JWTManager(app)
 
-    CORS(
-        app,
-        origins=["*"],
-        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        allow_headers=["Content-Type", "Authorization"],
-        supports_credentials=False,
-    )
+    CORS(app, resources={r"/*": {"origins": "*", "supports_credentials": True}})
 
     warnings.filterwarnings("ignore")
     app.config.from_pyfile("instance/secrets.py", silent=True)

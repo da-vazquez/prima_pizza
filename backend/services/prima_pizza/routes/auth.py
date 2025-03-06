@@ -19,7 +19,7 @@ from services.prima_pizza.db import users_collection
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/v1/auth")
 
-# Configure logging
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -70,7 +70,7 @@ def register():
         return jsonify({"message": "User registered successfully"}), 201
     except Exception as e:
         logger.error(f"Error in register: {e}", exc_info=True)
-        return jsonify({"message": "Internal Server Error"}), 500
+        return jsonify({"message": "Error registering user"}), 500
 
 
 @auth_bp.route("/login", methods=["POST"])
@@ -83,31 +83,26 @@ def login():
         if not user or not verify_password(
             user["password_hash"], data["password"], user["salt"]
         ):
-            return (
-                jsonify({"message": "Invalid credentials or account does not exist"}),
-                401,
-            )
+            return jsonify({"message": "Invalid credentials"}), 401
 
         identity = json.dumps({"username": user["username"], "role": user["role"]})
         access_token = create_access_token(
             identity=identity, expires_delta=timedelta(hours=3)
         )
-
-        logger.info(f"User logged in successfully: {user['username']}")
         return jsonify(access_token=access_token), 200
     except Exception as e:
         logger.error(f"Error in login: {e}", exc_info=True)
-        return jsonify({"message": "Internal Server Error"}), 500
+        return jsonify({"message": "Error logging in"}), 500
 
 
 @auth_bp.route("/users", methods=["GET"])
 @jwt_required()
 def get_users():
     try:
-        users = users_collection.find({}, {"password_hash": 0, "salt": 0})
-        users_list = [{**user, "_id": str(user["_id"])} for user in users]
-        logger.info(f"Users retrieved successfully: {users_list}")
-        return jsonify(users_list), 200
+        users = list(
+            users_collection.find({}, {"_id": 0, "password_hash": 0, "salt": 0})
+        )
+        return jsonify(users), 200
     except Exception as e:
         logger.error(f"Error in get_users: {e}", exc_info=True)
-        return jsonify({"message": "Internal Server Error"}), 500
+        return jsonify({"message": "Error fetching users"}), 500
