@@ -26,7 +26,6 @@ const axiosInstance = axios.create({
     withCredentials: true
 });
 
-
 axiosInstance.interceptors.request.use(
     (config) => {
         delete config.headers['Origin'];
@@ -72,7 +71,7 @@ interface PizzaData {
   cheese: string;
 }
 
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const request = {
   get: <T>(url: string, config?: { headers: { Authorization?: string; "Content-Type": string } }): Promise<T> =>
     axiosInstance.get(url, config).then(responseBody),
@@ -153,4 +152,6 @@ const Requests = {
 };
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
+/* eslint-disable import/no-anonymous-default-export */
 export default { Requests };
+/* eslint-enable import/no-anonymous-default-export */

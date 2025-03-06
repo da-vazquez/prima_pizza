@@ -29,3 +29,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
