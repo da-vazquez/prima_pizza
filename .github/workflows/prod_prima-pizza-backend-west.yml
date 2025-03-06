@@ -81,7 +81,7 @@ jobs:
           # Configure CORS
           az webapp cors remove --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --allowed-origins "*"
           az webapp cors add --resource-group prima-pizza-rg-west --name prima-pizza-backend-west \
-            --allowed-origins "https://prima-pizza.vercel.app" "https://localhost:3000"
+            --allowed-origins "https://prima-pizza.vercel.app" "http://localhost:3000" "https://localhost:3000"
 
           # Set environment variables and app settings
           az webapp config appsettings set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --settings \
