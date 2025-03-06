@@ -2,6 +2,7 @@
 Default Imports
 """
 import logging
+from datetime import timedelta
 from flask import Flask, request, redirect, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
@@ -33,8 +34,7 @@ def create_app():
     app.config.update(
         JWT_SECRET_KEY=secrets.JWT_SECRET_KEY,
         JWT_ACCESS_TOKEN_EXPIRES=timedelta(hours=3),
-        CORS_ORIGINS=os.getenv("CORS_ORIGINS", ",".join(default_origins)).split(","),
-        CORS_SUPPORTS_CREDENTIALS=True,
+        CORS_ORIGINS=default_origins,
     )
 
     jwt = JWTManager(app)
@@ -43,7 +43,7 @@ def create_app():
         app,
         resources={
             r"/api/*": {
-                "origins": app.config["CORS_ORIGINS"],
+                "origins": default_origins,
                 "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
                 "allow_headers": [
                     "Content-Type",
@@ -52,42 +52,36 @@ def create_app():
                     "Origin",
                     "X-Requested-With",
                 ],
+                "expose_headers": ["Content-Range", "X-Content-Range"],
                 "supports_credentials": True,
-                "expose_headers": ["Authorization"],
             }
         },
+        supports_credentials=True,
     )
 
-    # Register blueprints
     app.register_blueprint(auth_bp)
     app.register_blueprint(toppings_bp)
     app.register_blueprint(pizzas_bp)
 
     @app.after_request
     def after_request(response):
-        try:
-            origin = request.headers.get("Origin")
-            allowed_origins = app.config.get("CORS_ORIGINS", default_origins)
-
-            if origin and origin in allowed_origins:
-                response.headers["Access-Control-Allow-Origin"] = origin
-                response.headers["Access-Control-Allow-Credentials"] = "true"
-                response.headers[
-                    "Access-Control-Allow-Methods"
-                ] = "GET, POST, PUT, DELETE, OPTIONS"
-                response.headers[
-                    "Access-Control-Allow-Headers"
-                ] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
-                response.headers["Access-Control-Expose-Headers"] = "Authorization"
-        except Exception as e:
-            app.logger.error(f"CORS header processing error: {str(e)}")
-
+        origin = request.headers.get("Origin")
+        if origin in app.config["CORS_ORIGINS"]:
+            response.headers["Access-Control-Allow-Origin"] = origin
+            response.headers["Access-Control-Allow-Credentials"] = "true"
+            response.headers[
+                "Access-Control-Allow-Methods"
+            ] = "GET, POST, PUT, DELETE, OPTIONS"
+            response.headers[
+                "Access-Control-Allow-Headers"
+            ] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
         return response
 
     return app
 
 
 app = create_app()
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=secrets.DEBUG)

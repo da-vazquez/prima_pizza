@@ -23,10 +23,16 @@ pizzas_bp = Blueprint("pizzas", __name__, url_prefix="/api/v1/pizzas")
 
 @pizzas_bp.route("/", methods=["GET"])
 def get_pizzas():
-    pizzas = list(pizzas_collection.find({}, {"_id": 0}))
-    response = jsonify(pizzas)
-    response.headers["Access-Control-Allow-Credentials"] = "true"
-    return response, 200
+    try:
+        pizzas = list(pizzas_collection.find({}, {"_id": 0}))
+        response = jsonify(pizzas)
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        return response, 200
+    except Exception as e:
+        logger.error(f"Error fetching pizzas: {e}")
+        response = jsonify({"message": "Error fetching pizzas"})
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        return response, 500
 
 
 @pizzas_bp.route("/", methods=["POST"])
@@ -34,7 +40,9 @@ def get_pizzas():
 def add_pizza():
     auth_error = check_role(["chef"])
     if auth_error:
-        return auth_error
+        response = auth_error[0]
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        return response, auth_error[1]
 
     data = request.get_json()
 
@@ -88,8 +96,16 @@ def add_pizza():
     pizza_data = pizza.model_dump()
     pizza_data["price"] = price
 
-    pizzas_collection.insert_one(pizza_data)
-    return jsonify({"message": f"Pizza {pizza.name} added"}), 201
+    try:
+        pizzas_collection.insert_one(pizza_data)
+        response = jsonify({"message": f"Pizza {pizza.name} added"})
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        return response, 201
+    except Exception as e:
+        logger.error(f"Error adding pizza: {e}")
+        response = jsonify({"message": "Error adding pizza"})
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        return response, 500
 
 
 @pizzas_bp.route("/<string:name>", methods=["DELETE"])
@@ -97,13 +113,25 @@ def add_pizza():
 def delete_pizza(name):
     auth_error = check_role(["chef"])
     if auth_error:
-        return auth_error
+        response = auth_error[0]
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        return response, auth_error[1]
 
-    result = pizzas_collection.delete_one({"name": all_variations(name)})
-    if result.deleted_count == 0:
-        return jsonify({"message": f"Pizza {name} not found"}), 404
+    try:
+        result = pizzas_collection.delete_one({"name": all_variations(name)})
+        if result.deleted_count == 0:
+            response = jsonify({"message": f"Pizza {name} not found"})
+            response.headers["Access-Control-Allow-Credentials"] = "true"
+            return response, 404
 
-    return jsonify({"message": f"Pizza {name} deleted"}), 200
+        response = jsonify({"message": f"Pizza {name} deleted"})
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        return response, 200
+    except Exception as e:
+        logger.error(f"Error deleting pizza: {e}")
+        response = jsonify({"message": "Error deleting pizza"})
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        return response, 500
 
 
 @pizzas_bp.route("/<string:name>", methods=["PUT"])
@@ -111,7 +139,9 @@ def delete_pizza(name):
 def update_pizza(name):
     auth_error = check_role(["chef"])
     if auth_error:
-        return auth_error
+        response = auth_error[0]
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        return response, auth_error[1]
 
     data = request.get_json()
     update_fields = {}
@@ -190,8 +220,15 @@ def update_pizza(name):
 
         update_fields["price"] = price
 
-    result = pizzas_collection.update_one(
-        {"name": all_variations(name)}, {"$set": update_fields}
-    )
-
-    return jsonify({"message": f"Pizza {name} updated successfully"}), 200
+    try:
+        result = pizzas_collection.update_one(
+            {"name": all_variations(name)}, {"$set": update_fields}
+        )
+        response = jsonify({"message": f"Pizza {name} updated successfully"})
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        return response, 200
+    except Exception as e:
+        logger.error(f"Error updating pizza: {e}")
+        response = jsonify({"message": "Error updating pizza"})
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        return response, 500
