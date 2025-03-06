@@ -8,10 +8,12 @@ let allowCredentials = false;
 
 if (nodeEnv === "LOCAL") {
   baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL;
+} else {
+  baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_DEV;
+  allowCredentials = true;
 }
 
-if (nodeEnv !== "LOCAL" && baseUrl && baseUrl.startsWith('http://')) {
-    allowCredentials = true;
+if (baseUrl && baseUrl.startsWith('http://')) {
     baseUrl = baseUrl.replace('http://', 'https://');
 }
 
