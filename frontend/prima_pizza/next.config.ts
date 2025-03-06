@@ -22,25 +22,14 @@ const nextConfig: NextConfig = {
   images: {
     domains: ['prima-pizza-backend-west.azurewebsites.net'],
   },
+  output: 'export',
   async rewrites() {
     return [
       {
         source: '/api/:path*',
-        destination: `${baseURL}/api/:path*`,
-      },
-      {
-        source: '/api/v1/auth/:path*',
-        destination: `${baseURL}/api/v1/auth/:path*`,
-      },
-      {
-        source: '/api/v1/toppings/:path*',
-        destination: `${baseURL}/api/v1/toppings/:path*`,
-      },
-      {
-        source: '/api/v1/pizzas/:path*',
-        destination: `${baseURL}/api/v1/pizzas/:path*`,
-      },    
-    ]
+        destination: 'https://prima-pizza-backend-west.azurewebsites.net/api/:path*',
+      }
+    ];
   },
 };
 

@@ -33,7 +33,7 @@ if current_env == "LOCAL":
     CLIENT_APP = "http://localhost:3000"
     PORT = 5005
 else:
-    CLIENT_APP = os.getenv("NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_DEV", "")
+    CLIENT_APP = "*"
     PORT = 8000
 
 
@@ -47,7 +47,7 @@ def create_app():
 
     jwt = JWTManager(app)
 
-    CORS(app, supports_credentials=True, origins=CLIENT_APP)
+    CORS(app, origins="*", supports_credentials=True)
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(toppings_bp)

@@ -1,18 +1,9 @@
+_topping_count.ts
 import clientPromise from "../../api/mongodb";
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const origin = req.headers.origin;
-  const allowedOrigins = [
-    'https://prima-pizza.vercel.app',
-    'https://prima-pizza-backend-west.azurewebsites.net',
-    'http://localhost:3000'
-  ];
-
-  if (origin && allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
-
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader(
@@ -28,18 +19,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log("Attempting to connect to MongoDB...");
     
     const client = await clientPromise;
-    const db = client.db("prima_pizza");
-
     console.log("Connected to MongoDB, executing queries...");
     
     const [pizzas, toppings, meats, cheeses, vegetables, sauces, crusts] = await Promise.all([
-      db.collection("pizzas").countDocuments(),
-      db.collection("toppings").countDocuments(),
-      db.collection("toppings").countDocuments({ topping_type: "meat" }),
-      db.collection("toppings").countDocuments({ topping_type: "cheese" }),
-      db.collection("toppings").countDocuments({ topping_type: "vegetable" }),
-      db.collection("toppings").countDocuments({ topping_type: "sauce" }),
-      db.collection("toppings").countDocuments({ topping_type: "crust" })
+      client.db("prima_pizza").collection("pizzas").countDocuments(),
+      client.db("prima_pizza").collection("toppings").countDocuments(),
+      client.db("prima_pizza").collection("toppings").countDocuments({ topping_type: "meat" }),
+      client.db("prima_pizza").collection("toppings").countDocuments({ topping_type: "cheese" }),
+      client.db("prima_pizza").collection("toppings").countDocuments({ topping_type: "vegetable" }),
+      client.db("prima_pizza").collection("toppings").countDocuments({ topping_type: "sauce" }),
+      client.db("prima_pizza").collection("toppings").countDocuments({ topping_type: "crust" })
     ]);
 
     console.log("Queries executed successfully");

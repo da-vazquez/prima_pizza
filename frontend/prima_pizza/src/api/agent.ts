@@ -3,11 +3,15 @@ import axios, { AxiosResponse } from "axios";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const nodeEnv = process.env.NEXT_PUBLIC_NODE_ENV || "LOCAL"; 
-let baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_DEV;
+let baseUrl;
 let allowCredentials = false;
 
-if (nodeEnv === "LOCAL") {
+if (nodeEnv === "PROD") {
+  baseUrl = "";  
+  allowCredentials = false;
+} else if (nodeEnv === "LOCAL") {
   baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL;
+  allowCredentials = false;
 } else {
   baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_DEV;
   allowCredentials = true;
