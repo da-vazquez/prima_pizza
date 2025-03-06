@@ -21,6 +21,7 @@ const axiosInstance = axios.create({
     baseURL: baseUrl,
     headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
     },
     withCredentials: true,
     maxRedirects: 5,
@@ -36,6 +37,9 @@ axiosInstance.interceptors.request.use((config) => {
 axiosInstance.interceptors.response.use(
     response => response,
     error => {
+        if (error.response?.status === 401) {
+            window.location.href = '/login';
+        }
         if (error.message === 'Network Error') {
             console.error('Network error occurred:', error);
         }

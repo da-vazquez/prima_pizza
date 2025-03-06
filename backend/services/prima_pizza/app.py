@@ -26,21 +26,26 @@ def create_app():
     app.config["JWT_SECRET_KEY"] = secrets.JWT_SECRET_KEY
     jwt = JWTManager(app)
 
-    allowed_origins = [
-        "https://prima-pizza.vercel.app",
-        "https://prima-pizza-backend-west.azurewebsites.net",
-        "https://localhost:3000",
-    ]
-
     CORS(
         app,
         resources={
-            r"/*": {
-                "origins": allowed_origins,
+            r"/api/*": {
+                "origins": [
+                    "https://prima-pizza.vercel.app",
+                    "https://prima-pizza-backend-west.azurewebsites.net",
+                    "https://localhost:3000",
+                ],
                 "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-                "allow_headers": ["Content-Type", "Authorization"],
-                "supports_credentials": True,
+                "allow_headers": [
+                    "Content-Type",
+                    "Authorization",
+                    "Accept",
+                    "Origin",
+                    "X-Requested-With",
+                ],
                 "expose_headers": ["Content-Range", "X-Content-Range"],
+                "supports_credentials": True,
+                "send_wildcard": False,
                 "max_age": 600,
             }
         },
@@ -56,7 +61,7 @@ def create_app():
     @app.after_request
     def after_request(response):
         origin = request.headers.get("Origin")
-        if origin in allowed_origins:
+        if origin in app.config["CORS_ORIGINS"]:
             response.headers["Access-Control-Allow-Origin"] = origin
             response.headers["Access-Control-Allow-Credentials"] = "true"
             response.headers[
@@ -64,7 +69,10 @@ def create_app():
             ] = "GET, POST, PUT, DELETE, OPTIONS"
             response.headers[
                 "Access-Control-Allow-Headers"
-            ] = "Content-Type, Authorization"
+            ] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
+            response.headers[
+                "Access-Control-Expose-Headers"
+            ] = "Content-Range, X-Content-Range"
         return response
 
     return app
