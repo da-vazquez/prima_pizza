@@ -87,16 +87,6 @@ const request = {
 };
 
 const Requests = {
-  login: (data: AuthData): Promise<any> =>
-    request.post(`/api/v1/auth/login`, data, {
-      headers: { "Content-Type": "application/json" }
-    }),
-
-  register: (data: AuthData): Promise<any> =>
-    request.post(`/api/v1/auth/register`, data, {
-      headers: { "Content-Type": "application/json" }
-    }),
-
   getToppings: (): Promise<any> => 
     request.get(`/api/toppings`),
 
