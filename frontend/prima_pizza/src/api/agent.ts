@@ -52,29 +52,47 @@ axiosInstance.interceptors.response.use(
 
 const responseBody = <T>(response: AxiosResponse<T>) => response.data;
 
+interface AuthData {
+  username: string;
+  password: string;
+  role?: string;
+}
+
+interface ToppingData {
+  name: string;
+  price: number;
+  topping_type: string;
+}
+
+interface PizzaData {
+  name: string;
+  toppings: string[];
+  crust: string;
+  sauce: string;
+  cheese: string;
+}
 
 const request = {
-  get: (url: string, config?: { headers: { Authorization?: string; "Content-Type": string } }) =>
+  get: <T>(url: string, config?: { headers: { Authorization?: string; "Content-Type": string } }): Promise<T> =>
     axiosInstance.get(url, config).then(responseBody),
 
-  post: (url: string, body: object, config?: { headers: { Authorization?: string; "Content-Type": string } }) =>
+  post: <T>(url: string, body: object, config?: { headers: { Authorization?: string; "Content-Type": string } }): Promise<T> =>
     axiosInstance.post(url, body, config).then(responseBody),
 
-  put: (url: string, body: object, config?: { headers: { Authorization?: string; "Content-Type": string } }) =>
+  put: <T>(url: string, body: object, config?: { headers: { Authorization?: string; "Content-Type": string } }): Promise<T> =>
     axiosInstance.put(url, body, config).then(responseBody),
 
-  delete: (url: string, config?: { headers: { Authorization?: string; "Content-Type": string } }) =>
+  delete: <T>(url: string, config?: { headers: { Authorization?: string; "Content-Type": string } }): Promise<T> =>
     axiosInstance.delete(url, config).then(responseBody),
 };
 
-
 const Requests = {
-  login: (data: { username: string; password: string }): Promise<any> =>
+  login: (data: AuthData): Promise<any> =>
     request.post(`/api/v1/auth/login`, data, {
       headers: { "Content-Type": "application/json" }
     }),
 
-  register: (data: { username: string; password: string; role: string }): Promise<any> =>
+  register: (data: AuthData): Promise<any> =>
     request.post(`/api/v1/auth/register`, data, {
       headers: { "Content-Type": "application/json" }
     }),
@@ -82,7 +100,7 @@ const Requests = {
   getToppings: (): Promise<any> => 
     request.get(`/api/toppings`),
 
-  addTopping: (data: { name: string; price: number; topping_type: string }, token: string): Promise<any> =>
+  addTopping: (data: ToppingData, token: string): Promise<any> =>
     request.post(`/api/toppings/`, data, {
       headers: { 
         "Content-Type": "application/json",
@@ -90,7 +108,7 @@ const Requests = {
       },
     }),
 
-  updateTopping: (name: string, data: { name?: string; price?: number; topping_type?: string }, token: string): Promise<any> =>
+  updateTopping: (name: string, data: Partial<ToppingData>, token: string): Promise<any> =>
     request.put(`/api/toppings/${name}`, data, {
       headers: { 
         "Content-Type": "application/json",
@@ -108,7 +126,7 @@ const Requests = {
 
   getPizzas: (): Promise<any> => request.get(`/api/pizzas`),
 
-  addPizza: (data: { name: string; toppings: string[]; crust: string; sauce: string; cheese: string }, token: string): Promise<any> =>
+  addPizza: (data: PizzaData, token: string): Promise<any> =>
     request.post(`/api/pizzas/`, data, {
       headers: { 
         "Content-Type": "application/json",
@@ -116,7 +134,7 @@ const Requests = {
       },
     }),
 
-  updatePizza: (name: string, data: { name?: string; toppings?: string[]; crust?: string; sauce?: string; cheese?: string }, token: string): Promise<any> =>
+  updatePizza: (name: string, data: Partial<PizzaData>, token: string): Promise<any> =>
     request.put(`/api/pizzas/${name}`, data, {
       headers: { 
         "Content-Type": "application/json",

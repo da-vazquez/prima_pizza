@@ -1,9 +1,8 @@
 "use client";
 
-// Default Imports
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { jwtDecode } from "jwt-decode";
+import { useSession, signOut } from "next-auth/react";
 
 // Custom Imports
 import globalStyles from "../globals.css";
@@ -11,7 +10,6 @@ import { styles } from "./styles";
 import Home from "../../components/dashHome";
 import ToppingsTable from "../../components/dashToppings";
 import PizzaTable from "@/components/dashPizza";
-
 
 interface User {
   username: string;
@@ -25,79 +23,41 @@ interface PizzaToppingData {
 
 const DashboardPage = () => {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [user, setUser] = useState<User | null>(null);
   const [currentView, setCurrentView] = useState<string>("home");
   const [pizzaToppingData, setPizzaToppingData] = useState<PizzaToppingData | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      router.push("/");
-
-    } else {
-      try {
-        const decoded: any = jwtDecode(token);
-        const userData = JSON.parse(decoded.sub);
-
-        setUser({
-          username: userData.username || "Unknown User",
-          role: userData.role || "Unknown Role",
-        });
-      } catch (error) {
-        console.error("Invalid token:", error);
-        localStorage.removeItem("token");
-        router.push("/login");
-      }
+    if (status === "loading") return;
+    if (status === "unauthenticated") {
+      router.push("/login");
     }
-  }, [router]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    router.push("/");
-  };
+  }, [status, router]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const pizzaToppingResponse = await fetch("/api/pizza_topping_count");
-        console.log("pizza topping count: ", pizzaToppingResponse)
-        
-        if (!pizzaToppingResponse.ok) {
-          throw new Error(`Error fetching pizza/topping data: ${pizzaToppingResponse.statusText}`);
-        }
+    if (session?.user) {
+      setUser({
+        username: session.user.name || "Unknown User",
+        role: session.user.role || "Unknown Role",
+      });
+    }
+  }, [session]);
 
-        const pizzaToppingData = await pizzaToppingResponse.json();
-        setPizzaToppingData(pizzaToppingData);
-
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
+  const handleLogout = () => {
+    signOut({ callbackUrl: "/login" });
+  };
 
   const renderContent = () => {
     switch (currentView) {
       case "home":
-        return (
-          <Home user={user} pizzaToppingData={pizzaToppingData}/>
-        );
+        return <Home user={user} pizzaToppingData={pizzaToppingData} />;
       case "modifyPizza":
-
-        return (
-          <PizzaTable />
-        );
-
+        return <PizzaTable />;
       case "modifyTopping":
-        return (
-          <ToppingsTable />
-        );
+        return <ToppingsTable />;
       case "accountSettings":
-        // TODO: Create Component
         return <h2>Coming soon!</h2>;
-
       default:
         return <h2>Dashboard</h2>;
     }
@@ -111,43 +71,42 @@ const DashboardPage = () => {
           {user && (
             <>
               <nav style={styles.nav}>
-              <button
-                style={styles.navButton}
-                onClick={() => setCurrentView("home")}
-              >
-                Home
-              </button>
-              <button
-                style={user.role !== "chef" ? styles.navButtonDisabled : styles.navButton}
-                onClick={() => setCurrentView("modifyPizza")}
-                disabled={user.role !== "chef"}
-              >
-                View/Modify Pizzas
-              </button>
-              <button
-                style={user.role !== "owner" ? styles.navButtonDisabled : styles.navButton}
-                onClick={() => setCurrentView("modifyTopping")}
-                disabled={user.role !== "owner"}
-              >
-                View/Modify Toppings
-              </button>
-              <button
-                style={styles.navButton}
-                onClick={() => setCurrentView("accountSettings")}
-              >
-                Account Settings
-              </button>
-              <button
-                style={styles.navButtonLogout}
-                onClick={handleLogout}
-              >
-                Logout
-              </button>
+                <button
+                  style={styles.navButton}
+                  onClick={() => setCurrentView("home")}
+                >
+                  Home
+                </button>
+                <button
+                  style={user.role !== "chef" ? styles.navButtonDisabled : styles.navButton}
+                  onClick={() => setCurrentView("modifyPizza")}
+                  disabled={user.role !== "chef"}
+                >
+                  View/Modify Pizzas
+                </button>
+                <button
+                  style={user.role !== "owner" ? styles.navButtonDisabled : styles.navButton}
+                  onClick={() => setCurrentView("modifyTopping")}
+                  disabled={user.role !== "owner"}
+                >
+                  View/Modify Toppings
+                </button>
+                <button
+                  style={styles.navButton}
+                  onClick={() => setCurrentView("accountSettings")}
+                >
+                  Account Settings
+                </button>
+                <button
+                  style={styles.navButtonLogout}
+                  onClick={handleLogout}
+                >
+                  Logout
+                </button>
               </nav>
             </>
           )}
         </div>
-
         <div style={styles.mainContent}>
           <div style={styles.card}>
             {renderContent()}
@@ -157,6 +116,5 @@ const DashboardPage = () => {
     </div>
   );
 };
-
 
 export default DashboardPage;
