@@ -36,7 +36,7 @@ jobs:
         run: |
           cd backend
           cp -r ../antenv ./
-          zip -r ../release.zip . .env antenv web.config
+          zip -r ../release.zip . .env antenv
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
@@ -70,78 +70,24 @@ jobs:
           az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
 
       - name: Configure Azure Web App
-        uses: azure/appservice-settings@v1
-        with:
-          app-name: 'prima-pizza-backend-west'
-          slot-name: 'Production'
-          app-settings-json: |
-            [
-              {
-                "name": "WEBSITES_PORT",
-                "value": "8000",
-                "slotSetting": false
-              },
-              {
-                "name": "FLASK_ENV",
-                "value": "production",
-                "slotSetting": false
-              },
-              {
-                "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
-                "value": "true",
-                "slotSetting": false
-              },
-              {
-                "name": "CORS_ENABLED",
-                "value": "true",
-                "slotSetting": false
-              },
-              {
-                "name": "CORS_ORIGINS",
-                "value": "https://prima-pizza.vercel.app,https://localhost:3000",
-                "slotSetting": false
-              },
-              {
-                "name": "CORS_ALLOW_CREDENTIALS",
-                "value": "true",
-                "slotSetting": false
-              },
-              {
-                "name": "CORS_METHODS",
-                "value": "GET,POST,PUT,DELETE,OPTIONS",
-                "slotSetting": false
-              },
-              {
-                "name": "CORS_HEADERS",
-                "value": "Content-Type,Authorization,Accept,Origin,X-Requested-With",
-                "slotSetting": false
-              },
-              {
-                "name": "WEBSITE_HTTPLOGGING_RETENTION_DAYS",
-                "value": "7",
-                "slotSetting": false
-              },
-              {
-                "name": "FLASK_APP",
-                "value": "startup:app",
-                "slotSetting": false
-              },
-              {
-                "name": "ENV",
-                "value": "PROD",
-                "slotSetting": false
-              }
-            ]
-
-      - name: Configure Web App General Settings
         run: |
-          az webapp config set \
-            --resource-group prima-pizza-rg-west \
-            --name prima-pizza-backend-west \
-            --ftps-state Disabled \
-            --http20-enabled true \
-            --min-tls-version 1.2 \
-            --web-sockets-enabled false
+          # Set Python version and always-on
+          az webapp config set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west \
+            --linux-fx-version "PYTHON|3.10" \
+            --always-on true
+
+          # Set environment variables and app settings
+          az webapp config appsettings set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --settings \
+            ENV=PROD \
+            DATABASE_URL="${{ secrets.MONGODB_URI }}" \
+            TEST_DATABASE_URL="${{ secrets.TEST_MONGODB_URI }}" \
+            WEBSITES_PORT=8000 \
+            WEBSITE_RUN_FROM_PACKAGE=1 \
+            SCM_DO_BUILD_DURING_DEPLOYMENT=true \
+            ENABLE_ORYX_BUILD=true \
+            FLASK_APP=startup.py \
+            FLASK_ENV=production \
+            JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}"
 
       - name: Deploy to Azure Web App
         uses: Azure/webapps-deploy@v2
