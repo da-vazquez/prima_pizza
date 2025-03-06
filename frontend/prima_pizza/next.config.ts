@@ -17,12 +17,16 @@ const nextConfig: NextConfig = {
         destination: 'https://prima-pizza-backend-west.azurewebsites.net/api/:path*',
       },
       {
-        source: '/toppings/:path*',
-        destination: 'https://prima-pizza-backend-west.azurewebsites.net/toppings/:path*',
+        source: '/api/v1/auth/:path*',
+        destination: 'https://prima-pizza-backend-west.azurewebsites.net/api/v1/auth/:path*',
       },
       {
-        source: '/pizzas/:path*',
-        destination: 'https://prima-pizza-backend-west.azurewebsites.net/pizzas/:path*',
+        source: '/api/v1/toppings/:path*',
+        destination: 'https://prima-pizza-backend-west.azurewebsites.net/api/v1/toppings/:path*',
+      },
+      {
+        source: '/api/v1/pizzas/:path*',
+        destination: 'https://prima-pizza-backend-west.azurewebsites.net/api/v1/pizzas/:path*',
       },
     ];
   },

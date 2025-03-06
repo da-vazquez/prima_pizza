@@ -87,11 +87,14 @@ const request = {
 };
 
 const Requests = {
+  login: (data: AuthData): Promise<any> =>
+    request.post(`/api/v1/auth/login`, data),
+
   getToppings: (): Promise<any> => 
-    request.get(`/api/toppings`),
+    request.get(`/api/v1/toppings`),
 
   addTopping: (data: ToppingData, token: string): Promise<any> =>
-    request.post(`/api/toppings/`, data, {
+    request.post(`/api/v1/toppings/`, data, {
       headers: { 
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
@@ -99,7 +102,7 @@ const Requests = {
     }),
 
   updateTopping: (name: string, data: Partial<ToppingData>, token: string): Promise<any> =>
-    request.put(`/api/toppings/${name}`, data, {
+    request.put(`/api/v1/toppings/${name}`, data, {
       headers: { 
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
@@ -107,17 +110,17 @@ const Requests = {
     }),
 
   deleteTopping: (name: string, token: string): Promise<any> => 
-    request.delete(`/api/toppings/${name}`, {
+    request.delete(`/api/v1/toppings/${name}`, {
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
       },
     }),
 
-  getPizzas: (): Promise<any> => request.get(`/api/pizzas`),
+  getPizzas: (): Promise<any> => request.get(`/api/v1/pizzas`),
 
   addPizza: (data: PizzaData, token: string): Promise<any> =>
-    request.post(`/api/pizzas/`, data, {
+    request.post(`/api/v1/pizzas/`, data, {
       headers: { 
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
@@ -125,7 +128,7 @@ const Requests = {
     }),
 
   updatePizza: (name: string, data: Partial<PizzaData>, token: string): Promise<any> =>
-    request.put(`/api/pizzas/${name}`, data, {
+    request.put(`/api/v1/pizzas/${name}`, data, {
       headers: { 
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
@@ -133,7 +136,7 @@ const Requests = {
     }),
 
   deletePizza: (name: string, token: string): Promise<any> => 
-    request.delete(`/api/pizzas/${name}`, {
+    request.delete(`/api/v1/pizzas/${name}`, {
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
