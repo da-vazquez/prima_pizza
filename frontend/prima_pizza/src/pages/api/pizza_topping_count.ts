@@ -6,7 +6,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const allowedOrigins = [
     'https://prima-pizza.vercel.app',
     'https://prima-pizza-backend-west.azurewebsites.net',
-    'https://localhost:3000'
+    'http://localhost:3000'
   ];
 
   if (origin && allowedOrigins.includes(origin)) {
@@ -54,7 +54,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       crusts
     });
   } catch (error) {
-    console.error("Error details:", error);
+    console.log("Error details:", error);
     return res.status(500).json({ 
       error: "Error fetching pizza and topping data",
       details: error instanceof Error ? error.message : 'Unknown error'

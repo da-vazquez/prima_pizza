@@ -9,7 +9,7 @@ Custom Imports
 """
 from config import settings
 
-ENV = "PROD"
+ENV = os.getenv("ENV", "LOCAL")
 
 if ENV not in settings.ENV_OPTIONS:
     raise ValueError(f"ENV must be one of {settings.ENV_OPTIONS}")

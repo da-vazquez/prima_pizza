@@ -10,6 +10,7 @@ import globalStyles from "../globals.css";
 import { styles } from "./styles";
 import Home from "../../components/dashHome";
 import ToppingsTable from "../../components/dashToppings";
+import PizzaTable from "../../components/dashPizza";
 
 interface User {
   username: string;
@@ -26,6 +27,7 @@ const DashboardPage = () => {
   const [user, setUser] = useState<User | null>(null);
   const [currentView, setCurrentView] = useState<string>("home");
   const [pizzaToppingData, setPizzaToppingData] = useState<PizzaToppingData | null>(null);
+  const [refreshData, setRefreshData] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -42,7 +44,7 @@ const DashboardPage = () => {
           role: userData.role || "Unknown Role",
         });
       } catch (error) {
-        console.error("Invalid token:", error);
+        console.log("Invalid token:", error);
         localStorage.removeItem("token");
         router.push("/login");
       }
@@ -83,8 +85,9 @@ const DashboardPage = () => {
           <Home user={user} pizzaToppingData={pizzaToppingData}/>
         );
       case "modifyPizza":
-        // TODO: Create Component
-        return <h2>View/Modify Pizza</h2>;
+        return (
+          <PizzaTable />
+        );
       case "modifyTopping":
         return (
           <ToppingsTable />
@@ -113,7 +116,10 @@ const DashboardPage = () => {
                 </button>
                 <button
                   style={user.role !== "chef" ? styles.navButtonDisabled : styles.navButton}
-                  onClick={() => setCurrentView("modifyPizza")}
+                  onClick={() => {
+                    setCurrentView("modifyPizza");
+                    setRefreshData(!refreshData);
+                  }}
                   disabled={user.role !== "chef"}
                 >
                   View/Modify Pizzas

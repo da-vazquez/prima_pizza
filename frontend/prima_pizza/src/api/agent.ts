@@ -4,12 +4,14 @@ import axios, { AxiosResponse } from "axios";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const nodeEnv = process.env.NEXT_PUBLIC_NODE_ENV || "LOCAL"; 
 let baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_DEV;
+let allowCredentials = false;
 
 if (nodeEnv === "LOCAL") {
   baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL;
 }
 
-if (baseUrl && baseUrl.startsWith('http://')) {
+if (nodeEnv !== "LOCAL" && baseUrl && baseUrl.startsWith('http://')) {
+    allowCredentials = true;
     baseUrl = baseUrl.replace('http://', 'https://');
 }
 
@@ -23,7 +25,7 @@ const axiosInstance = axios.create({
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     },
-    withCredentials: true
+    withCredentials: allowCredentials
 });
 
 axiosInstance.interceptors.request.use(
@@ -43,7 +45,7 @@ axiosInstance.interceptors.response.use(
             window.location.href = '/login';
         }
         if (error.message === 'Network Error') {
-            console.error('Network error occurred:', error);
+            console.log('Network error occurred:', error);
         }
         return Promise.reject(error);
     }

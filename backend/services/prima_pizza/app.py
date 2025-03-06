@@ -27,6 +27,15 @@ from services.prima_pizza.routes.auth import auth_bp
 
 load_dotenv()
 
+current_env = os.getenv("ENV", "LOCAL")
+
+if current_env == "LOCAL":
+    CLIENT_APP = "http://localhost:3000"
+    PORT = 5005
+else:
+    CLIENT_APP = os.getenv("NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_DEV", "")
+    PORT = 8000
+
 
 def create_app():
     app = Flask(__name__)
@@ -38,19 +47,17 @@ def create_app():
 
     jwt = JWTManager(app)
 
-    CORS(app, supports_credentials=True, origins="*")
+    CORS(app, supports_credentials=True, origins=CLIENT_APP)
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(toppings_bp)
     app.register_blueprint(pizzas_bp)
 
     @app.errorhandler(Exception)
-    def handle_error(error):
-        logger.error(f"Unhandled error: {error}", exc_info=True)
-        response = jsonify({"message": "Internal server error"})
-        response.headers["Access-Control-Allow-Origin"] = request.headers.get("Origin")
-        response.headers["Access-Control-Allow-Credentials"] = "true"
-        return response, 500
+    def handle_exception(e):
+        response = jsonify({"message": str(e)})
+        response.status_code = 500
+        return response
 
     return app
 
@@ -59,4 +66,4 @@ app = create_app()
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000, debug=secrets.DEBUG)
+    app.run(host="0.0.0.0", port=PORT, debug=secrets.DEBUG)

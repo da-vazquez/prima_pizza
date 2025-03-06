@@ -68,7 +68,7 @@ const ToppingsTable = () => {
       setActiveToast(true);
       setShowModal(false);
     } catch (error) {
-      console.error("Error adding topping:", error);
+      console.log("Error adding topping:", error);
       setNotification("Failed to add topping. 🥲");
       setActiveToast(true);
     } finally {
@@ -93,7 +93,7 @@ const ToppingsTable = () => {
         setActiveToast(true);
         fetchToppings();
       } catch (error) {
-        console.error("Error deleting topping:", error);
+        console.log("Error deleting topping:", error);
         setNotification("Failed to delete topping. 🥲");
         setActiveToast(true);
       } finally {
@@ -146,7 +146,7 @@ const ToppingsTable = () => {
       setStep(1);
       setShowModal(false);
     } catch (error) {
-      console.error("Error updating topping:", error);
+      console.log("Error updating topping:", error);
       setNotification(`Failed to update topping. 🥲 (${Date.now()})`);
       setActiveToast(true);
     } finally {

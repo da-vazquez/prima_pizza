@@ -37,7 +37,7 @@ const PizzaTable = () => {
       const response = await agent.Requests.getPizzas();
       setPizzas(Array.isArray(response) ? response : []);
     } catch (error) {
-      console.error("Error fetching pizzas:", error);
+      console.log("Error fetching pizzas:", error);
       setPizzas([]);
     }
   };
@@ -47,7 +47,7 @@ const PizzaTable = () => {
       const response = await agent.Requests.getToppings();
       setIngredients(Array.isArray(response) ? response : []); 
     } catch (error) {
-      console.error("Error fetching ingredients:", error);
+      console.log("Error fetching ingredients:", error);
       setIngredients([]);
     }
   };
@@ -80,7 +80,7 @@ const PizzaTable = () => {
       setActiveToast(true);
       setShowModal(false);
     } catch (error) {
-      console.error("Error adding pizza:", error);
+      console.log("Error adding pizza:", error);
       setNotification("Failed to add pizza. 🥲");
       setActiveToast(true);
     } finally {
@@ -105,7 +105,7 @@ const PizzaTable = () => {
         setActiveToast(true);
         fetchPizzas();
       } catch (error) {
-        console.error("Error deleting pizza:", error);
+        console.log("Error deleting pizza:", error);
         setNotification("Failed to delete pizza. 🥲");
         setActiveToast(true);
       } finally {
@@ -161,7 +161,7 @@ const PizzaTable = () => {
       setStep(1);
       setShowModal(false);
     } catch (error) {
-      console.error("Error updating pizza:", error);
+      console.log("Error updating pizza:", error);
       setNotification(`Failed to update pizza. 🥲 (${Date.now()})`);
       setActiveToast(true);
     } finally {

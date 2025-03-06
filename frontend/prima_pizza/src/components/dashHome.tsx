@@ -24,7 +24,7 @@ const Home = ({ user }) => {
         const data = await response.json();
         setPizzaToppingData(data);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.log("Error fetching data:", error);
       }
     };
 

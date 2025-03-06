@@ -1,4 +1,13 @@
 import type { NextConfig } from "next";
+const nodeEnv = process.env.NEXT_PUBLIC_NODE_ENV
+let baseURL;
+
+if (nodeEnv === "PROD") {
+  baseURL = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_PROD;
+}
+else {
+  baseURL = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL;
+}
 
 const nextConfig: NextConfig = {
   typescript: {
@@ -14,21 +23,21 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'https://prima-pizza-backend-west.azurewebsites.net/api/:path*',
+        destination: `${baseURL}/api/:path*`,
       },
       {
         source: '/api/v1/auth/:path*',
-        destination: 'https://prima-pizza-backend-west.azurewebsites.net/api/v1/auth/:path*',
+        destination: `${baseURL}/api/v1/auth/:path*`,
       },
       {
         source: '/api/v1/toppings/:path*',
-        destination: 'https://prima-pizza-backend-west.azurewebsites.net/api/v1/toppings/:path*',
+        destination: `${baseURL}/api/v1/toppings/:path*`,
       },
       {
         source: '/api/v1/pizzas/:path*',
-        destination: 'https://prima-pizza-backend-west.azurewebsites.net/api/v1/pizzas/:path*',
-      },
-    ];
+        destination: `${baseURL}/api/v1/pizzas/:path*`,
+      },    
+    ]
   },
 };
 
