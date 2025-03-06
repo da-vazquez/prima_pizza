@@ -88,6 +88,7 @@ jobs:
             FLASK_APP=startup.py \
             FLASK_ENV=production \
             JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}"
+         
 
       - name: Deploy to Azure Web App
         uses: Azure/webapps-deploy@v2
@@ -99,4 +100,4 @@ jobs:
 
       - name: Set startup command
         run: |
-          az webapp config set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --startup-file 'gunicorn --bind=0.0.0.0:8000 --timeout 220 startup:app'
+          az webapp config set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --startup-file 'gunicorn --bind=0.0.0.0:8000 --timeout 6000 startup:app'
