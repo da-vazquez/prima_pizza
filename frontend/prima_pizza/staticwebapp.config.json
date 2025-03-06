@@ -6,11 +6,6 @@
       "backendUri": "https://prima-pizza-backend-west.azurewebsites.net/api/*"
     },
     {
-      "route": "/api/v1/*",
-      "allowedRoles": ["anonymous"],
-      "backendUri": "https://prima-pizza-backend-west.azurewebsites.net/api/v1/*" 
-    },
-    {
       "route": "/*",
       "serve": "/index.html",
       "statusCode": 200
