@@ -5,6 +5,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
 from datetime import datetime
 import math
+import logging
 
 """
 Custom Imports
@@ -14,6 +15,8 @@ from services.prima_pizza.models import Pizza
 from utils.db import all_variations
 from utils.auth import check_role
 from config import settings
+
+logger = logging.getLogger(__name__)
 
 pizzas_collection = get_pizzas_collection()
 toppings_collection = get_toppings_collection()
@@ -232,3 +235,16 @@ def update_pizza(name):
         response = jsonify({"message": "Error updating pizza"})
         response.headers["Access-Control-Allow-Credentials"] = "true"
         return response, 500
+
+
+@pizzas_bp.route("/", methods=["OPTIONS"])
+@pizzas_bp.route("/<string:name>", methods=["OPTIONS"])
+def handle_options():
+    response = jsonify({"message": "OK"})
+    response.headers["Access-Control-Allow-Origin"] = request.headers.get("Origin")
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+    response.headers[
+        "Access-Control-Allow-Headers"
+    ] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
+    response.headers["Access-Control-Allow-Credentials"] = "true"
+    return response, 200

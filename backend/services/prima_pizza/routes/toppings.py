@@ -171,3 +171,16 @@ def update_topping(name):
         response = jsonify({"message": "Error updating topping"})
         response.headers["Access-Control-Allow-Credentials"] = "true"
         return response, 500
+
+
+@toppings_bp.route("/", methods=["OPTIONS"])
+@toppings_bp.route("/<string:name>", methods=["OPTIONS"])
+def handle_options():
+    response = jsonify({"message": "OK"})
+    response.headers["Access-Control-Allow-Origin"] = request.headers.get("Origin")
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+    response.headers[
+        "Access-Control-Allow-Headers"
+    ] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
+    response.headers["Access-Control-Allow-Credentials"] = "true"
+    return response, 200

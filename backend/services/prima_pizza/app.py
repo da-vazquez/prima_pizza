@@ -11,6 +11,12 @@ import os
 from dotenv import load_dotenv
 
 """
+Logging
+"""
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+"""
 Custom Imports
 """
 from config import settings
@@ -52,8 +58,9 @@ def create_app():
                     "Origin",
                     "X-Requested-With",
                 ],
-                "expose_headers": ["Content-Range", "X-Content-Range"],
+                "expose_headers": ["Content-Range", "X-Content-Range", "Authorization"],
                 "supports_credentials": True,
+                "max_age": 600,
             }
         },
         supports_credentials=True,
@@ -75,7 +82,17 @@ def create_app():
             response.headers[
                 "Access-Control-Allow-Headers"
             ] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
+        if request.method == "OPTIONS":
+            response.status_code = 200
         return response
+
+    @app.errorhandler(Exception)
+    def handle_error(error):
+        logger.error(f"Unhandled error: {error}", exc_info=True)
+        response = jsonify({"message": "Internal server error"})
+        response.headers["Access-Control-Allow-Origin"] = request.headers.get("Origin")
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        return response, 500
 
     return app
 
