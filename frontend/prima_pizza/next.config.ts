@@ -14,7 +14,7 @@ else {
 
 const nextConfig: NextConfig = {
   typescript: {
-    ignoreBuildErrors: true, // Ignore TypeScript errors during build
+    ignoreBuildErrors: true, // Ignore TypeScript errors during build 
   },
   eslint: {
     ignoreDuringBuilds: true, // Ignore ESLint errors during build
