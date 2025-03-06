@@ -23,18 +23,25 @@ load_dotenv()
 
 def create_app():
     app = Flask(__name__)
-    app.config["JWT_SECRET_KEY"] = secrets.JWT_SECRET_KEY
-    jwt = JWTManager(app)
+
+    # Default CORS settings
+    default_origins = [
+        "https://prima-pizza.vercel.app",
+        "https://prima-pizza-backend-west.azurewebsites.net",
+        "https://localhost:3000",
+    ]
+
+    app.config.update(
+        JWT_SECRET_KEY=secrets.JWT_SECRET_KEY,
+        CORS_ORIGINS=os.getenv("CORS_ORIGINS", ",".join(default_origins)).split(","),
+        CORS_SUPPORTS_CREDENTIALS=True,
+    )
 
     CORS(
         app,
         resources={
             r"/api/*": {
-                "origins": [
-                    "https://prima-pizza.vercel.app",
-                    "https://prima-pizza-backend-west.azurewebsites.net",
-                    "https://localhost:3000",
-                ],
+                "origins": app.config["CORS_ORIGINS"],
                 "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
                 "allow_headers": [
                     "Content-Type",
@@ -43,36 +50,33 @@ def create_app():
                     "Origin",
                     "X-Requested-With",
                 ],
-                "expose_headers": ["Content-Range", "X-Content-Range"],
                 "supports_credentials": True,
-                "send_wildcard": False,
-                "max_age": 600,
             }
         },
     )
 
-    warnings.filterwarnings("ignore")
-    app.config.from_pyfile("instance/secrets.py", silent=True)
-    app.logger.setLevel(secrets.LOG_LEVEL)
+    app.register_blueprint(auth_bp)
     app.register_blueprint(toppings_bp)
     app.register_blueprint(pizzas_bp)
-    app.register_blueprint(auth_bp)
 
     @app.after_request
     def after_request(response):
-        origin = request.headers.get("Origin")
-        if origin in app.config["CORS_ORIGINS"]:
-            response.headers["Access-Control-Allow-Origin"] = origin
-            response.headers["Access-Control-Allow-Credentials"] = "true"
-            response.headers[
-                "Access-Control-Allow-Methods"
-            ] = "GET, POST, PUT, DELETE, OPTIONS"
-            response.headers[
-                "Access-Control-Allow-Headers"
-            ] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
-            response.headers[
-                "Access-Control-Expose-Headers"
-            ] = "Content-Range, X-Content-Range"
+        try:
+            origin = request.headers.get("Origin")
+            allowed_origins = app.config.get("CORS_ORIGINS", default_origins)
+
+            if origin and origin in allowed_origins:
+                response.headers["Access-Control-Allow-Origin"] = origin
+                response.headers["Access-Control-Allow-Credentials"] = "true"
+                response.headers[
+                    "Access-Control-Allow-Methods"
+                ] = "GET, POST, PUT, DELETE, OPTIONS"
+                response.headers[
+                    "Access-Control-Allow-Headers"
+                ] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
+        except Exception as e:
+            app.logger.error(f"CORS header processing error: {str(e)}")
+
         return response
 
     return app
