@@ -23,14 +23,6 @@ const nextConfig: NextConfig = {
     domains: ['prima-pizza-backend-west.azurewebsites.net'],
   },
   output: 'export',
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: 'https://prima-pizza-backend-west.azurewebsites.net/api/:path*',
-      }
-    ];
-  },
 };
 
 export default nextConfig;

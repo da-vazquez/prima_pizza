@@ -7,13 +7,13 @@ let baseUrl;
 let allowCredentials = false;
 
 if (nodeEnv === "PROD") {
-  baseUrl = "";  
+  baseUrl = "/api";  
   allowCredentials = false;
 } else if (nodeEnv === "LOCAL") {
-  baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL;
+  baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL || "http://localhost:5005";
   allowCredentials = false;
 } else {
-  baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_DEV;
+  baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_DEV || "https://prima-pizza-backend-west.azurewebsites.net";
   allowCredentials = true;
 }
 
