@@ -1,17 +1,16 @@
 "use client";
 
+// Default Imports
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useSession, signOut } from "next-auth/react";
+import { jwtDecode } from "jwt-decode";
 
 // Custom Imports
 import globalStyles from "../globals.css";
 import { styles } from "./styles";
 import Home from "../../components/dashHome";
 import ToppingsTable from "../../components/dashToppings";
-import PizzaTable from "@/components/dashPizza";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 interface User {
   username: string;
   role: string;
@@ -24,41 +23,75 @@ interface PizzaToppingData {
 
 const DashboardPage = () => {
   const router = useRouter();
-  const { data: session, status } = useSession();
   const [user, setUser] = useState<User | null>(null);
   const [currentView, setCurrentView] = useState<string>("home");
   const [pizzaToppingData, setPizzaToppingData] = useState<PizzaToppingData | null>(null);
 
   useEffect(() => {
-    if (status === "loading") return;
-    if (status === "unauthenticated") {
-      router.push("/login");
-    }
-  }, [status, router]);
+    const token = localStorage.getItem("token");
 
-  useEffect(() => {
-    if (session?.user) {
-      setUser({
-        username: session.user.name || "Unknown User",
-        role: session.user.role || "Unknown Role",
-      });
+    if (!token) {
+      router.push("/login");
+    } else {
+      try {
+        const decoded: any = jwtDecode(token);
+        const userData = JSON.parse(decoded.sub);
+
+        setUser({
+          username: userData.username || "Unknown User",
+          role: userData.role || "Unknown Role",
+        });
+      } catch (error) {
+        console.error("Invalid token:", error);
+        localStorage.removeItem("token");
+        router.push("/login");
+      }
     }
-  }, [session]);
+  }, [router]);
 
   const handleLogout = () => {
-    signOut({ callbackUrl: "/login" });
+    localStorage.removeItem("token");
+    router.push("/");
   };
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const pizzaToppingResponse = await fetch("/api/pizza_topping_count");
+        console.log("pizza topping count: ", pizzaToppingResponse)
+        
+        if (!pizzaToppingResponse.ok) {
+          throw new Error(`Error fetching pizza/topping data: ${pizzaToppingResponse.statusText}`);
+        }
+
+        const pizzaToppingData = await pizzaToppingResponse.json();
+        setPizzaToppingData(pizzaToppingData);
+
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const renderContent = () => {
     switch (currentView) {
       case "home":
-        return <Home user={user} pizzaToppingData={pizzaToppingData} />;
+        return (
+          <Home user={user} pizzaToppingData={pizzaToppingData}/>
+        );
       case "modifyPizza":
-        return <PizzaTable />;
+        // TODO: Create Component
+        return <h2>View/Modify Pizza</h2>;
       case "modifyTopping":
-        return <ToppingsTable />;
+        return (
+          <ToppingsTable />
+        );
       case "accountSettings":
-        return <h2>Coming soon!</h2>;
+        // TODO: Create Component
+        return <h2>Account Settings</h2>;
       default:
         return <h2>Dashboard</h2>;
     }
@@ -108,6 +141,7 @@ const DashboardPage = () => {
             </>
           )}
         </div>
+
         <div style={styles.mainContent}>
           <div style={styles.card}>
             {renderContent()}
@@ -118,7 +152,5 @@ const DashboardPage = () => {
   );
 };
 
-/* eslint-enable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 export default DashboardPage;
-/* eslint-enable @typescript-eslint/no-unused-vars */

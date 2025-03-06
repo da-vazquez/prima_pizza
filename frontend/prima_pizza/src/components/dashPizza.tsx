@@ -45,7 +45,7 @@ const PizzaTable = () => {
   const fetchIngredients = async () => {
     try {
       const response = await agent.Requests.getToppings();
-      setIngredients(Array.isArray(response) ? response : []);
+      setIngredients(Array.isArray(response) ? response : []); 
     } catch (error) {
       console.error("Error fetching ingredients:", error);
       setIngredients([]);
@@ -127,18 +127,18 @@ const PizzaTable = () => {
       setActiveToast(true);
       return;
     }
-  
+
     const token = localStorage.getItem("token");
     if (!token) {
       setNotification(`No token found! Please log in again. 🥲 (${Date.now()})`);
       setActiveToast(true);
       return;
     }
-  
+
     try {
       setLoading(true);
       const oldPizzaName = editingPizza.name;
-  
+
       const updatedPizzaData = {
         cheese: updatedPizza.cheese,
         crust: updatedPizza.crust,
@@ -146,16 +146,16 @@ const PizzaTable = () => {
         toppings: updatedPizza.toppings,
         date_added: new Date().toISOString(),
       };
-  
+
       if (updatedPizza.name !== oldPizzaName) {
         updatedPizzaData.name = updatedPizza.name;
       }
-  
+
       await agent.Requests.updatePizza(oldPizzaName, updatedPizzaData, token);
-  
+
       setNotification(`Pizza updated successfully! 👍 (${Date.now()})`);
       setActiveToast(true);
-  
+
       fetchPizzas();
       setEditingPizza(null);
       setStep(1);
