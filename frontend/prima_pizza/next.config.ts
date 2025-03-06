@@ -2,24 +2,19 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   typescript: {
-    ignoreBuildErrors: true, // Skips type checking during build
+    ignoreBuildErrors: false, // Enable type checking for production
   },
   eslint: {
-    ignoreDuringBuilds: true, // Skips ESLint checks during build
+    ignoreDuringBuilds: false, // Enable ESLint checks for production
   },
-  async redirects() {
+  images: {
+    domains: ['prima-pizza-backend-west.azurewebsites.net'],
+  },
+  async rewrites() {
     return [
       {
-        source: "/:path*",
-        has: [{ type: "host", value: "https://prima-pizza.vercel.app/" }],
-        permanent: true,
-        destination: "https://prima-pizza.vercel.app/:path*",
-      },
-      {
-        source: "/:path*",
-        has: [{ type: "host", value: "https://prima-pizza.vercel.app/" }],
-        permanent: true,
-        destination: "https://prima-pizza.vercel.app/:path*",
+        source: '/api/:path*',
+        destination: 'https://prima-pizza-backend-west.azurewebsites.net/api/:path*',
       },
     ];
   },
