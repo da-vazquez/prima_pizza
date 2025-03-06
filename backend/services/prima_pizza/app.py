@@ -48,7 +48,7 @@ def create_app():
     CORS(
         app,
         resources={
-            r"/api/*": {
+            r"/*": {
                 "origins": default_origins,
                 "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
                 "allow_headers": [
@@ -60,7 +60,7 @@ def create_app():
                 ],
                 "expose_headers": ["Content-Range", "X-Content-Range", "Authorization"],
                 "supports_credentials": True,
-                "max_age": 600,
+                "send_wildcard": False,
             }
         },
         supports_credentials=True,

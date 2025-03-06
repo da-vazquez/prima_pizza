@@ -22,17 +22,27 @@ const axiosInstance = axios.create({
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
+        'Access-Control-Allow-Origin': 'https://prima-pizza.vercel.app',
     },
     withCredentials: true,
-    maxRedirects: 5,
+    maxRedirects: 5
 });
 
-axiosInstance.interceptors.request.use((config) => {
-    if (config.url && config.url.startsWith('http://')) {
-        config.url = config.url.replace('http://', 'https://');
+
+axiosInstance.interceptors.request.use(
+    (config) => {
+        if (config.url?.startsWith('http://')) {
+            config.url = config.url.replace('http://', 'https://');
+        }
+        
+        config.headers['Origin'] = 'https://prima-pizza.vercel.app';
+        
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
     }
-    return config;
-});
+);
 
 axiosInstance.interceptors.response.use(
     response => response,
