@@ -35,8 +35,7 @@ jobs:
       - name: Prepare deployment package
         run: |
           cd backend
-          cp -r ../antenv ./ 
-          cp web.config ./
+          cp -r ../antenv ./
           zip -r ../release.zip . .env antenv web.config
 
       - name: Upload artifact for deployment jobs
@@ -77,15 +76,28 @@ jobs:
           slot-name: 'Production'
           app-settings-json: |
             {
+              "WEBSITES_PORT": "8000",
+              "FLASK_ENV": "production",
+              "SCM_DO_BUILD_DURING_DEPLOYMENT": "true",
               "CORS_ENABLED": "true",
               "CORS_ORIGINS": "https://prima-pizza.vercel.app,https://localhost:3000",
               "CORS_ALLOW_CREDENTIALS": "true",
               "CORS_METHODS": "GET,POST,PUT,DELETE,OPTIONS",
               "CORS_HEADERS": "Content-Type,Authorization,Accept,Origin,X-Requested-With",
-              "WEBSITES_PORT": "8000",
-              "SCM_DO_BUILD_DURING_DEPLOYMENT": "true",
-              "FLASK_ENV": "production"
+              "WEBSITE_HTTPLOGGING_RETENTION_DAYS": "7",
+              "FLASK_APP": "startup:app",
+              "ENV": "PROD"
             }
+
+      - name: Configure Web App General Settings
+        run: |
+          az webapp config set \
+            --resource-group prima-pizza-rg-west \
+            --name prima-pizza-backend-west \
+            --ftps-state Disabled \
+            --http20-enabled true \
+            --min-tls-version 1.2 \
+            --web-sockets-enabled false
 
       - name: Deploy to Azure Web App
         uses: Azure/webapps-deploy@v2
