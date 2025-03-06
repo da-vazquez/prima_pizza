@@ -2,7 +2,7 @@
 Default Imports
 """
 import logging
-from flask import Flask, request, redirect
+from flask import Flask, request, redirect, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 import warnings
@@ -46,9 +46,9 @@ def create_app():
 
     @app.after_request
     def after_request(response):
-        origin = request.headers.get("Origin")
-        if origin in allowed_origins:
-            response.headers.add("Access-Control-Allow-Origin", origin)
+        response.headers.add(
+            "Access-Control-Allow-Origin", request.headers.get("Origin", "*")
+        )
         response.headers.add(
             "Access-Control-Allow-Headers", "Content-Type,Authorization"
         )
