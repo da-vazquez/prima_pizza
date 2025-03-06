@@ -1,7 +1,7 @@
 // Default Imports
 import axios, { AxiosResponse } from "axios";
 
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const nodeEnv = process.env.NEXT_PUBLIC_NODE_ENV || "LOCAL"; 
 let baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_DEV;
 
@@ -71,6 +71,7 @@ interface PizzaData {
   sauce: string;
   cheese: string;
 }
+
 
 const request = {
   get: <T>(url: string, config?: { headers: { Authorization?: string; "Content-Type": string } }): Promise<T> =>
@@ -150,6 +151,6 @@ const Requests = {
       },
     }),
 };
-
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 export default { Requests };

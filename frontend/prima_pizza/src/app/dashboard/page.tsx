@@ -11,6 +11,7 @@ import Home from "../../components/dashHome";
 import ToppingsTable from "../../components/dashToppings";
 import PizzaTable from "@/components/dashPizza";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 interface User {
   username: string;
   role: string;
