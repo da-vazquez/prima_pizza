@@ -1,8 +1,11 @@
 import type { NextConfig } from "next";
-const nodeEnv = process.env.NEXT_PUBLIC_NODE_ENV
+
+const nodeEnv = process.env.NEXT_PUBLIC_NODE_ENV;
 let baseURL;
 
 if (nodeEnv === "PROD") {
+  baseURL = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_PROD;
+} else if (nodeEnv === "DEV") {
   baseURL = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_PROD;
 }
 else {
