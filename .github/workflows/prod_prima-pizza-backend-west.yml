@@ -75,19 +75,63 @@ jobs:
           app-name: 'prima-pizza-backend-west'
           slot-name: 'Production'
           app-settings-json: |
-            {
-              "WEBSITES_PORT": "8000",
-              "FLASK_ENV": "production",
-              "SCM_DO_BUILD_DURING_DEPLOYMENT": "true",
-              "CORS_ENABLED": "true",
-              "CORS_ORIGINS": "https://prima-pizza.vercel.app,https://localhost:3000",
-              "CORS_ALLOW_CREDENTIALS": "true",
-              "CORS_METHODS": "GET,POST,PUT,DELETE,OPTIONS",
-              "CORS_HEADERS": "Content-Type,Authorization,Accept,Origin,X-Requested-With",
-              "WEBSITE_HTTPLOGGING_RETENTION_DAYS": "7",
-              "FLASK_APP": "startup:app",
-              "ENV": "PROD"
-            }
+            [
+              {
+                "name": "WEBSITES_PORT",
+                "value": "8000",
+                "slotSetting": false
+              },
+              {
+                "name": "FLASK_ENV",
+                "value": "production",
+                "slotSetting": false
+              },
+              {
+                "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
+                "value": "true",
+                "slotSetting": false
+              },
+              {
+                "name": "CORS_ENABLED",
+                "value": "true",
+                "slotSetting": false
+              },
+              {
+                "name": "CORS_ORIGINS",
+                "value": "https://prima-pizza.vercel.app,https://localhost:3000",
+                "slotSetting": false
+              },
+              {
+                "name": "CORS_ALLOW_CREDENTIALS",
+                "value": "true",
+                "slotSetting": false
+              },
+              {
+                "name": "CORS_METHODS",
+                "value": "GET,POST,PUT,DELETE,OPTIONS",
+                "slotSetting": false
+              },
+              {
+                "name": "CORS_HEADERS",
+                "value": "Content-Type,Authorization,Accept,Origin,X-Requested-With",
+                "slotSetting": false
+              },
+              {
+                "name": "WEBSITE_HTTPLOGGING_RETENTION_DAYS",
+                "value": "7",
+                "slotSetting": false
+              },
+              {
+                "name": "FLASK_APP",
+                "value": "startup:app",
+                "slotSetting": false
+              },
+              {
+                "name": "ENV",
+                "value": "PROD",
+                "slotSetting": false
+              }
+            ]
 
       - name: Configure Web App General Settings
         run: |
