@@ -46,9 +46,9 @@ def create_app():
 
     @app.after_request
     def after_request(response):
-        response.headers.add(
-            "Access-Control-Allow-Origin", request.headers.get("Origin", "*")
-        )
+        origin = request.headers.get("Origin")
+        if origin in allowed_origins:
+            response.headers.add("Access-Control-Allow-Origin", origin)
         response.headers.add(
             "Access-Control-Allow-Headers", "Content-Type,Authorization"
         )
@@ -57,12 +57,6 @@ def create_app():
         )
         response.headers.add("Access-Control-Allow-Credentials", "true")
         return response
-
-    @app.before_request
-    def force_https():
-        if request.url.startswith("http://"):
-            url = request.url.replace("http://", "https://", 1)
-            return redirect(url, code=302)
 
     return app
 
