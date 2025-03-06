@@ -71,10 +71,11 @@ jobs:
 
       - name: Configure Azure Web App
         run: |
-          # Set Python version and always-on
-          az webapp config set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west \
-            --linux-fx-version "PYTHON|3.10" \
-            --always-on true
+          # Configure CORS settings
+          az webapp cors add --resource-group prima-pizza-rg-west \
+            --name prima-pizza-backend-west \
+            --allowed-origins "https://prima-pizza.vercel.app" "https://localhost:3000" \
+            --support-credentials true
 
           # Set environment variables and app settings
           az webapp config appsettings set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --settings \

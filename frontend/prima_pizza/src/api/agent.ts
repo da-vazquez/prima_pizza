@@ -37,7 +37,7 @@ axiosInstance.interceptors.response.use(
     response => response,
     error => {
         if (error.message === 'Network Error') {
-            console.error('Network error occurred');
+            console.error('Network error occurred:', error);
         }
         return Promise.reject(error);
     }

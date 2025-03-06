@@ -34,7 +34,16 @@ def create_app():
 
     CORS(
         app,
-        resources={r"/*": {"origins": allowed_origins, "supports_credentials": True}},
+        resources={
+            r"/*": {
+                "origins": allowed_origins,
+                "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+                "allow_headers": ["Content-Type", "Authorization"],
+                "supports_credentials": True,
+                "expose_headers": ["Content-Range", "X-Content-Range"],
+                "max_age": 600,
+            }
+        },
     )
 
     warnings.filterwarnings("ignore")
@@ -48,14 +57,14 @@ def create_app():
     def after_request(response):
         origin = request.headers.get("Origin")
         if origin in allowed_origins:
-            response.headers.add("Access-Control-Allow-Origin", origin)
-        response.headers.add(
-            "Access-Control-Allow-Headers", "Content-Type,Authorization"
-        )
-        response.headers.add(
-            "Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS"
-        )
-        response.headers.add("Access-Control-Allow-Credentials", "true")
+            response.headers["Access-Control-Allow-Origin"] = origin
+            response.headers["Access-Control-Allow-Credentials"] = "true"
+            response.headers[
+                "Access-Control-Allow-Methods"
+            ] = "GET, POST, PUT, DELETE, OPTIONS"
+            response.headers[
+                "Access-Control-Allow-Headers"
+            ] = "Content-Type, Authorization"
         return response
 
     return app

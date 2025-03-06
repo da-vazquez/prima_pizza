@@ -25,7 +25,9 @@ toppings_bp = Blueprint("toppings", __name__, url_prefix="/api/v1/toppings")
 @toppings_bp.route("/", methods=["GET"])
 def get_toppings():
     toppings = list(toppings_collection.find({}, {"_id": 0}))
-    return jsonify(toppings), 200
+    response = jsonify(toppings)
+    response.headers["Access-Control-Allow-Credentials"] = "true"
+    return response, 200
 
 
 @toppings_bp.route("/", methods=["POST"])
