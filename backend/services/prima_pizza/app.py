@@ -34,6 +34,7 @@ def create_app():
     default_origins = [
         "https://prima-pizza.vercel.app",
         "https://prima-pizza-backend-west.azurewebsites.net",
+        "http://localhost:3000",
         "https://localhost:3000",
     ]
 
@@ -58,9 +59,7 @@ def create_app():
                     "Origin",
                     "X-Requested-With",
                 ],
-                "expose_headers": ["Content-Range", "X-Content-Range", "Authorization"],
                 "supports_credentials": True,
-                "send_wildcard": False,
             }
         },
         supports_credentials=True,
