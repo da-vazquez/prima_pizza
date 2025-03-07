@@ -10,6 +10,7 @@ import os
 from dotenv import load_dotenv
 from flask_cors import CORS
 from flask_talisman import Talisman  # Import Flask-Talisman
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 """
 Logging
