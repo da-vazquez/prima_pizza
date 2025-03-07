@@ -53,7 +53,10 @@ def create_app():
     elif current_env == "PROD":
         CORS(
             app,
-            origins=["https://your-static-web-app-url.azurestaticapps.net"],
+            origins=[
+                "https://mango-meadow-0d2cf901e.6.azurestaticapps.net",
+                "https://prima-pizza-frontend-west.azurestaticapps.net",
+            ],
             supports_credentials=True,
         )
     else:

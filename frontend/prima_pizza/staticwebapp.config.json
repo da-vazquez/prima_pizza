@@ -1,6 +1,11 @@
 {
   "routes": [
     {
+      "route": "/api/api/*",
+      "allowedRoles": ["anonymous"],
+      "backendUri": "https://prima-pizza-backend-west.azurewebsites.net/api/*"
+    },
+    {
       "route": "/api/*",
       "allowedRoles": ["anonymous"],
       "backendUri": "https://prima-pizza-backend-west.azurewebsites.net/api/*"
