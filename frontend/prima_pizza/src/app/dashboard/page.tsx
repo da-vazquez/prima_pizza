@@ -60,7 +60,7 @@ const DashboardPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const pizzaToppingResponse = await fetch("/api/pizza_topping_count");
+        const pizzaToppingResponse = await fetch(`${baseUrl}/api/v1/dashboard/pizza_topping_count`);
         console.log("pizza topping count: ", pizzaToppingResponse)
         
         if (!pizzaToppingResponse.ok) {

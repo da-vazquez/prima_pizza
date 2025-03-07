@@ -24,6 +24,7 @@ from instance import secrets
 from services.prima_pizza.routes.toppings import toppings_bp
 from services.prima_pizza.routes.pizzas import pizzas_bp
 from services.prima_pizza.routes.auth import auth_bp
+from services.prima_pizza.routes.dashboard import dashboard_bp
 
 load_dotenv()
 
@@ -49,12 +50,19 @@ def create_app():
 
     if current_env == "LOCAL":
         CORS(app, origins=["http://localhost:3000"], supports_credentials=True)
+    elif current_env == "PROD":
+        CORS(
+            app,
+            origins=["https://your-static-web-app-url.azurestaticapps.net"],
+            supports_credentials=True,
+        )
     else:
         CORS(app, origins="*", supports_credentials=True)
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(toppings_bp)
     app.register_blueprint(pizzas_bp)
+    app.register_blueprint(dashboard_bp)
 
     @app.errorhandler(Exception)
     def handle_exception(e):

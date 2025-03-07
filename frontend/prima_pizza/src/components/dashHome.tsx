@@ -15,12 +15,10 @@ const Home = ({ user }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("/api/pizza_topping_count");
-
+        const response = await fetch(`${baseUrl}/api/v1/dashboard/pizza_topping_count`);
         if (!response.ok) {
           throw new Error("Error fetching pizza and topping data");
         }
-
         const data = await response.json();
         setPizzaToppingData(data);
       } catch (error) {
