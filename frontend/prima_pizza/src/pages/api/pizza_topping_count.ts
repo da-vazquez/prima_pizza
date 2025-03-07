@@ -1,4 +1,3 @@
-_topping_count.ts
 import clientPromise from "../../api/mongodb";
 import { NextApiRequest, NextApiResponse } from 'next';
 
@@ -17,6 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     console.log("Attempting to connect to MongoDB...");
+    console.log("MongoDB URL:", process.env.NEXT_PUBLIC_MONGODB_URL ? "URL exists" : "URL missing");
     
     const client = await clientPromise;
     console.log("Connected to MongoDB, executing queries...");
@@ -43,7 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       crusts
     });
   } catch (error) {
-    console.log("Error details:", error);
+    console.log("MongoDB Error details:", error);
     return res.status(500).json({ 
       error: "Error fetching pizza and topping data",
       details: error instanceof Error ? error.message : 'Unknown error'

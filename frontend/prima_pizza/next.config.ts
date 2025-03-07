@@ -21,8 +21,9 @@ const nextConfig: NextConfig = {
   },
   images: {
     domains: ['prima-pizza-backend-west.azurewebsites.net'],
+    unoptimized: true, 
   },
-  output: 'export',
+  output: nodeEnv === "LOCAL" ? undefined : 'export',
 };
 
 export default nextConfig;

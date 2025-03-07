@@ -47,7 +47,10 @@ def create_app():
 
     jwt = JWTManager(app)
 
-    CORS(app, origins="*", supports_credentials=True)
+    if current_env == "LOCAL":
+        CORS(app, origins=["http://localhost:3000"], supports_credentials=True)
+    else:
+        CORS(app, origins="*", supports_credentials=True)
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(toppings_bp)

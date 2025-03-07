@@ -17,13 +17,15 @@ if (nodeEnv === "PROD") {
   allowCredentials = true;
 }
 
-if (baseUrl && baseUrl.startsWith('http://')) {
+
+if (nodeEnv !== "LOCAL" && baseUrl && baseUrl.startsWith('http://')) {
     baseUrl = baseUrl.replace('http://', 'https://');
 }
 
 console.log('Current environment:', nodeEnv);
 console.log('DEV URL:', process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_DEV);
 console.log('LOCAL URL:', process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL);
+console.log('Base URL being used:', baseUrl);
 
 const axiosInstance = axios.create({
     baseURL: baseUrl,

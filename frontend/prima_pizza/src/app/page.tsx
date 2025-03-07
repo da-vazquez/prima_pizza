@@ -14,7 +14,7 @@ export default function Home() {
       <main className={styles.main}>
         <div className={styles.logoContainer}>
           <Image
-            src="/new_logo.png"
+            src="/images/new_logo.png"
             alt="Pizza Logo"
             width={200}
             height={200}
