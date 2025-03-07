@@ -29,13 +29,13 @@ jobs:
       - name: Install dependencies
         run: |
           source antenv/bin/activate
+          python -m pip install --upgrade pip wheel setuptools
           python -m pip install -r backend/requirements.txt
-          python -m pip install flask-cors==3.0.10 gunicorn==23.0.0 pymongo[srv]
 
       - name: Prepare deployment package
         run: |
           cd backend
-          cp -r ../antenv ./
+          cp -r ../antenv ./ 
           zip -r ../release.zip . .env antenv
 
       - name: Upload artifact for deployment jobs
