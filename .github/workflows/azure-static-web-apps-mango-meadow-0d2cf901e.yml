@@ -19,13 +19,11 @@ jobs:
         with:
           submodules: true
       
-      # Add this step to set environment variables before building
       - name: Set Environment Variables
         run: |
           echo "NEXT_PUBLIC_NODE_ENV=PROD" >> $GITHUB_ENV
           echo "NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_PROD=https://prima-pizza-backend-west.azurewebsites.net" >> $GITHUB_ENV
           
-      # Create a .env file to ensure environment variables are available during build
       - name: Create .env file
         run: |
           cd frontend/prima_pizza
