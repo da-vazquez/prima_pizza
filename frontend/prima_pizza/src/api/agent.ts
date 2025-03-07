@@ -1,4 +1,3 @@
-// Default Imports
 import axios, { AxiosResponse } from "axios";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -15,7 +14,6 @@ console.log('Current environment:', nodeEnv);
 console.log('PROD URL:', process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_PROD);
 console.log('LOCAL URL:', process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL);
 console.log('Base URL being used:', baseUrl);
-
 
 const axiosInstance = axios.create({
     baseURL: baseUrl,
@@ -74,13 +72,10 @@ interface PizzaData {
 const request = {
   get: <T>(url: string, config?: { headers: { Authorization?: string; "Content-Type": string } }): Promise<T> =>
     axiosInstance.get(url, config).then(responseBody),
-
   post: <T>(url: string, body: object, config?: { headers: { Authorization?: string; "Content-Type": string } }): Promise<T> =>
     axiosInstance.post(url, body, config).then(responseBody),
-
   put: <T>(url: string, body: object, config?: { headers: { Authorization?: string; "Content-Type": string } }): Promise<T> =>
     axiosInstance.put(url, body, config).then(responseBody),
-
   delete: <T>(url: string, config?: { headers: { Authorization?: string; "Content-Type": string } }): Promise<T> =>
     axiosInstance.delete(url, config).then(responseBody),
 };
@@ -139,8 +134,8 @@ const Requests = {
     }),
   getDashboardStats: (): Promise<any> => request.get(`/api/v1/dashboard/pizza_topping_count`),
 };
-/* eslint-enable @typescript-eslint/no-explicit-any */
 
+/* eslint-enable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-anonymous-default-export */
 export default { Requests };
 /* eslint-enable import/no-anonymous-default-export */

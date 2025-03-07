@@ -86,11 +86,17 @@ jobs:
             WEBSITE_RUN_FROM_PACKAGE=1 \
             SCM_DO_BUILD_DURING_DEPLOYMENT=true \
             ENABLE_ORYX_BUILD=true \
-            FLASK_APP=startup.py \
             FLASK_ENV=production \
             JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}" \
             WEBSITES_CONTAINER_START_TIME_MAX_COUNT=600
-         
+
+      - name: Configure Azure Web App
+        run: |
+          az webapp config appsettings set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --settings \
+            ENV=PROD \
+            PORT=8000 \
+            WEBSITES_PORT=8000 \
+            CLIENT_APP="https://mango-meadow-0d2cf901e.6.azurestaticapps.net"
 
       - name: Deploy to Azure Web App
         uses: Azure/webapps-deploy@v2
@@ -102,4 +108,4 @@ jobs:
 
       - name: Set startup command
         run: |
-          az webapp config set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --startup-file 'gunicorn --bind=0.0.0.0:8000 --timeout 6000 startup:app'
+          az webapp config set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --startup-file 'gunicorn --bind=0.0.0.0:8000 --timeout 6000 wsgi:app'
