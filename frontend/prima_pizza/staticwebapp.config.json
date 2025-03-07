@@ -10,7 +10,7 @@
       "route": "/api/*",
       "allowedRoles": ["anonymous"],
       "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-      "rewrite": "https://prima-pizza-backend-west.azurewebsites.net/api/:splat"
+      "backendUri": "https://prima-pizza-backend-west.azurewebsites.net/api/*"
     },
     {
       "route": "/*",
@@ -21,10 +21,5 @@
   "navigationFallback": {
     "rewrite": "/index.html",
     "exclude": ["/images/*", "/css/*", "/js/*"]
-  },
-  "globalHeaders": {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With"
   }
 }

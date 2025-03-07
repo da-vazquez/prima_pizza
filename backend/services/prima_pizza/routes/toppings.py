@@ -28,12 +28,10 @@ def get_toppings():
     try:
         toppings = list(toppings_collection.find({}, {"_id": 0}))
         response = jsonify(toppings)
-        response.headers["Access-Control-Allow-Credentials"] = "true"
         return response, 200
     except Exception as e:
         logger.error(f"Error fetching toppings: {e}")
         response = jsonify({"message": "Error fetching toppings"})
-        response.headers["Access-Control-Allow-Credentials"] = "true"
         return response, 500
 
 
@@ -43,7 +41,6 @@ def add_topping():
     auth_error = check_role(["owner"])
     if auth_error:
         response = auth_error[0]
-        response.headers["Access-Control-Allow-Credentials"] = "true"
         return response, auth_error[1]
 
     try:
@@ -52,17 +49,14 @@ def add_topping():
 
         if toppings_collection.find_one({"name": all_variations(topping.name)}):
             response = jsonify({"message": "Topping already exists"})
-            response.headers["Access-Control-Allow-Credentials"] = "true"
             return response, 400
 
         toppings_collection.insert_one(topping.model_dump())
         response = jsonify({"message": f"Topping {topping.name} added"})
-        response.headers["Access-Control-Allow-Credentials"] = "true"
         return response, 201
     except Exception as e:
         logger.error(f"Error adding topping: {e}")
         response = jsonify({"message": "Error adding topping"})
-        response.headers["Access-Control-Allow-Credentials"] = "true"
         return response, 500
 
 
@@ -72,14 +66,12 @@ def delete_topping(name):
     auth_error = check_role(["owner"])
     if auth_error:
         response = auth_error[0]
-        response.headers["Access-Control-Allow-Credentials"] = "true"
         return response, auth_error[1]
 
     try:
         result = toppings_collection.delete_one({"name": all_variations(name)})
         if result.deleted_count == 0:
             response = jsonify({"message": f"Topping {name} not found"})
-            response.headers["Access-Control-Allow-Credentials"] = "true"
             return response, 404
 
         pizzas = pizzas_collection.find({"toppings": name})
@@ -112,12 +104,10 @@ def delete_topping(name):
             )
 
         response = jsonify({"message": f"Topping {name} deleted and pizzas updated"})
-        response.headers["Access-Control-Allow-Credentials"] = "true"
         return response, 200
     except Exception as e:
         logger.error(f"Error deleting topping: {e}")
         response = jsonify({"message": "Error deleting topping"})
-        response.headers["Access-Control-Allow-Credentials"] = "true"
         return response, 500
 
 
@@ -127,7 +117,6 @@ def update_topping(name):
     auth_error = check_role(["owner"])
     if auth_error:
         response = auth_error[0]
-        response.headers["Access-Control-Allow-Credentials"] = "true"
         return response, auth_error[1]
 
     try:
@@ -147,7 +136,6 @@ def update_topping(name):
 
         if not update_fields:
             response = jsonify({"message": "No valid fields provided for update"})
-            response.headers["Access-Control-Allow-Credentials"] = "true"
             return response, 400
 
         if check_new_name:
@@ -156,7 +144,6 @@ def update_topping(name):
             )
             if existing_topping:
                 response = jsonify({"message": "Topping already exists with that name"})
-                response.headers["Access-Control-Allow-Credentials"] = "true"
                 return response, 400
 
         toppings_collection.update_one(
@@ -164,12 +151,10 @@ def update_topping(name):
         )
 
         response = jsonify({"message": f"Topping {name} updated successfully"})
-        response.headers["Access-Control-Allow-Credentials"] = "true"
         return response, 200
     except Exception as e:
         logger.error(f"Error updating topping: {e}")
         response = jsonify({"message": "Error updating topping"})
-        response.headers["Access-Control-Allow-Credentials"] = "true"
         return response, 500
 
 
@@ -177,10 +162,4 @@ def update_topping(name):
 @toppings_bp.route("/<string:name>", methods=["OPTIONS"])
 def handle_options():
     response = jsonify({"message": "OK"})
-    response.headers["Access-Control-Allow-Origin"] = request.headers.get("Origin")
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
-    response.headers[
-        "Access-Control-Allow-Headers"
-    ] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
-    response.headers["Access-Control-Allow-Credentials"] = "true"
     return response, 200

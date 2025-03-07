@@ -20,15 +20,13 @@ logger = logging.getLogger(__name__)
 def get_pizza_topping_count():
     """Get counts of pizzas and toppings for dashboard"""
     try:
-        pizzas = db.prima_pizza.pizzas.count_documents({})
-        toppings = db.prima_pizza.toppings.count_documents({})
-        meats = db.prima_pizza.toppings.count_documents({"topping_type": "meat"})
-        cheeses = db.prima_pizza.toppings.count_documents({"topping_type": "cheese"})
-        vegetables = db.prima_pizza.toppings.count_documents(
-            {"topping_type": "vegetable"}
-        )
-        sauces = db.prima_pizza.toppings.count_documents({"topping_type": "sauce"})
-        crusts = db.prima_pizza.toppings.count_documents({"topping_type": "crust"})
+        pizzas = db.pizzas.count_documents({})
+        toppings = db.toppings.count_documents({})
+        meats = db.toppings.count_documents({"topping_type": "meat"})
+        cheeses = db.toppings.count_documents({"topping_type": "cheese"})
+        vegetables = db.toppings.count_documents({"topping_type": "vegetable"})
+        sauces = db.toppings.count_documents({"topping_type": "sauce"})
+        crusts = db.toppings.count_documents({"topping_type": "crust"})
 
         logger.info("Queries executed successfully")
 

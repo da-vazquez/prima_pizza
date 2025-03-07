@@ -49,23 +49,68 @@ def create_app():
     jwt = JWTManager(app)
 
     if current_env == "LOCAL":
-        CORS(app, origins=["http://localhost:3000"], supports_credentials=True)
-    elif current_env == "PROD":
         CORS(
             app,
-            origins=[
-                "https://mango-meadow-0d2cf901e.6.azurestaticapps.net",
-                "https://prima-pizza-frontend-west.azurestaticapps.net",
-            ],
+            origins=["http://localhost:3000"],
             supports_credentials=True,
+            allow_headers=[
+                "Content-Type",
+                "Authorization",
+                "Accept",
+                "Origin",
+                "X-Requested-With",
+            ],
+            methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            expose_headers=["Content-Type", "Authorization"],
         )
     else:
-        CORS(app, origins="*", supports_credentials=True)
+        CORS(
+            app,
+            origins="*",
+            supports_credentials=False,
+            allow_headers=[
+                "Content-Type",
+                "Authorization",
+                "Accept",
+                "Origin",
+                "X-Requested-With",
+            ],
+            methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        )
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(toppings_bp)
     app.register_blueprint(pizzas_bp)
     app.register_blueprint(dashboard_bp)
+
+    # Add consistent CORS headers to all responses
+    @app.after_request
+    def add_cors_headers(response):
+        if current_env == "LOCAL":
+            response.headers["Access-Control-Allow-Origin"] = "http://localhost:3000"
+            response.headers["Access-Control-Allow-Credentials"] = "true"
+            response.headers[
+                "Access-Control-Allow-Methods"
+            ] = "GET, POST, PUT, DELETE, OPTIONS"
+            response.headers[
+                "Access-Control-Allow-Headers"
+            ] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
+        else:
+            response.headers["Access-Control-Allow-Origin"] = "*"
+            response.headers[
+                "Access-Control-Allow-Methods"
+            ] = "GET, POST, PUT, DELETE, OPTIONS"
+            response.headers[
+                "Access-Control-Allow-Headers"
+            ] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
+        return response
+
+    # Add explicit OPTIONS handler for preflight requests
+    @app.route("/", defaults={"path": ""}, methods=["OPTIONS"])
+    @app.route("/<path:path>", methods=["OPTIONS"])
+    def handle_options(path):
+        response = app.make_default_options_response()
+        return response
 
     @app.errorhandler(Exception)
     def handle_exception(e):
@@ -78,6 +123,5 @@ def create_app():
 
 app = create_app()
 
-
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=PORT, debug=secrets.DEBUG)
+    app.run(host="0.0.0.0", port=PORT, debug=True)

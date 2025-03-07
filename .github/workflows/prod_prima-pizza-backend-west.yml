@@ -3,7 +3,7 @@ name: Build and deploy Python app to Azure Web App - prima-pizza-backend-west
 on:
   push:
     branches:
-      - prod
+      - main
   workflow_dispatch:
 
 jobs:
@@ -29,6 +29,7 @@ jobs:
       - name: Install dependencies
         run: |
           source antenv/bin/activate
+          python -m pip install --upgrade pip wheel setuptools
           python -m pip install -r backend/requirements.txt
           python -m pip install flask-cors==3.0.10 gunicorn==23.0.0 pymongo[srv]
 
@@ -87,7 +88,8 @@ jobs:
             ENABLE_ORYX_BUILD=true \
             FLASK_APP=startup.py \
             FLASK_ENV=production \
-            JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}"
+            JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}" \
+            WEBSITES_CONTAINER_START_TIME_MAX_COUNT=600
          
 
       - name: Deploy to Azure Web App

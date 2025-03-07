@@ -35,7 +35,7 @@ const ToppingsTable = () => {
       const response = await agent.Requests.getToppings();
       setToppings(Array.isArray(response) ? response : []);
     } catch (error) {
-      console.error("Error fetching toppings:", error);
+      console.log("Error fetching toppings:", error);
       setToppings([]);
     }
   };

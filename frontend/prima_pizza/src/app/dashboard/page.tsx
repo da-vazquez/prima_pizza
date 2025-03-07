@@ -11,6 +11,8 @@ import { styles } from "./styles";
 import Home from "../../components/dashHome";
 import ToppingsTable from "../../components/dashToppings";
 import PizzaTable from "../../components/dashPizza";
+import agent from "../../api/agent";
+
 
 interface User {
   username: string;
@@ -56,20 +58,11 @@ const DashboardPage = () => {
     router.push("/");
   };
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const pizzaToppingResponse = await fetch(`${baseUrl}/api/v1/dashboard/pizza_topping_count`);
-        console.log("pizza topping count: ", pizzaToppingResponse)
-        
-        if (!pizzaToppingResponse.ok) {
-          throw new Error(`Error fetching pizza/topping data: ${pizzaToppingResponse.statusText}`);
-        }
-
-        const pizzaToppingData = await pizzaToppingResponse.json();
+        const pizzaToppingData = await agent.Requests.getDashboardStats();
         setPizzaToppingData(pizzaToppingData);
-
       } catch (error) {
         console.log("Error fetching data:", error);
       }

@@ -4,20 +4,21 @@ import axios, { AxiosResponse } from "axios";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const nodeEnv = process.env.NEXT_PUBLIC_NODE_ENV || "LOCAL"; 
 let baseUrl = "";
-let allowCredentials = false;
+let allowCredentials = false
 
 if (nodeEnv === "LOCAL") {
   baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL || "http://localhost:5005";
-  allowCredentials = false;
+  allowCredentials = true
 } else if (nodeEnv === "PROD") {
   baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_PROD || "https://prima-pizza-backend-west.azurewebsites.net";
-  allowCredentials = true;
+  allowCredentials = false
 }
 
 console.log('Current environment:', nodeEnv);
 console.log('PROD URL:', process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_PROD);
 console.log('LOCAL URL:', process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL);
 console.log('Base URL being used:', baseUrl);
+console.log('Using credentials:', allowCredentials);
 
 const axiosInstance = axios.create({
     baseURL: baseUrl,
@@ -30,7 +31,6 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
     (config) => {
-        delete config.headers['Origin'];
         return config;
     },
     (error) => {
@@ -89,7 +89,13 @@ const request = {
 };
 
 const Requests = {
-  login: (data: AuthData): Promise<any> => request.post(`/api/v1/auth/login`, data),
+  login: (data: AuthData): Promise<any> => 
+    request.post('/api/v1/auth/login', data, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    }),
   getToppings: (): Promise<any> => request.get(`/api/v1/toppings`),
   addTopping: (data: ToppingData, token: string): Promise<any> =>
     request.post(`/api/v1/toppings/`, data, {
