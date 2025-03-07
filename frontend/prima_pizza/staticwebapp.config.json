@@ -4,13 +4,19 @@
       "route": "/api/v1/auth/login",
       "allowedRoles": ["anonymous"],
       "methods": ["POST", "OPTIONS"],
-      "backendUri": "https://prima-pizza-backend-west.azurewebsites.net/api/v1/auth/login"
+      "backendUri": "https://prima-pizza-backend-west.azurewebsites.net/api/v1/auth/login",
+      "headers": {
+        "Access-Control-Allow-Credentials": "true"
+      }
     },
     {
       "route": "/api/*",
       "allowedRoles": ["anonymous"],
       "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-      "backendUri": "https://prima-pizza-backend-west.azurewebsites.net/api/*"
+      "backendUri": "https://prima-pizza-backend-west.azurewebsites.net/api/*",
+      "headers": {
+        "Access-Control-Allow-Credentials": "true"
+      }
     },
     {
       "route": "/*",

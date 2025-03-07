@@ -8,10 +8,10 @@ let allowCredentials = false
 
 if (nodeEnv === "LOCAL") {
   baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL || "http://localhost:5005";
-  allowCredentials = true
+  allowCredentials = true;
 } else if (nodeEnv === "PROD") {
   baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_PROD || "https://prima-pizza-backend-west.azurewebsites.net";
-  allowCredentials = false
+  allowCredentials = true;
 }
 
 console.log('Current environment:', nodeEnv);

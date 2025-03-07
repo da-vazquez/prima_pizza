@@ -49,6 +49,7 @@ def create_app():
     jwt = JWTManager(app)
 
     if current_env == "LOCAL":
+        # Local config stays the same
         CORS(
             app,
             origins=["http://localhost:3000"],
@@ -66,8 +67,8 @@ def create_app():
     else:
         CORS(
             app,
-            origins="*",
-            supports_credentials=False,
+            origins=["https://mango-meadow-0d2cf901e.6.azurestaticapps.net"],
+            supports_credentials=True,
             allow_headers=[
                 "Content-Type",
                 "Authorization",
@@ -76,6 +77,7 @@ def create_app():
                 "X-Requested-With",
             ],
             methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            expose_headers=["Content-Type", "Authorization"],
         )
 
     app.register_blueprint(auth_bp)

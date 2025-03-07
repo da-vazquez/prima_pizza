@@ -78,6 +78,15 @@ def login():
     try:
         data = request.get_json()
         logger.info(f"Login request data: {data}")
+
+        if not data:
+            logger.error("No JSON data in request")
+            return jsonify({"message": "Missing request data"}), 400
+
+        if "username" not in data or "password" not in data:
+            logger.error("Missing username or password in request")
+            return jsonify({"message": "Username and password required"}), 400
+
         user = users_collection.find_one({"username": data["username"]})
 
         if not user or not verify_password(
@@ -92,7 +101,7 @@ def login():
         return jsonify(access_token=access_token), 200
     except Exception as e:
         logger.error(f"Error in login: {e}", exc_info=True)
-        return jsonify({"message": "Error logging in"}), 500
+        return jsonify({"message": f"Error logging in: {str(e)}"}), 500
 
 
 @auth_bp.route("/users", methods=["GET"])
