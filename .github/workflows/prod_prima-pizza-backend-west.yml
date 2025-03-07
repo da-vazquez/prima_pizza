@@ -87,8 +87,8 @@ jobs:
             ENABLE_ORYX_BUILD=true \
             FLASK_APP=startup.py \
             FLASK_ENV=production \
-            JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}"
-         
+            JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}" \
+            WEBSITES_CONTAINER_START_TIME_MAX_COUNT=600
 
       - name: Deploy to Azure Web App
         uses: Azure/webapps-deploy@v2
