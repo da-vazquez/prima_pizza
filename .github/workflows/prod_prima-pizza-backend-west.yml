@@ -87,7 +87,9 @@ jobs:
             FLASK_APP="services.prima_pizza.app" \
             FLASK_ENV=production \
             JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}" \
-            CLIENT_APP="https://mango-meadow-0d2cf901e.6.azurestaticapps.net"
+            CLIENT_APP="https://mango-meadow-0d2cf901e.6.azurestaticapps.net" \
+            ALLOWED_ORIGINS="https://mango-meadow-0d2cf901e.6.azurestaticapps.net" \
+            WEBSITE_HTTPLOGGING_RETENTION_DAYS=7
 
       - name: Deploy to Azure Web App
         uses: Azure/webapps-deploy@v2

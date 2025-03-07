@@ -50,16 +50,14 @@ def create_app():
 
     CORS(
         app,
-        origins=[CLIENT_APP],
-        supports_credentials=False,
-        allow_headers=[
-            "Content-Type",
-            "Authorization",
-            "Accept",
-            "Origin",
-            "X-Requested-With",
-        ],
-        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        resources={
+            r"/api/*": {
+                "origins": [CLIENT_APP],
+                "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+                "allow_headers": ["Content-Type", "Authorization", "Accept"],
+                "supports_credentials": True,
+            }
+        },
         expose_headers=["Content-Type", "Authorization"],
     )
 

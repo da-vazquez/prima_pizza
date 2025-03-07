@@ -78,6 +78,7 @@ def login():
     try:
         data = request.get_json()
         logger.info(f"Login request data: {data}")
+        logger.info(f"Request headers: {request.headers}")
 
         if not data:
             logger.error("No JSON data in request")
