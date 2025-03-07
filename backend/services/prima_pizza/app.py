@@ -3,9 +3,8 @@ Default Imports
 """
 import logging
 from datetime import timedelta
-from flask import Flask, request, redirect, jsonify
+from flask import Flask, request, jsonify
 from flask_jwt_extended import JWTManager
-import warnings
 import os
 from dotenv import load_dotenv
 from flask_cors import CORS
@@ -34,7 +33,7 @@ if current_env == "LOCAL":
     CLIENT_APP = "http://localhost:3000"
     PORT = 5005
 else:
-    CLIENT_APP = "*"
+    CLIENT_APP = "https://mango-meadow-0d2cf901e.6.azurestaticapps.net"
     PORT = 8000
 
 
@@ -48,63 +47,25 @@ def create_app():
 
     jwt = JWTManager(app)
 
-    if current_env == "LOCAL":
-        CORS(
-            app,
-            origins=["http://localhost:3000"],
-            supports_credentials=False,
-            allow_headers=[
-                "Content-Type",
-                "Authorization",
-                "Accept",
-                "Origin",
-                "X-Requested-With",
-            ],
-            methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-            expose_headers=["Content-Type", "Authorization"],
-        )
-    else:
-        CORS(
-            app,
-            origins=["https://mango-meadow-0d2cf901e.6.azurestaticapps.net"],
-            supports_credentials=False,
-            allow_headers=[
-                "Content-Type",
-                "Authorization",
-                "Accept",
-                "Origin",
-                "X-Requested-With",
-            ],
-            methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-            expose_headers=["Content-Type", "Authorization"],
-        )
+    CORS(
+        app,
+        origins=[CLIENT_APP],
+        supports_credentials=False,
+        allow_headers=[
+            "Content-Type",
+            "Authorization",
+            "Accept",
+            "Origin",
+            "X-Requested-With",
+        ],
+        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        expose_headers=["Content-Type", "Authorization"],
+    )
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(toppings_bp)
     app.register_blueprint(pizzas_bp)
     app.register_blueprint(dashboard_bp)
-
-    @app.after_request
-    def add_cors_headers(response):
-        if current_env == "LOCAL":
-            response.headers["Access-Control-Allow-Origin"] = "http://localhost:3000"
-            response.headers["Access-Control-Allow-Credentials"] = "false"
-            response.headers[
-                "Access-Control-Allow-Methods"
-            ] = "GET, POST, PUT, DELETE, OPTIONS"
-            response.headers[
-                "Access-Control-Allow-Headers"
-            ] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
-        else:
-            response.headers["Access-Control-Allow-Origin"] = "*"
-            response.headers["Access-Control-Allow-Credentials"] = "false"
-            response.headers[
-                "Access-Control-Allow-Methods"
-            ] = "GET, POST, PUT, DELETE, OPTIONS"
-            response.headers[
-                "Access-Control-Allow-Headers"
-            ] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
-        return response
 
     @app.route("/", defaults={"path": ""}, methods=["OPTIONS"])
     @app.route("/<path:path>", methods=["OPTIONS"])
