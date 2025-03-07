@@ -49,7 +49,6 @@ def create_app():
     jwt = JWTManager(app)
 
     if current_env == "LOCAL":
-        # Local config stays the same
         CORS(
             app,
             origins=["http://localhost:3000"],
@@ -85,12 +84,11 @@ def create_app():
     app.register_blueprint(pizzas_bp)
     app.register_blueprint(dashboard_bp)
 
-    # Add consistent CORS headers to all responses
     @app.after_request
     def add_cors_headers(response):
         if current_env == "LOCAL":
             response.headers["Access-Control-Allow-Origin"] = "http://localhost:3000"
-            response.headers["Access-Control-Allow-Credentials"] = "true"
+            response.headers["Access-Control-Allow-Credentials"] = "false"
             response.headers[
                 "Access-Control-Allow-Methods"
             ] = "GET, POST, PUT, DELETE, OPTIONS"
@@ -99,6 +97,7 @@ def create_app():
             ] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
         else:
             response.headers["Access-Control-Allow-Origin"] = "*"
+            response.headers["Access-Control-Allow-Credentials"] = "false"
             response.headers[
                 "Access-Control-Allow-Methods"
             ] = "GET, POST, PUT, DELETE, OPTIONS"
@@ -107,7 +106,6 @@ def create_app():
             ] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
         return response
 
-    # Add explicit OPTIONS handler for preflight requests
     @app.route("/", defaults={"path": ""}, methods=["OPTIONS"])
     @app.route("/<path:path>", methods=["OPTIONS"])
     def handle_options(path):
