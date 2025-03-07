@@ -98,60 +98,110 @@ const request = {
 
 const Requests = {
   login: (data: AuthData): Promise<any> =>
-    request.post(`/api/v1/auth/login`, data),
+    // Remove leading /api in production since baseUrl already has it
+    nodeEnv === "PROD" 
+      ? request.post(`/v1/auth/login`, data) 
+      : request.post(`/api/v1/auth/login`, data),
 
   getToppings: (): Promise<any> => 
-    request.get(`/api/v1/toppings`),
+    nodeEnv === "PROD"
+      ? request.get(`/v1/toppings`)
+      : request.get(`/api/v1/toppings`),
 
   addTopping: (data: ToppingData, token: string): Promise<any> =>
-    request.post(`/api/v1/toppings/`, data, {
-      headers: { 
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-    }),
+    nodeEnv === "PROD"
+      ? request.post(`/v1/toppings/`, data, {
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        })
+      : request.post(`/api/v1/toppings/`, data, {
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        }),
 
   updateTopping: (name: string, data: Partial<ToppingData>, token: string): Promise<any> =>
-    request.put(`/api/v1/toppings/${name}`, data, {
-      headers: { 
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-    }),
+    nodeEnv === "PROD"
+      ? request.put(`/v1/toppings/${name}`, data, {
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        })
+      : request.put(`/api/v1/toppings/${name}`, data, {
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        }),
 
   deleteTopping: (name: string, token: string): Promise<any> => 
-    request.delete(`/api/v1/toppings/${name}`, {
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-    }),
+    nodeEnv === "PROD"
+      ? request.delete(`/v1/toppings/${name}`, {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        })
+      : request.delete(`/api/v1/toppings/${name}`, {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        }),
 
-  getPizzas: (): Promise<any> => request.get(`/api/v1/pizzas`),
+  getPizzas: (): Promise<any> => 
+    nodeEnv === "PROD"
+      ? request.get(`/v1/pizzas`)
+      : request.get(`/api/v1/pizzas`),
 
   addPizza: (data: PizzaData, token: string): Promise<any> =>
-    request.post(`/api/v1/pizzas/`, data, {
-      headers: { 
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-    }),
+    nodeEnv === "PROD"
+      ? request.post(`/v1/pizzas/`, data, {
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        })
+      : request.post(`/api/v1/pizzas/`, data, {
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        }),
 
   updatePizza: (name: string, data: Partial<PizzaData>, token: string): Promise<any> =>
-    request.put(`/api/v1/pizzas/${name}`, data, {
-      headers: { 
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-    }),
+    nodeEnv === "PROD"
+      ? request.put(`/v1/pizzas/${name}`, data, {
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        })
+      : request.put(`/api/v1/pizzas/${name}`, data, {
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        }),
 
   deletePizza: (name: string, token: string): Promise<any> => 
-    request.delete(`/api/v1/pizzas/${name}`, {
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-    }),
+    nodeEnv === "PROD"
+      ? request.delete(`/v1/pizzas/${name}`, {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        })
+      : request.delete(`/api/v1/pizzas/${name}`, {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        }),
 };
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
