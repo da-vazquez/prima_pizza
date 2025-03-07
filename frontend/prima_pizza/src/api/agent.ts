@@ -4,21 +4,18 @@ import axios, { AxiosResponse } from "axios";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const nodeEnv = process.env.NEXT_PUBLIC_NODE_ENV || "LOCAL"; 
 let baseUrl = "";
-let allowCredentials = false
 
 if (nodeEnv === "LOCAL") {
   baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL || "http://localhost:5005";
-  allowCredentials = true;
 } else if (nodeEnv === "PROD") {
   baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_PROD || "https://prima-pizza-backend-west.azurewebsites.net";
-  allowCredentials = true;
 }
 
 console.log('Current environment:', nodeEnv);
 console.log('PROD URL:', process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_PROD);
 console.log('LOCAL URL:', process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL);
 console.log('Base URL being used:', baseUrl);
-console.log('Using credentials:', allowCredentials);
+
 
 const axiosInstance = axios.create({
     baseURL: baseUrl,
@@ -26,7 +23,7 @@ const axiosInstance = axios.create({
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     },
-    withCredentials: allowCredentials
+    withCredentials: false,
 });
 
 axiosInstance.interceptors.request.use(

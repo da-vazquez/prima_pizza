@@ -53,7 +53,7 @@ def create_app():
         CORS(
             app,
             origins=["http://localhost:3000"],
-            supports_credentials=True,
+            supports_credentials=False,
             allow_headers=[
                 "Content-Type",
                 "Authorization",
@@ -68,7 +68,7 @@ def create_app():
         CORS(
             app,
             origins=["https://mango-meadow-0d2cf901e.6.azurestaticapps.net"],
-            supports_credentials=True,
+            supports_credentials=False,
             allow_headers=[
                 "Content-Type",
                 "Authorization",
