@@ -31,7 +31,7 @@ jobs:
           source antenv/bin/activate
           python -m pip install --upgrade pip wheel setuptools
           python -m pip install -r backend/requirements.txt
-          python -m pip install flask-cors==3.0.10 gunicorn==23.0.0 pymongo[srv]
+          python -m pip install flask-cors==3.0.10 pymongo[srv]
 
       - name: Prepare deployment package
         run: |
@@ -77,25 +77,16 @@ jobs:
             --linux-fx-version "PYTHON|3.10" \
             --always-on true
 
-          # Set environment variables and app settings
+          # Set all environment variables and app settings in one command
           az webapp config appsettings set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --settings \
             ENV=PROD \
             DATABASE_URL="${{ secrets.MONGODB_URI }}" \
             TEST_DATABASE_URL="${{ secrets.TEST_MONGODB_URI }}" \
-            WEBSITES_PORT=8000 \
-            WEBSITE_RUN_FROM_PACKAGE=1 \
-            SCM_DO_BUILD_DURING_DEPLOYMENT=true \
-            ENABLE_ORYX_BUILD=true \
-            FLASK_ENV=production \
-            JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}" \
-            WEBSITES_CONTAINER_START_TIME_MAX_COUNT=600
-
-      - name: Configure Azure Web App
-        run: |
-          az webapp config appsettings set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --settings \
-            ENV=PROD \
             PORT=8000 \
             WEBSITES_PORT=8000 \
+            FLASK_APP="services.prima_pizza.app" \
+            FLASK_ENV=production \
+            JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}" \
             CLIENT_APP="https://mango-meadow-0d2cf901e.6.azurestaticapps.net"
 
       - name: Deploy to Azure Web App
@@ -108,4 +99,4 @@ jobs:
 
       - name: Set startup command
         run: |
-          az webapp config set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --startup-file 'gunicorn --bind=0.0.0.0:8000 --timeout 6000 wsgi:app'
+          az webapp config set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --startup-file 'python3 -m services.prima_pizza.app'

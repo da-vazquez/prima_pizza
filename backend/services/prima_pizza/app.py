@@ -43,6 +43,7 @@ def create_app():
     app.config.update(
         JWT_SECRET_KEY=secrets.JWT_SECRET_KEY,
         JWT_ACCESS_TOKEN_EXPIRES=timedelta(hours=3),
+        ENV=current_env,
     )
 
     jwt = JWTManager(app)
@@ -85,4 +86,5 @@ def create_app():
 app = create_app()
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=PORT, debug=True)
+    debug_mode = True if current_env == "LOCAL" else False
+    app.run(host="0.0.0.0", port=PORT, debug=debug_mode)
