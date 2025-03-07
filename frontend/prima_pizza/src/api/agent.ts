@@ -3,16 +3,19 @@ import axios, { AxiosResponse } from "axios";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const nodeEnv = process.env.NEXT_PUBLIC_NODE_ENV || "LOCAL"; 
-let baseUrl = ""
+let baseUrl = "";
 let allowCredentials = false;
 
 if (nodeEnv === "LOCAL") {
   baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL || "http://localhost:5005";
   allowCredentials = false;
+} else if (nodeEnv === "PROD") {
+  baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_PROD || "https://prima-pizza-backend-west.azurewebsites.net";
+  allowCredentials = true;
 }
 
 console.log('Current environment:', nodeEnv);
-console.log('DEV URL:', process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_DEV);
+console.log('PROD URL:', process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_PROD);
 console.log('LOCAL URL:', process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL);
 console.log('Base URL being used:', baseUrl);
 
@@ -131,6 +134,7 @@ const Requests = {
         "Authorization": `Bearer ${token}`,
       },
     }),
+  getDashboardStats: (): Promise<any> => request.get(`/api/v1/dashboard/pizza_topping_count`),
 };
 /* eslint-enable @typescript-eslint/no-explicit-any */
 

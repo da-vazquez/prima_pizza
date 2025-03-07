@@ -6,6 +6,7 @@ import { Chart as ChartJS, Title, Tooltip, Legend, CategoryScale, LinearScale, B
 // Custom Imports
 import { styles } from "./styles";
 import Card from "./card";
+import agent from "../api/agent";
 
 ChartJS.register(Title, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
 
@@ -15,12 +16,9 @@ const Home = ({ user }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${baseUrl}/api/v1/dashboard/pizza_topping_count`);
-        if (!response.ok) {
-          throw new Error("Error fetching pizza and topping data");
-        }
-        const data = await response.json();
-        setPizzaToppingData(data);
+        // Use agent instead of direct fetch
+        const response = await agent.Requests.getDashboardStats();
+        setPizzaToppingData(response);
       } catch (error) {
         console.log("Error fetching data:", error);
       }
