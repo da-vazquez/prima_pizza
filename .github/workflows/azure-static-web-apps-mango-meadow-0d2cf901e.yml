@@ -30,10 +30,36 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: './frontend/prima_pizza/yarn.lock'
 
+      - name: Set Environment Variables
+        run: |
+          echo "NEXT_PUBLIC_NODE_ENV=PROD" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_PROD=https://prima-pizza-backend-west.azurewebsites.net" >> $GITHUB_ENV
+          
+      - name: Create .env file
+        run: |
+          cd frontend/prima_pizza
+          echo "NEXT_PUBLIC_NODE_ENV=PROD" > .env
+          echo "NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_PROD=https://prima-pizza-backend-west.azurewebsites.net" >> .env
+          echo "NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_DEV=https://prima-pizza-backend-west.azurewebsites.net" >> .env
+          echo "NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL=http://localhost:5005" >> .env
+          cat .env
+
       - name: Install Dependencies
         run: |
           cd frontend/prima_pizza
           yarn install --frozen-lockfile
+
+      - name: Copy staticwebapp.config.json
+        run: |
+          cp frontend/prima_pizza/staticwebapp.config.json staticwebapp.config.json
+          
+      - name: Update package.json
+        run: |
+          cd frontend/prima_pizza
+          if ! grep -q "\"export\":" package.json; then
+            sed -i 's/"lint": "next lint"/"lint": "next lint",\n    "export": "next export"/g' package.json
+          fi
+          cat package.json
 
       - name: Build And Deploy
         id: builddeploy
@@ -43,11 +69,11 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: "./frontend/prima_pizza"
-          output_location: ".next"
+          output_location: "out"
           skip_app_build: false
           skip_api_build: true
           production_branch: "main"
-          app_build_command: "yarn build"
+          app_build_command: "yarn build && yarn export"
           api_location: ""
           routes_location: "staticwebapp.config.json"
         env:
