@@ -49,7 +49,7 @@ jobs:
           production_branch: "main"
           app_build_command: "yarn build"
           api_location: ""
-          routes_location: "/staticwebapp.config.json"
+          routes_location: "staticwebapp.config.json"
         env:
           NEXT_PUBLIC_NODE_ENV: PROD
           NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_PROD: "https://prima-pizza-backend-west.azurewebsites.net"
