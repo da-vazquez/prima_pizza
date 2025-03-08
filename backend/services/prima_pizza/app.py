@@ -3,7 +3,7 @@ Default Imports
 """
 import logging
 from datetime import timedelta
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, make_response
 from flask_jwt_extended import JWTManager
 import os
 from dotenv import load_dotenv
@@ -54,12 +54,33 @@ def create_app():
             r"/api/*": {
                 "origins": [CLIENT_APP],
                 "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-                "allow_headers": ["Content-Type", "Authorization", "Accept"],
+                "allow_headers": [
+                    "Content-Type",
+                    "Authorization",
+                    "Accept",
+                    "Origin",
+                    "X-Requested-With",
+                ],
+                "expose_headers": ["Content-Type", "Authorization"],
                 "supports_credentials": True,
+                "max_age": 3600,
             }
         },
-        expose_headers=["Content-Type", "Authorization"],
     )
+
+    @app.before_request
+    def handle_preflight():
+        if request.method == "OPTIONS":
+            response = make_response()
+            response.headers["Access-Control-Allow-Origin"] = CLIENT_APP
+            response.headers[
+                "Access-Control-Allow-Methods"
+            ] = "GET, POST, PUT, DELETE, OPTIONS"
+            response.headers[
+                "Access-Control-Allow-Headers"
+            ] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
+            response.headers["Access-Control-Max-Age"] = "3600"
+            return response
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(toppings_bp)
