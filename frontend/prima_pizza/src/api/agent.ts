@@ -125,6 +125,7 @@ const Requests = {
   getDashboardStats: (): Promise<any> => request.get(`/api/v1/dashboard/pizza_topping_count`),
 };
 
+
 /* eslint-enable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-anonymous-default-export */
 export default { Requests };
