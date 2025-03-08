@@ -48,25 +48,39 @@ def create_app():
 
     jwt = JWTManager(app)
 
-    CORS(
-        app,
-        resources={
-            r"/api/*": {
-                "origins": [CLIENT_APP],
-                "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-                "allow_headers": [
-                    "Content-Type",
-                    "Authorization",
-                    "Accept",
-                    "Origin",
-                    "X-Requested-With",
-                ],
-                "expose_headers": ["Content-Type", "Authorization"],
-                "supports_credentials": True,
-                "max_age": 3600,
-            }
-        },
-    )
+    if current_env == "LOCAL":
+        CORS(
+            app,
+            resources={
+                r"/api/*": {
+                    "origins": ["http://localhost:3000"],
+                    "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+                    "allow_headers": ["Content-Type", "Authorization", "Accept", "Origin", "X-Requested-With"],
+                    "expose_headers": ["Content-Type", "Authorization"],
+                    "supports_credentials": False,
+                }
+            },
+        )
+    else:
+        CORS(
+            app,
+            resources={
+                r"/api/*": {
+                    "origins": [CLIENT_APP],
+                    "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+                    "allow_headers": [
+                        "Content-Type",
+                        "Authorization",
+                        "Accept",
+                        "Origin",
+                        "X-Requested-With",
+                    ],
+                    "expose_headers": ["Content-Type", "Authorization"],
+                    "supports_credentials": False,
+                    "max_age": 3600,
+                }
+            },
+        )
 
     @app.before_request
     def handle_preflight():
@@ -81,6 +95,21 @@ def create_app():
             ] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
             response.headers["Access-Control-Max-Age"] = "3600"
             return response
+
+    @app.after_request
+    def add_cors_headers(response):
+        if current_env != "LOCAL":
+            response.headers['Access-Control-Allow-Origin'] = CLIENT_APP
+        return response
+
+    @app.route('/api/<path:path>', methods=['OPTIONS'])
+    def handle_options_api(path):
+        response = make_response()
+        response.headers['Access-Control-Allow-Origin'] = CLIENT_APP
+        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, Accept, Origin, X-Requested-With'
+        response.headers['Access-Control-Max-Age'] = '3600'
+        return response
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(toppings_bp)

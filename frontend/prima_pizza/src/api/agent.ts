@@ -5,14 +5,12 @@ const nodeEnv = process.env.NEXT_PUBLIC_NODE_ENV || "LOCAL";
 let baseUrl = "";
 
 if (nodeEnv === "LOCAL") {
-  baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL || "http://localhost:5005";
-} else if (nodeEnv === "PROD") {
-  baseUrl = process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_PROD || "https://prima-pizza-backend-west.azurewebsites.net";
+  baseUrl = "http://localhost:5005";
+} else if (nodeEnv === "PROD" || nodeEnv === "DEV") {
+  baseUrl = "https://prima-pizza-backend-west.azurewebsites.net";
 }
 
 console.log('Current environment:', nodeEnv);
-console.log('PROD URL:', process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_PROD);
-console.log('LOCAL URL:', process.env.NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL);
 console.log('Base URL being used:', baseUrl);
 
 const axiosInstance = axios.create({
@@ -21,18 +19,8 @@ const axiosInstance = axios.create({
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     },
-    withCredentials: true
+    withCredentials: false
 });
-
-
-axiosInstance.interceptors.request.use(
-    (config) => {
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-);
 
 axiosInstance.interceptors.response.use(
     response => response,
