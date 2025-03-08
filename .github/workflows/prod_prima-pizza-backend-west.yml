@@ -1,9 +1,11 @@
-name: Build and deploy Python app to Azure Web App - prima-pizza-backend-west
+name: Azure Web App - prima-pizza-backend-west
 
 on:
   push:
     branches:
       - main
+    paths:
+      - 'backend/**'
   workflow_dispatch:
 
 jobs:

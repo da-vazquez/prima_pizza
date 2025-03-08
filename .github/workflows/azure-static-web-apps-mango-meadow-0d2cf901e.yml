@@ -1,9 +1,11 @@
-name: Azure Static Web Apps CI/CD
+name: Azure Static Web Apps - prima-pizza-frontend-west
 
 on:
   push:
     branches:
       - main
+    paths:
+      - 'frontend/**'
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
