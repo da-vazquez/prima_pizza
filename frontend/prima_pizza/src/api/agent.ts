@@ -57,7 +57,6 @@ interface PizzaData {
   cheese: string;
 }
 
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const request = {
   get: <T>(url: string, config?: { headers: { Authorization?: string; "Content-Type": string } }): Promise<T> =>
