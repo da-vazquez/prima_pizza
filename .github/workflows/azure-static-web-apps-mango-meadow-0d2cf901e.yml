@@ -49,17 +49,10 @@ jobs:
           cd frontend/prima_pizza
           yarn install --frozen-lockfile
 
-      - name: Copy staticwebapp.config.json
+      - name: Copy configuration
         run: |
-          cp frontend/prima_pizza/staticwebapp.config.json staticwebapp.config.json
-          
-      - name: Update package.json
-        run: |
-          cd frontend/prima_pizza
-          if ! grep -q "\"export\":" package.json; then
-            sed -i 's/"lint": "next lint"/"lint": "next lint",\n    "export": "next export"/g' package.json
-          fi
-          cat package.json
+          cp frontend/prima_pizza/staticwebapp.config.json .
+          cat staticwebapp.config.json
 
       - name: Build And Deploy
         id: builddeploy
@@ -69,13 +62,13 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: "./frontend/prima_pizza"
-          output_location: "out"
+          output_location: ".next"
           skip_app_build: false
           skip_api_build: true
           production_branch: "main"
-          app_build_command: "yarn build && yarn export"
+          app_build_command: "yarn build"
           api_location: ""
-          routes_location: "staticwebapp.config.json"
+
         env:
           NEXT_PUBLIC_NODE_ENV: PROD
           NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_PROD: "https://prima-pizza-backend-west.azurewebsites.net"
