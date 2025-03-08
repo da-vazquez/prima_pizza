@@ -21,19 +21,35 @@ jobs:
         with:
           submodules: true
           lfs: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'yarn'
+          cache-dependency-path: './frontend/prima_pizza/yarn.lock'
+
+      - name: Install Dependencies
+        run: |
+          cd frontend/prima_pizza
+          yarn install --frozen-lockfile
+
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_MANGO_MEADOW_0D2CF901E }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "./frontend/prima_pizza/" # App source code path
-          api_location: "" # Api source code path - optional
-          output_location: "" # Built app content directory - optional
-          ###### End of Repository/Build Configurations ######
+          app_location: "./frontend/prima_pizza"
+          output_location: ".next"
+          skip_app_build: false
+          production_branch: "main"
+          app_build_command: "yarn build"
+          api_location: ""
+        env:
+          NEXT_PUBLIC_NODE_ENV: PROD
+          NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_PROD: "https://prima-pizza-backend-west.azurewebsites.net"
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
