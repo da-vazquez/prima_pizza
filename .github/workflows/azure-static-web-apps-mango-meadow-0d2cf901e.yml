@@ -62,11 +62,11 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: "./frontend/prima_pizza"
-          output_location: ".next"
+          output_location: "out"
           skip_app_build: false
           skip_api_build: true
           production_branch: "main"
-          app_build_command: "yarn build"
+          app_build_command: "yarn build && yarn export"
           api_location: ""
 
         env:
