@@ -37,15 +37,12 @@ jobs:
 
       - name: Prepare deployment package
         run: |
-          # Create a clean deployment directory
           mkdir -p deploy_package
           cp -r backend/* deploy_package/
           cp -r antenv deploy_package/
-          
-          # Create a clean zip file
           cd deploy_package
           zip -r ../clean_release.zip .
-          
+
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
         with:
@@ -74,36 +71,22 @@ jobs:
 
       - name: Clean up previous deployment
         run: |
-          # Get Kudu credentials for file management
           CREDS=$(az webapp deployment list-publishing-credentials --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --query "{username:publishingUserName, password:publishingPassword}" -o json)
           USERNAME=$(echo $CREDS | jq -r '.username')
           PASSWORD=$(echo $CREDS | jq -r '.password')
-          
-          # List files in root directory
-          echo "Files in wwwroot before cleanup:"
-          curl -u "$USERNAME:$PASSWORD" https://prima-pizza-backend-west.scm.azurewebsites.net/api/vfs/site/wwwroot/ | jq '.[].name'
-          
-          # Delete specific problematic files
-          echo "Deleting startup.py and other unnecessary files..."
-          curl -X DELETE "https://prima-pizza-backend-west.scm.azurewebsites.net/api/vfs/site/wwwroot/startup.py" -u "$USERNAME:$PASSWORD" || true
-          curl -X DELETE "https://prima-pizza-backend-west.scm.azurewebsites.net/api/vfs/site/wwwroot/release.zip" -u "$USERNAME:$PASSWORD" || true
-          curl -X DELETE "https://prima-pizza-backend-west.scm.azurewebsites.net/api/vfs/site/wwwroot/prima_pizza_backend.zip" -u "$USERNAME:$PASSWORD" || true
-          curl -X DELETE "https://prima-pizza-backend-west.scm.azurewebsites.net/api/vfs/site/wwwroot/output.tar.gz" -u "$USERNAME:$PASSWORD" || true
+          curl -u "$USERNAME:$PASSWORD" -X DELETE "https://prima-pizza-backend-west.scm.azurewebsites.net/api/vfs/site/wwwroot/*"
 
       - name: Restart Web App before deployment
         run: |
           az webapp restart --resource-group prima-pizza-rg-west --name prima-pizza-backend-west
-          echo "Sleeping to allow restart to complete..."
           sleep 30
 
       - name: Unzip artifact for deployment
         run: |
           unzip -o clean_release.zip -d .
-          ls -la
 
       - name: Configure Azure Web App
         run: |
-          # Set all environment variables and app settings in one command
           az webapp config appsettings set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --settings \
             ENV=PROD \
             DATABASE_URL="${{ secrets.MONGODB_URI }}" \
@@ -134,11 +117,7 @@ jobs:
 
       - name: Verify deployment
         run: |
-          # Get Kudu credentials again
           CREDS=$(az webapp deployment list-publishing-credentials --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --query "{username:publishingUserName, password:publishingPassword}" -o json)
           USERNAME=$(echo $CREDS | jq -r '.username')
           PASSWORD=$(echo $CREDS | jq -r '.password')
-          
-          # List files after deployment
-          echo "Files in wwwroot after deployment:"
           curl -u "$USERNAME:$PASSWORD" https://prima-pizza-backend-west.scm.azurewebsites.net/api/vfs/site/wwwroot/ | jq '.[].name'
