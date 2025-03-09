@@ -76,7 +76,21 @@ def register():
 @auth_bp.route("/login", methods=["POST"])
 def login():
     try:
-        data = request.get_json()
+        logger.info(f"Request headers: {request.headers}")
+        logger.info(f"Content type: {request.content_type}")
+        logger.info(f"Raw data: {request.get_data()}")
+        
+        if request.is_json:
+            data = request.get_json()
+        else:
+            try:
+                data = json.loads(request.get_data().decode('utf-8'))
+            except:
+                logger.error("Failed to parse JSON manually")
+                return jsonify({"message": "Invalid JSON format"}), 400
+                
+        logger.info(f"Parsed data: {data}")
+        
         logger.info(f"Login request data: {data}")
         logger.info(f"Request headers: {request.headers}")
 

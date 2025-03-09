@@ -4,7 +4,9 @@
       "route": "/api/v1/auth/login",
       "allowedRoles": ["anonymous"],
       "methods": ["POST", "OPTIONS"],
-      "backendUri": "https://prima-pizza-backend-west.azurewebsites.net/api/v1/auth/login"
+      "headers": {
+        "Content-Type": "application/json"
+      }
     },
     {
       "route": "/api/*",
