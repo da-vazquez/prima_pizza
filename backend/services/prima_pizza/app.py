@@ -36,7 +36,6 @@ else:
     CLIENT_APP = "https://mango-meadow-0d2cf901e.6.azurestaticapps.net"
     PORT = 8000
 
-
 def create_app():
     app = Flask(__name__)
 
