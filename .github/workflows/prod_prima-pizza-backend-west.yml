@@ -81,12 +81,12 @@ jobs:
             fi
           done
 
-      # - name: Clean up previous deployment
-      #   run: |
-      #     CREDS=$(az webapp deployment list-publishing-credentials --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --query "{username:publishingUserName, password:publishingPassword}" -o json)
-      #     USERNAME=$(echo $CREDS | jq -r '.username')
-      #     PASSWORD=$(echo $CREDS | jq -r '.password')
-      #     curl -u "$USERNAME:$PASSWORD" -X DELETE "https://prima-pizza-backend-west.scm.azurewebsites.net/api/vfs/site/wwwroot/*"
+      - name: Clean up previous deployment
+        run: |
+          CREDS=$(az webapp deployment list-publishing-credentials --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --query "{username:publishingUserName, password:publishingPassword}" -o json)
+          USERNAME=$(echo $CREDS | jq -r '.username')
+          PASSWORD=$(echo $CREDS | jq -r '.password')
+          curl -u "$USERNAME:$PASSWORD" -X DELETE "https://prima-pizza-backend-west.scm.azurewebsites.net/api/vfs/site/wwwroot/*"
 
       - name: Restart Web App before deployment
         run: |
@@ -121,7 +121,7 @@ jobs:
         with:
           app-name: 'prima-pizza-backend-west'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: .
+          package: clean_release.zip
 
       - name: Set startup command
         run: |
