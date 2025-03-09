@@ -33,7 +33,7 @@ if current_env == "LOCAL":
     CLIENT_APP = "http://localhost:3000"
     PORT = 5005
 else:
-    CLIENT_APP = "https://mango-meadow-0d2cf901e.6.azurestaticapps.net"
+    CLIENT_APP = "https://white-forest-0d702341e.6.azurestaticapps.net"
     PORT = 8000
 
 def create_app():

@@ -84,11 +84,11 @@ jobs:
             FLASK_APP="services.prima_pizza.app" \
             FLASK_ENV=production \
             JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}" \
-            CLIENT_APP="https://mango-meadow-0d2cf901e.6.azurestaticapps.net" \
-            ALLOWED_ORIGINS="https://mango-meadow-0d2cf901e.6.azurestaticapps.net" \
+            CLIENT_APP="https://white-forest-0d702341e.6.azurestaticapps.net" \
+            ALLOWED_ORIGINS="https://white-forest-0d702341e.6.azurestaticapps.net" \
             CORS_ENABLED=true \
             CORS_ALLOW_CREDENTIALS=false \
-            WEBSITE_CORS_ALLOWED_ORIGINS="https://mango-meadow-0d2cf901e.6.azurestaticapps.net" \
+            WEBSITE_CORS_ALLOWED_ORIGINS="https://white-forest-0d702341e.6.azurestaticapps.net" \
             WEBSITE_CORS_SUPPORT_CREDENTIALS=false
 
       - name: Deploy to Azure Web App
