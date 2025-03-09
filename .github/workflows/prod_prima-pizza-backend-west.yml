@@ -69,6 +69,18 @@ jobs:
         run: |
           az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
 
+      - name: Retry DNS Resolution
+        run: |
+          for i in {1..5}; do
+            if curl -s --head --request GET https://prima-pizza-backend-west.scm.azurewebsites.net | grep "200 OK" > /dev/null; then
+              echo "DNS resolved successfully"
+              break
+            else
+              echo "DNS resolution failed, retrying in 30 seconds..."
+              sleep 30
+            fi
+          done
+
       - name: Clean up previous deployment
         run: |
           CREDS=$(az webapp deployment list-publishing-credentials --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --query "{username:publishingUserName, password:publishingPassword}" -o json)
