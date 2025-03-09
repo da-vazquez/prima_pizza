@@ -6,7 +6,8 @@
       "methods": ["POST", "OPTIONS"],
       "headers": {
         "Content-Type": "application/json"
-      }
+      },
+      "backendUri": "https://prima-pizza-backend-west.azurewebsites.net/api/v1/auth/login"
     },
     {
       "route": "/api/*",
