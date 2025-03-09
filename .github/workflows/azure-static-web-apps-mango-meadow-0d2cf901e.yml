@@ -1,17 +1,20 @@
-name: Azure Static Web Apps CI/CD
+name: Azure Static Web Apps - prima-pizza-frontend-west
 
 on:
   push:
     branches:
       - main
+    paths:
+      - 'frontend/**'
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed') || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
@@ -19,19 +22,56 @@ jobs:
         with:
           submodules: true
           lfs: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'yarn'
+          cache-dependency-path: './frontend/prima_pizza/yarn.lock'
+
+      - name: Set Environment Variables
+        run: |
+          echo "NEXT_PUBLIC_NODE_ENV=PROD" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_PROD=https://prima-pizza-backend-west.azurewebsites.net" >> $GITHUB_ENV
+          
+      - name: Create .env file
+        run: |
+          cd frontend/prima_pizza
+          echo "NEXT_PUBLIC_NODE_ENV=PROD" > .env
+          echo "NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_PROD=https://prima-pizza-backend-west.azurewebsites.net" >> .env
+          echo "NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_DEV=https://prima-pizza-backend-west.azurewebsites.net" >> .env
+          echo "NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_LOCAL=http://localhost:5005" >> .env
+          cat .env
+
+      - name: Install Dependencies
+        run: |
+          cd frontend/prima_pizza
+          yarn install --frozen-lockfile
+
+      - name: Copy configuration
+        run: |
+          cp frontend/prima_pizza/staticwebapp.config.json .
+          cat staticwebapp.config.json
+
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_MANGO_MEADOW_0D2CF901E }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "/" # App source code path
-          api_location: "" # Api source code path - optional
-          output_location: "" # Built app content directory - optional
-          ###### End of Repository/Build Configurations ######
+          app_location: "./frontend/prima_pizza"
+          output_location: ".next"
+          skip_app_build: false
+          skip_api_build: true
+          production_branch: "main"
+          app_build_command: "yarn build"
+          api_location: ""
+
+        env:
+          NEXT_PUBLIC_NODE_ENV: PROD
+          NEXT_PUBLIC_PRIMA_PIZZA_BASE_URL_PROD: "https://prima-pizza-backend-west.azurewebsites.net"
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
