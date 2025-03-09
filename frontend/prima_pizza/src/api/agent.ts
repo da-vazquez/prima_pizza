@@ -72,7 +72,7 @@ const request = {
 
 const Requests = {
   login: (data: AuthData): Promise<any> => 
-    request.post('/api/v1/auth/login', data, {
+    request.post('/api/v1/auth/login', JSON.stringify(data), {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'

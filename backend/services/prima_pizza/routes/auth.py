@@ -99,6 +99,7 @@ def login():
         access_token = create_access_token(
             identity=identity, expires_delta=timedelta(hours=3)
         )
+        
         return jsonify(access_token=access_token), 200
     except Exception as e:
         logger.error(f"Error in login: {e}", exc_info=True)

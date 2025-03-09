@@ -21,19 +21,14 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    setSuccess(false);
-  
+
     try {
       const response = await agent.Requests.login({ username, password });
-      const { access_token } = response;
-  
-      if (access_token) {
-        localStorage.setItem("token", access_token);
-        setSuccess(true);
-        setLoading(false);
-        router.push("/dashboard");
-      }
-    } catch (error) {
+      localStorage.setItem("token", response.access_token);
+      setSuccess("Login successful!");
+      router.push("/dashboard");
+    } catch (error: any) {
+      console.error("Login failed:", error);
       setLoading(false);
       setError("Invalid credentials or account does not exist");
     }
@@ -77,6 +72,5 @@ const Login = () => {
     </div>
   );
 };
-
 
 export default Login;
