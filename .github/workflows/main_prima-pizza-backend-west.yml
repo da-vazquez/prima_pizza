@@ -15,9 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./backend  # Add this to set default working directory
+        working-directory: ./backend
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -33,13 +33,21 @@ jobs:
           source venv/bin/activate
       
       - name: Install dependencies
-        run: pip install -r requirements.txt
-        
-      # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip freeze > requirements.txt
+
+      - name: Set environment variables for deployment
+        run: |
+          echo "ENV=PROD" > .env
+          echo "PORT=8000" >> .env
+          echo "FLASK_APP=services.prima_pizza.app" >> .env
+          echo "FLASK_ENV=production" >> .env
 
       - name: Zip artifact for deployment
         run: |
-          cd ..  # Go back to root directory
+          cd ..
           zip release.zip ./backend/* -r
 
       - name: Upload artifact for deployment jobs
@@ -57,8 +65,8 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+      id-token: write
+      contents: read
 
     steps:
       - name: Download artifact from build job
@@ -68,7 +76,6 @@ jobs:
 
       - name: Unzip artifact for deployment
         run: unzip release.zip
-
       
       - name: Login to Azure
         uses: azure/login@v2
