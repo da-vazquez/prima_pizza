@@ -96,7 +96,7 @@ jobs:
           app-name: 'prima-pizza-backend-west'
           slot-name: 'Production'
           startup-command: |
-            cd /home/site/wwwroot &&
+            cd /home/site/wwwroot && 
             python -m pip install --upgrade pip &&
             pip install -r requirements.txt &&
-            PYTHONPATH=/home/site/wwwroot python3 -m services.prima_pizza.app
+            PYTHONPATH=/home/site/wwwroot FLASK_APP=services.prima_pizza.app FLASK_ENV=production gunicorn --bind=0.0.0.0:8000 services.prima_pizza.app:app

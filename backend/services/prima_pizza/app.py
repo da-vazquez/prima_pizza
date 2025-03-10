@@ -2,6 +2,7 @@
 Default Imports
 """
 import logging
+import sys
 from datetime import timedelta
 from flask import Flask, request, jsonify, make_response
 from flask_jwt_extended import JWTManager
@@ -12,7 +13,11 @@ from flask_cors import CORS
 """
 Logging
 """
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[logging.StreamHandler(sys.stdout)],
+)
 logger = logging.getLogger(__name__)
 
 """
@@ -39,12 +44,12 @@ else:
 
 def create_app():
     app = Flask(__name__)
-
-    print("Current working directory:", os.getcwd())
-    print("PYTHONPATH:", os.environ.get("PYTHONPATH"))
-    print("ENV:", os.environ.get("ENV"))
-    print("PORT:", os.environ.get("PORT"))
-    print("Directory contents:", os.listdir())
+    logger.info("Creating Flask application")
+    logger.info(f"Current working directory: {os.getcwd()}")
+    logger.info(f"PYTHONPATH: {os.environ.get('PYTHONPATH')}")
+    logger.info(f"ENV: {os.environ.get('ENV')}")
+    logger.info(f"PORT: {os.environ.get('PORT')}")
+    logger.info(f"Directory contents: {os.listdir()}")
 
     app.config.update(
         JWT_SECRET_KEY=secrets.JWT_SECRET_KEY,
