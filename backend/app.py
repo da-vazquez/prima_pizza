@@ -25,10 +25,10 @@ Custom Imports
 """
 from config import settings
 from instance import secrets
-from services.prima_pizza.routes.toppings import toppings_bp
-from services.prima_pizza.routes.pizzas import pizzas_bp
-from services.prima_pizza.routes.auth import auth_bp
-from services.prima_pizza.routes.dashboard import dashboard_bp
+from routes.toppings import toppings_bp
+from routes.pizzas import pizzas_bp
+from routes.auth import auth_bp
+from routes.dashboard import dashboard_bp
 
 load_dotenv()
 

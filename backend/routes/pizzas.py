@@ -10,8 +10,8 @@ import logging
 """
 Custom Imports
 """
-from services.prima_pizza.db import get_pizzas_collection, get_toppings_collection
-from services.prima_pizza.models import Pizza
+from db import get_pizzas_collection, get_toppings_collection
+from models import Pizza
 from utils.db import all_variations
 from utils.auth import check_role
 from config import settings

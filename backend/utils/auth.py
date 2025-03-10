@@ -8,7 +8,7 @@ from flask import jsonify
 """
 Custom Imports
 """
-from services.prima_pizza.db import users_collection
+from db import users_collection
 
 
 def check_role(required_roles):

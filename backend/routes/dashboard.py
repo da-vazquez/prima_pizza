@@ -8,7 +8,7 @@ from flask_jwt_extended import jwt_required
 """
 Custom Imports
 """
-from services.prima_pizza.db import db
+from db import db
 
 dashboard_bp = Blueprint("dashboard", __name__, url_prefix="/api/v1/dashboard")
 

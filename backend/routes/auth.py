@@ -15,7 +15,7 @@ import os
 """
 Custom Imports
 """
-from services.prima_pizza.db import users_collection
+from db import users_collection
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/v1/auth")
 
@@ -79,18 +79,18 @@ def login():
         logger.info(f"Request headers: {request.headers}")
         logger.info(f"Content type: {request.content_type}")
         logger.info(f"Raw data: {request.get_data()}")
-        
+
         if request.is_json:
             data = request.get_json()
         else:
             try:
-                data = json.loads(request.get_data().decode('utf-8'))
+                data = json.loads(request.get_data().decode("utf-8"))
             except:
                 logger.error("Failed to parse JSON manually")
                 return jsonify({"message": "Invalid JSON format"}), 400
-                
+
         logger.info(f"Parsed data: {data}")
-        
+
         logger.info(f"Login request data: {data}")
         logger.info(f"Request headers: {request.headers}")
 
@@ -113,7 +113,7 @@ def login():
         access_token = create_access_token(
             identity=identity, expires_delta=timedelta(hours=3)
         )
-        
+
         return jsonify(access_token=access_token), 200
     except Exception as e:
         logger.error(f"Error in login: {e}", exc_info=True)
