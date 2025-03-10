@@ -95,11 +95,8 @@ jobs:
         with:
           app-name: 'prima-pizza-backend-west'
           slot-name: 'Production'
-          startup-command: |
-            cd /home/site/wwwroot &&
-            python -m pip install --no-cache-dir -r requirements.txt &&
-            gunicorn --bind=0.0.0.0:8000 --timeout 600 services.prima_pizza.app:app
-          
+          startup-command: 'gunicorn --bind=0.0.0.0:8000 --workers=4 --timeout=600 services.prima_pizza.app:app'
+
       - name: Configure Web App Settings
         uses: azure/CLI@v1
         with:
@@ -107,7 +104,7 @@ jobs:
             az webapp config set \
               --resource-group prima-pizza-rg-west \
               --name prima-pizza-backend-west \
-              --python-version 3.10 \
+              --linux-fx-version "PYTHON|3.10" \
               --startup-file ""
 
       - name: Configure App Settings
@@ -124,4 +121,5 @@ jobs:
                 ENV="PROD" \
                 PORT="8000" \
                 FLASK_APP="services.prima_pizza.app" \
+                WEBSITE_WEBDEPLOY_USE_SCM=false \
                 FLASK_ENV="production"
