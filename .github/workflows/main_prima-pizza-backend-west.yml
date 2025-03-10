@@ -31,7 +31,7 @@ jobs:
         run: |
           echo "ENV=PROD" > .env
           echo "PORT=8000" >> .env
-          echo "FLASK_APP=backend.app" >> .env
+          echo "FLASK_APP=app.py" >> .env
           echo "FLASK_ENV=production" >> .env
 
       - name: Zip artifact for deployment
@@ -69,6 +69,10 @@ jobs:
           pwd
           tree backend/
       
+      - name: Clean up old files
+        run: |
+          rm -rf /home/site/wwwroot/*
+
       - name: Install dependencies
         run: |
           cd backend
@@ -91,7 +95,7 @@ jobs:
           slot-name: 'Production'
           startup-command: |
             . antenv/bin/activate &&
-            gunicorn --bind=0.0.0.0:8000 --workers=4 --timeout=600 --preload backend.app:app
+            gunicorn --bind=0.0.0.0:8000 --workers=4 --timeout=600 --preload app:app
 
       - name: Configure Web App Settings
         uses: azure/CLI@v1
@@ -116,6 +120,6 @@ jobs:
                 PYTHONPATH="/home/site/wwwroot" \
                 ENV="PROD" \
                 PORT="8000" \
-                FLASK_APP="backend.app" \
+                FLASK_APP="app.py" \
                 WEBSITE_WEBDEPLOY_USE_SCM=false \
                 FLASK_ENV="production"
