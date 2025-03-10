@@ -26,17 +26,19 @@ jobs:
         run: |
           python -m venv antenv
           source antenv/bin/activate
-          python -m pip install --upgrade pip pip wheel setuptools
+          python -m pip install --upgrade pip wheel setuptools
 
       - name: Install dependencies
         run: |
           source antenv/bin/activate
           python -m pip install --upgrade pip wheel setuptools
           python -m pip install -r backend/requirements.txt
+          python -m pip install flask-cors==3.0.10 pymongo[srv]
 
       - name: Prepare deployment package
         run: |
           cd backend
+          cp -r ../antenv ./
           zip -r ../release.zip . .env antenv
 
       - name: Upload artifact for deployment jobs
@@ -82,7 +84,6 @@ jobs:
             FLASK_APP="services.prima_pizza.app" \
             FLASK_ENV=production \
             JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}" \
-            FLASK_SECRET_KEY="${{ secrets.FLASK_SECRET_KEY }}" \
             CLIENT_APP="https://white-forest-0d702341e.6.azurestaticapps.net" \
             ALLOWED_ORIGINS="https://white-forest-0d702341e.6.azurestaticapps.net" \
             CORS_ENABLED=true \
