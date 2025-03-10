@@ -95,7 +95,9 @@ jobs:
         with:
           app-name: 'prima-pizza-backend-west'
           slot-name: 'Production'
-          startup-command: 'gunicorn --config gunicorn.conf.py services.prima_pizza.app:app'
+          startup-command: |
+            cd /home/site/wwwroot &&
+            gunicorn --bind=0.0.0.0:8000 --workers=4 --timeout=600 --preload services.prima_pizza.app:app
 
       - name: Configure Web App Settings
         uses: azure/CLI@v1
