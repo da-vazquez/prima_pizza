@@ -67,18 +67,7 @@ jobs:
           ls -la
           echo "Current directory contents:"
           pwd
-          tree backend/
-      
-      - name: Clean up old files
-        run: |
-          rm -rf /home/site/wwwroot/*
-
-      - name: Install dependencies
-        run: |
-          cd backend
-          python -m venv antenv
-          . antenv/bin/activate
-          pip install -r requirements.txt
+          find backend -type f -name "*.py" | sort
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -93,9 +82,8 @@ jobs:
         with:
           app-name: 'prima-pizza-backend-west'
           slot-name: 'Production'
-          startup-command: |
-            cd $APP_PATH &&
-            gunicorn --bind=0.0.0.0:8000 --workers=4 --timeout=600 --preload app:app
+          package: backend
+          startup-command: 'gunicorn --bind=0.0.0.0:8000 --workers=4 --timeout=600 --preload app:app'
 
       - name: Configure Web App Settings
         uses: azure/CLI@v1
