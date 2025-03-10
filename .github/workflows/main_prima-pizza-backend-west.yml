@@ -38,7 +38,7 @@ jobs:
       - name: Prepare deployment package
         run: |
           cd backend
-          cp -r ../antenv ./
+          cp -r ../antenv ./ 
           zip -r ../release.zip . .env antenv
 
       - name: Upload artifact for deployment jobs
@@ -89,7 +89,8 @@ jobs:
             CORS_ENABLED=true \
             CORS_ALLOW_CREDENTIALS=false \
             WEBSITE_CORS_ALLOWED_ORIGINS="https://white-forest-0d702341e.6.azurestaticapps.net" \
-            WEBSITE_CORS_SUPPORT_CREDENTIALS=false
+            WEBSITE_CORS_SUPPORT_CREDENTIALS=false \
+            WEBSITE_AUTH_ENABLED=False
 
       - name: Deploy to Azure Web App
         uses: Azure/webapps-deploy@v2
