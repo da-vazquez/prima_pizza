@@ -47,14 +47,10 @@ jobs:
           source antenv/bin/activate
           pip freeze
 
-      - name: Set execute permissions on Python executable
-        run: chmod +x antenv/bin/python3
-
       - name: Prepare deployment package
         run: |
           cd backend
-          cp -r ../antenv ./ 
-          zip -r ../release.zip . .env antenv
+          zip -r ../release.zip . .env deploy.sh
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
@@ -114,7 +110,3 @@ jobs:
           app-name: 'prima-pizza-backend-west'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: .
-
-      - name: Set startup command
-        run: |
-          az webapp config set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --startup-file '. antenv/bin/activate && python3 -m services.prima_pizza.app'
