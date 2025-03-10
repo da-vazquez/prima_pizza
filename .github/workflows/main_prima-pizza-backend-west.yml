@@ -27,8 +27,7 @@ jobs:
 
       - name: Prepare deployment package
         run: |
-          cd backend
-          zip -r ../release.zip . .env deploy.sh
+          zip -r release.zip backend .env deploy.sh
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
@@ -59,19 +58,16 @@ jobs:
 
       - name: Create virtual environment
         run: |
-          cd backend
           python3 -m venv antenv
 
       - name: Install dependencies
         run: |
-          cd backend
           source antenv/bin/activate
           ./antenv/bin/pip install --upgrade pip wheel setuptools
-          ./antenv/bin/pip install -r requirements.txt
+          ./antenv/bin/pip install -r backend/requirements.txt
 
       - name: Set execute permissions on Python executable
         run: |
-          cd backend
           chmod +x antenv/bin/python3
 
       - name: Login to Azure
