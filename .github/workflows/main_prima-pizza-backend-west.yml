@@ -47,6 +47,9 @@ jobs:
           source antenv/bin/activate
           pip freeze
 
+      - name: Set execute permissions on Python executable
+        run: chmod +x antenv/bin/python3
+
       - name: Prepare deployment package
         run: |
           cd backend
@@ -79,9 +82,6 @@ jobs:
         run: |
           unzip release.zip -d .
           ls -la
-
-      - name: Set execute permissions on Python executable
-        run: chmod +x antenv/bin/python3
 
       - name: Login to Azure
         run: |
