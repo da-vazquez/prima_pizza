@@ -28,6 +28,7 @@ const nextConfig: NextConfig = {
   },
 
   async headers() {
+    
     return nodeEnv === "LOCAL" ? [
       {
         source: "/api/:path*",
