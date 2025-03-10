@@ -27,17 +27,6 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Create and start virtual environment
-        run: |
-          python -m venv antenv
-          . antenv/bin/activate
-      
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip freeze > requirements.txt
-
       - name: Set environment variables for deployment
         run: |
           echo "ENV=PROD" > .env
@@ -48,15 +37,13 @@ jobs:
       - name: Zip artifact for deployment
         run: |
           cd ..
-          zip release.zip ./backend/* -r
+          zip -r release.zip ./backend
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
         with:
           name: python-app
-          path: |
-            release.zip
-            !antenv/
+          path: release.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -96,8 +83,6 @@ jobs:
           app-name: 'prima-pizza-backend-west'
           slot-name: 'Production'
           startup-command: |
-            cd /home/site/wwwroot &&
-            . antenv/bin/activate &&
             gunicorn --bind=0.0.0.0:8000 --workers=4 --timeout=600 --preload services.prima_pizza.app:app
 
       - name: Configure Web App Settings
