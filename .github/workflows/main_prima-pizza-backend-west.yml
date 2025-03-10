@@ -102,4 +102,4 @@ jobs:
 
       - name: Set startup command
         run: |
-          az webapp config set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --startup-file 'python3 -m services.prima_pizza.app'
+          az webapp config set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --startup-file 'source antenv/bin/activate && python3 -m services.prima_pizza.app'
