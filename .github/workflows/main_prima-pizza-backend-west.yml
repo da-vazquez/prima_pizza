@@ -65,6 +65,10 @@ jobs:
         run: |
           az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
 
+      - name: Clean deployment
+        run: |
+          az webapp ssh --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --command "rm -rf /home/site/wwwroot/*"
+
       - name: Configure Azure Web App
         run: |
           # Set all environment variables and app settings in one command
