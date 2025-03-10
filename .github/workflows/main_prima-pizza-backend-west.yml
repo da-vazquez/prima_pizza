@@ -25,27 +25,14 @@ jobs:
       - name: Check Python version
         run: python --version
 
-      - name: Create and start virtual environment
-        run: |
-          python -m venv antenv
-          source antenv/bin/activate
-          python -m pip install --upgrade pip wheel setuptools
-
       - name: Install dependencies
         run: |
-          source antenv/bin/activate
-          python -m pip install --upgrade pip wheel setuptools
-          python -m pip install -r backend/requirements.txt
-          python -m pip install flask-cors==3.0.10 pymongo[srv]
-
-      - name: Set execute permissions on Python executable
-        run: chmod +x antenv/bin/python3
+          pip3 install -r backend/requirements.txt
 
       - name: Prepare deployment package
         run: |
           cd backend
-          cp -r ../antenv ./ 
-          zip -r ../release.zip . .env antenv deploy.sh
+          zip -r ../release.zip . .env deploy.sh
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
@@ -97,6 +84,10 @@ jobs:
             WEBSITE_CORS_ALLOWED_ORIGINS="https://white-forest-0d702341e.6.azurestaticapps.net" \
             WEBSITE_CORS_SUPPORT_CREDENTIALS=false \
             WEBSITE_AUTH_ENABLED=False
+
+      - name: Set startup command
+        run: |
+          az webapp config set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --startup-file 'python3 -m services.prima_pizza.app'
 
       - name: Deploy to Azure Web App
         uses: Azure/webapps-deploy@v2
