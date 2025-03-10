@@ -95,8 +95,10 @@ jobs:
         with:
           app-name: 'prima-pizza-backend-west'
           slot-name: 'Production'
-          startup-command: 'gunicorn --bind=0.0.0.0:8000 services.prima_pizza.app:app'
-          package: .
+          startup-command: |
+            cd /home/site/wwwroot &&
+            python -m pip install --no-cache-dir -r requirements.txt &&
+            gunicorn --bind=0.0.0.0:8000 --timeout 600 services.prima_pizza.app:app
           
       - name: Configure Web App Settings
         uses: azure/CLI@v1
@@ -106,7 +108,7 @@ jobs:
               --resource-group prima-pizza-rg-west \
               --name prima-pizza-backend-west \
               --python-version 3.10 \
-              --startup-file "python3 -m services.prima_pizza.app"
+              --startup-file ""
 
       - name: Configure App Settings
         uses: azure/CLI@v1
@@ -116,6 +118,8 @@ jobs:
               --resource-group prima-pizza-rg-west \
               --name prima-pizza-backend-west \
               --settings \
+                SCM_DO_BUILD_DURING_DEPLOYMENT=true \
+                ENABLE_ORYX_BUILD=true \
                 PYTHONPATH="/home/site/wwwroot" \
                 ENV="PROD" \
                 PORT="8000" \
