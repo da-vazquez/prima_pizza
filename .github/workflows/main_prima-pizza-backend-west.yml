@@ -25,9 +25,27 @@ jobs:
       - name: Check Python version
         run: python --version
 
+      - name: Create and start virtual environment
+        run: |
+          python -m venv antenv
+          source antenv/bin/activate
+          python -m pip install --upgrade pip wheel setuptools
+
+      - name: Install dependencies
+        run: |
+          source antenv/bin/activate
+          python -m pip install --upgrade pip wheel setuptools
+          python -m pip install -r backend/requirements.txt
+          python -m pip install flask-cors==3.0.10 pymongo[srv]
+
+      - name: Set execute permissions on Python executable
+        run: chmod +x antenv/bin/python3
+
       - name: Prepare deployment package
         run: |
-          zip -r release.zip backend .env deploy.sh
+          cd backend
+          cp -r ../antenv ./ 
+          zip -r ../release.zip . .env antenv deploy.sh
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
@@ -55,20 +73,6 @@ jobs:
         run: |
           unzip release.zip -d .
           ls -la
-
-      - name: Create virtual environment
-        run: |
-          python3 -m venv antenv
-
-      - name: Install dependencies
-        run: |
-          source antenv/bin/activate
-          ./antenv/bin/pip install --upgrade pip wheel setuptools
-          ./antenv/bin/pip install -r backend/requirements.txt
-
-      - name: Set execute permissions on Python executable
-        run: |
-          chmod +x antenv/bin/python3
 
       - name: Login to Azure
         run: |
