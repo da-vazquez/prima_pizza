@@ -1,18 +1,20 @@
-name: Azure Web App - prima-pizza-backend-west
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+# More info on Python, GitHub Actions, and Azure App Service: https://aka.ms/python-webapps-actions
+
+name: Build and deploy Python app to Azure Web App - prima-pizza-backend-west
 
 on:
   push:
     branches:
       - main
-    paths:
-      - 'backend/**'
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: read #This is required for actions/checkout
 
     steps:
       - uses: actions/checkout@v4
@@ -22,23 +24,26 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Check Python version
-        run: python --version
-
+      - name: Create and start virtual environment
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+      
       - name: Install dependencies
-        run: |
-          pip3 install -r backend/requirements.txt
+        run: pip install -r requirements.txt
+        
+      # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
-      - name: Prepare deployment package
-        run: |
-          cd backend
-          zip -r ../release.zip . .env
+      - name: Zip artifact for deployment
+        run: zip release.zip ./* -r
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
         with:
           name: python-app
-          path: release.zip
+          path: |
+            release.zip
+            !venv/
 
   deploy:
     runs-on: ubuntu-latest
@@ -47,8 +52,8 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write
-      contents: read
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
 
     steps:
       - name: Download artifact from build job
@@ -57,46 +62,20 @@ jobs:
           name: python-app
 
       - name: Unzip artifact for deployment
-        run: |
-          unzip release.zip -d .
-          ls -la
+        run: unzip release.zip
 
+      
       - name: Login to Azure
-        run: |
-          az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_27DF159E9A0844BB97B6CAC22D245012 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F923D691F2CF4C72B36E641F24BA0BCA }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_C96D4689E28244EA98C68688C48ECF1B }}
 
-      - name: Clean deployment
-        run: |
-          az webapp ssh --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --command "rm -rf /home/site/wwwroot/*"
-
-      - name: Configure Azure Web App
-        run: |
-          # Set all environment variables and app settings in one command
-          az webapp config appsettings set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --settings \
-            ENV=PROD \
-            DATABASE_URL="${{ secrets.MONGODB_URI }}" \
-            TEST_DATABASE_URL="${{ secrets.TEST_MONGODB_URI }}" \
-            PORT=8000 \
-            WEBSITES_PORT=8000 \
-            FLASK_APP="services.prima_pizza.app" \
-            FLASK_ENV=production \
-            JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}" \
-            CLIENT_APP="https://white-forest-0d702341e.6.azurestaticapps.net" \
-            ALLOWED_ORIGINS="https://white-forest-0d702341e.6.azurestaticapps.net" \
-            CORS_ENABLED=true \
-            CORS_ALLOW_CREDENTIALS=false \
-            WEBSITE_CORS_ALLOWED_ORIGINS="https://white-forest-0d702341e.6.azurestaticapps.net" \
-            WEBSITE_CORS_SUPPORT_CREDENTIALS=false \
-            WEBSITE_AUTH_ENABLED=False
-
-      - name: Set startup command
-        run: |
-          az webapp config set --resource-group prima-pizza-rg-west --name prima-pizza-backend-west --startup-file 'python3 -m services.prima_pizza.app'
-
-      - name: Deploy to Azure Web App
-        uses: Azure/webapps-deploy@v2
+      - name: 'Deploy to Azure Web App'
+        uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
           app-name: 'prima-pizza-backend-west'
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: .
+          slot-name: 'Production'
+          
