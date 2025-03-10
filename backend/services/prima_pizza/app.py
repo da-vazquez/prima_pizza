@@ -97,8 +97,7 @@ def create_app():
 
     @app.after_request
     def add_cors_headers(response):
-        if current_env != "LOCAL":
-            response.headers['Access-Control-Allow-Origin'] = CLIENT_APP
+        response.headers['Access-Control-Allow-Origin'] = CLIENT_APP
         return response
 
     @app.route('/api/<path:path>', methods=['OPTIONS'])

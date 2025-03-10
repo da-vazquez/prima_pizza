@@ -38,7 +38,6 @@ jobs:
       - name: Prepare deployment package
         run: |
           cd backend
-          cp -r ../antenv ./
           zip -r ../release.zip . .env antenv
 
       - name: Upload artifact for deployment jobs
@@ -84,6 +83,7 @@ jobs:
             FLASK_APP="services.prima_pizza.app" \
             FLASK_ENV=production \
             JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}" \
+            FLASK_SECRET_KEY="${{ secrets.FLASK_SECRET_KEY }}" \
             CLIENT_APP="https://white-forest-0d702341e.6.azurestaticapps.net" \
             ALLOWED_ORIGINS="https://white-forest-0d702341e.6.azurestaticapps.net" \
             CORS_ENABLED=true \
