@@ -7,8 +7,8 @@ const port = 3001;
 
 // Enable CORS
 app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true
+  origin: '*',
+  credentials: false
 }));
 
 // Proxy all requests to the backend
@@ -17,9 +17,9 @@ app.use('/api', createProxyMiddleware({
   changeOrigin: true,
   pathRewrite: {'^/api': '/api'},
   onProxyRes: (proxyRes, req, res) => {
-    // Add CORS headers to the proxied response
-    proxyRes.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000';
-    proxyRes.headers['Access-Control-Allow-Credentials'] = 'true';
+    proxyRes.headers['Access-Control-Allow-Origin'] = '*';
+    proxyRes.headers['Access-Control-Allow-Credentials'] = 'false';
+    console.log('Proxy response headers:', proxyRes.headers);
   }
 }));
 

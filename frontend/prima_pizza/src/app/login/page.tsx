@@ -24,8 +24,17 @@ const Login = () => {
 
     try {
       const response = await agent.Requests.login({ username, password });
+      console.log('Login response:', response); // Add this debug log
+      
+      if (!response.access_token) {
+        throw new Error('No access token received');
+      }
+      
       localStorage.setItem("token", response.access_token);
+      console.log('Stored token:', localStorage.getItem("token")); // Add this debug log
+      
       setSuccess("Login successful!");
+      setLoading(false);
       router.push("/dashboard");
     } catch (error: any) {
       console.error("Login failed:", error);

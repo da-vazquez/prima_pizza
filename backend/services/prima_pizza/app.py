@@ -36,6 +36,7 @@ else:
     CLIENT_APP = "https://white-forest-0d702341e.6.azurestaticapps.net"
     PORT = 8000
 
+
 def create_app():
     app = Flask(__name__)
 
@@ -52,9 +53,16 @@ def create_app():
             app,
             resources={
                 r"/api/*": {
-                    "origins": ["http://localhost:3000"],
+                    # "origins": ["http://localhost:3000"],
+                    "origins": ["*"],
                     "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-                    "allow_headers": ["Content-Type", "Authorization", "Accept", "Origin", "X-Requested-With"],
+                    "allow_headers": [
+                        "Content-Type",
+                        "Authorization",
+                        "Accept",
+                        "Origin",
+                        "X-Requested-With",
+                    ],
                     "expose_headers": ["Content-Type", "Authorization"],
                     "supports_credentials": False,
                 }
@@ -65,7 +73,8 @@ def create_app():
             app,
             resources={
                 r"/api/*": {
-                    "origins": [CLIENT_APP],
+                    # "origins": [CLIENT_APP],
+                    "origins": ["*"],
                     "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
                     "allow_headers": [
                         "Content-Type",
@@ -85,7 +94,8 @@ def create_app():
     def handle_preflight():
         if request.method == "OPTIONS":
             response = make_response()
-            response.headers["Access-Control-Allow-Origin"] = CLIENT_APP
+            # response.headers["Access-Control-Allow-Origin"] = CLIENT_APP
+            response.headers["Access-Control-Allow-Origin"] = "*"
             response.headers[
                 "Access-Control-Allow-Methods"
             ] = "GET, POST, PUT, DELETE, OPTIONS"
@@ -97,16 +107,22 @@ def create_app():
 
     @app.after_request
     def add_cors_headers(response):
-        response.headers['Access-Control-Allow-Origin'] = CLIENT_APP
+        # response.headers['Access-Control-Allow-Origin'] = CLIENT_APP
+        response.headers["Access-Control-Allow-Origin"] = "*"
         return response
 
-    @app.route('/api/<path:path>', methods=['OPTIONS'])
+    @app.route("/api/<path:path>", methods=["OPTIONS"])
     def handle_options_api(path):
         response = make_response()
-        response.headers['Access-Control-Allow-Origin'] = CLIENT_APP
-        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
-        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, Accept, Origin, X-Requested-With'
-        response.headers['Access-Control-Max-Age'] = '3600'
+        # response.headers['Access-Control-Allow-Origin'] = CLIENT_APP
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers[
+            "Access-Control-Allow-Methods"
+        ] = "GET, POST, PUT, DELETE, OPTIONS"
+        response.headers[
+            "Access-Control-Allow-Headers"
+        ] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
+        response.headers["Access-Control-Max-Age"] = "3600"
         return response
 
     app.register_blueprint(auth_bp)
@@ -127,6 +143,7 @@ def create_app():
         return response
 
     return app
+
 
 app = create_app()
 

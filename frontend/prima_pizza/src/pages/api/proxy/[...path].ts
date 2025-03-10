@@ -17,5 +17,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       patternStr: '^/api/proxy',
       replaceStr: ''
     }],
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': 'false'
+    }
   });
 }

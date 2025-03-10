@@ -10,7 +10,7 @@ if (nodeEnv === "LOCAL") {
   baseUrl = "https://prima-pizza-backend-west.azurewebsites.net";
 }
 
-console.log('Current environment:', nodeEnv);
+console.log('Node Environment:', nodeEnv);
 console.log('Base URL being used:', baseUrl);
 
 const axiosInstance = axios.create({
@@ -71,13 +71,15 @@ const request = {
 };
 
 const Requests = {
-  login: (data: AuthData): Promise<any> => 
-    axiosInstance.post('/api/v1/auth/login', data, { // Changed to data instead of JSON.stringify(data)
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
-    }),
+  login: (data: AuthData): Promise<any> => {
+    console.log('Login request URL:', `${baseUrl}/api/v1/auth/login`);
+    console.log('Login request data:', data);
+    return axiosInstance.post('/api/v1/auth/login', data)
+      .then(response => {
+        console.log('Full login response:', response);
+        return response.data;
+      });
+  },
   getToppings: (): Promise<any> => request.get(`/api/v1/toppings`),
   addTopping: (data: ToppingData, token: string): Promise<any> =>
     request.post(`/api/v1/toppings/`, data, {
