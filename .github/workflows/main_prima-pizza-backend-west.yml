@@ -94,7 +94,7 @@ jobs:
           app-name: 'prima-pizza-backend-west'
           slot-name: 'Production'
           startup-command: |
-            . antenv/bin/activate &&
+            cd $APP_PATH &&
             gunicorn --bind=0.0.0.0:8000 --workers=4 --timeout=600 --preload app:app
 
       - name: Configure Web App Settings
