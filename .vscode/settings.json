@@ -1,0 +1,4 @@
+{
+  "appService.defaultWebAppToDeploy": "/subscriptions/239818a5-d65d-4dc0-8dfe-5ce8ffe212fa/resourceGroups/prima-pizza-rg-west/providers/Microsoft.Web/sites/prima-pizza-backend-west",
+  "appService.deploySubpath": "backend"
+}
