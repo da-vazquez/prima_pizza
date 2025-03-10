@@ -83,3 +83,4 @@ jobs:
         with:
           app-name: 'prima-pizza-backend-west'
           slot-name: 'Production'
+          startup-command: 'cd /home/site/wwwroot && PYTHONPATH=/home/site/wwwroot python3 -m services.prima_pizza.app'
