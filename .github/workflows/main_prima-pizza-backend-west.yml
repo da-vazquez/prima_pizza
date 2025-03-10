@@ -75,7 +75,12 @@ jobs:
           name: python-app
 
       - name: Unzip artifact for deployment
-        run: unzip release.zip
+        run: |
+          unzip release.zip
+          ls -la
+          echo "Current directory contents:"
+          pwd
+          tree backend/
       
       - name: Login to Azure
         uses: azure/login@v2

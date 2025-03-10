@@ -40,6 +40,12 @@ else:
 def create_app():
     app = Flask(__name__)
 
+    print("Current working directory:", os.getcwd())
+    print("PYTHONPATH:", os.environ.get("PYTHONPATH"))
+    print("ENV:", os.environ.get("ENV"))
+    print("PORT:", os.environ.get("PORT"))
+    print("Directory contents:", os.listdir())
+
     app.config.update(
         JWT_SECRET_KEY=secrets.JWT_SECRET_KEY,
         JWT_ACCESS_TOKEN_EXPIRES=timedelta(hours=3),
