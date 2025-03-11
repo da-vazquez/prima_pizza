@@ -80,7 +80,7 @@ const Requests = {
         return response.data;
       });
   },
-  getToppings: (): Promise<any> => request.get(`/api/v1/toppings`),
+  getToppings: (): Promise<any> => request.get(`/api/v1/toppings/`),
   addTopping: (data: ToppingData, token: string): Promise<any> =>
     request.post(`/api/v1/toppings/`, data, {
       headers: { 
@@ -102,7 +102,7 @@ const Requests = {
         "Authorization": `Bearer ${token}`,
       },
     }),
-  getPizzas: (): Promise<any> => request.get(`/api/v1/pizzas`),
+  getPizzas: (): Promise<any> => request.get(`/api/v1/pizzas/`),
   addPizza: (data: PizzaData, token: string): Promise<any> =>
     request.post(`/api/v1/pizzas/`, data, {
       headers: { 
