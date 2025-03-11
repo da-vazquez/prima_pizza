@@ -27,6 +27,18 @@ jobs:
         with:
           python-version: '3.10'
 
+      - name: Create web.config
+        run: |
+          echo '<?xml version="1.0" encoding="utf-8"?>' > web.config
+          echo '<configuration>' >> web.config
+          echo '  <system.webServer>' >> web.config
+          echo '    <handlers>' >> web.config
+          echo '      <add name="PythonHandler" path="*" verb="*" modules="httpPlatformHandler" resourceType="Unspecified" />' >> web.config
+          echo '    </handlers>' >> web.config
+          echo '    <httpPlatform processPath="python" arguments="app.py" stdoutLogEnabled="true" stdoutLogFile="\\?\%home%\LogFiles\python.log" startupTimeLimit="60" />' >> web.config
+          echo '  </system.webServer>' >> web.config
+          echo '</configuration>' >> web.config
+
       - name: Set environment variables for deployment
         run: |
           echo "ENV=PROD" > .env
@@ -34,7 +46,7 @@ jobs:
           echo "FLASK_APP=app.py" >> .env
           echo "FLASK_ENV=production" >> .env
 
-      - name: Zip artifact for deployment
+      - name: Create deployment package
         run: |
           cd ..
           zip -r release.zip ./backend
@@ -63,11 +75,13 @@ jobs:
 
       - name: Unzip artifact for deployment
         run: |
-          unzip release.zip
-          ls -la
+          mkdir -p backend_deploy
+          unzip release.zip -d backend_deploy
+          ls -la backend_deploy/backend/
           echo "Current directory contents:"
           pwd
-          find backend -type f -name "*.py" | sort
+          echo "--------"
+          ls -la backend_deploy/backend/requirements.txt
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -82,7 +96,7 @@ jobs:
         with:
           app-name: 'prima-pizza-backend-west'
           slot-name: 'Production'
-          package: backend
+          package: backend_deploy/backend
           startup-command: 'gunicorn --bind=0.0.0.0:8000 --workers=4 --timeout=600 --preload app:app'
 
       - name: Configure Web App Settings
@@ -110,4 +124,8 @@ jobs:
                 PORT="8000" \
                 FLASK_APP="app.py" \
                 WEBSITE_WEBDEPLOY_USE_SCM=false \
-                FLASK_ENV="production"
+                DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+                JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}" \
+                FLASK_ENV="development" \
+                DEBUG="True" \
+                LOG_LEVEL="DEBUG"

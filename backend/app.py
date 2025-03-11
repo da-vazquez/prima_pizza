@@ -57,98 +57,30 @@ def create_app():
         ENV=current_env,
     )
 
+    CORS(
+        app,
+        resources={r"/*": {"origins": "*"}},
+        supports_credentials=False,
+        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allow_headers=[
+            "Content-Type",
+            "Authorization",
+            "Accept",
+            "Origin",
+            "X-Requested-With",
+        ],
+    )
+
     jwt = JWTManager(app)
-
-    if current_env == "LOCAL":
-        CORS(
-            app,
-            resources={
-                r"/api/*": {
-                    # "origins": ["http://localhost:3000"],
-                    "origins": ["*"],
-                    "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-                    "allow_headers": [
-                        "Content-Type",
-                        "Authorization",
-                        "Accept",
-                        "Origin",
-                        "X-Requested-With",
-                    ],
-                    "expose_headers": ["Content-Type", "Authorization"],
-                    "supports_credentials": False,
-                }
-            },
-        )
-    else:
-        CORS(
-            app,
-            resources={
-                r"/api/*": {
-                    # "origins": [CLIENT_APP],
-                    "origins": ["*"],
-                    "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-                    "allow_headers": [
-                        "Content-Type",
-                        "Authorization",
-                        "Accept",
-                        "Origin",
-                        "X-Requested-With",
-                    ],
-                    "expose_headers": ["Content-Type", "Authorization"],
-                    "supports_credentials": False,
-                    "max_age": 3600,
-                }
-            },
-        )
-
-    @app.before_request
-    def handle_preflight():
-        if request.method == "OPTIONS":
-            response = make_response()
-            # response.headers["Access-Control-Allow-Origin"] = CLIENT_APP
-            response.headers["Access-Control-Allow-Origin"] = "*"
-            response.headers[
-                "Access-Control-Allow-Methods"
-            ] = "GET, POST, PUT, DELETE, OPTIONS"
-            response.headers[
-                "Access-Control-Allow-Headers"
-            ] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
-            response.headers["Access-Control-Max-Age"] = "3600"
-            return response
-
-    @app.after_request
-    def add_cors_headers(response):
-        # response.headers['Access-Control-Allow-Origin'] = CLIENT_APP
-        response.headers["Access-Control-Allow-Origin"] = "*"
-        return response
-
-    @app.route("/api/<path:path>", methods=["OPTIONS"])
-    def handle_options_api(path):
-        response = make_response()
-        # response.headers['Access-Control-Allow-Origin'] = CLIENT_APP
-        response.headers["Access-Control-Allow-Origin"] = "*"
-        response.headers[
-            "Access-Control-Allow-Methods"
-        ] = "GET, POST, PUT, DELETE, OPTIONS"
-        response.headers[
-            "Access-Control-Allow-Headers"
-        ] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
-        response.headers["Access-Control-Max-Age"] = "3600"
-        return response
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(toppings_bp)
     app.register_blueprint(pizzas_bp)
     app.register_blueprint(dashboard_bp)
 
-    @app.route("/", defaults={"path": ""}, methods=["OPTIONS"])
-    @app.route("/<path:path>", methods=["OPTIONS"])
-    def handle_options(path):
-        response = app.make_default_options_response()
-        return response
-
     @app.errorhandler(Exception)
     def handle_exception(e):
+        logger.error(f"Unhandled exception: {str(e)}", exc_info=True)
         response = jsonify({"message": str(e)})
         response.status_code = 500
         return response
@@ -157,7 +89,6 @@ def create_app():
 
 
 app = create_app()
-
 
 if __name__ == "__main__":
     debug_mode = True if current_env == "LOCAL" else False
