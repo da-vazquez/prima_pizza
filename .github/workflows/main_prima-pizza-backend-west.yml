@@ -44,7 +44,9 @@ jobs:
           echo "ENV=PROD" > .env
           echo "PORT=8000" >> .env
           echo "FLASK_APP=app.py" >> .env
-          echo "FLASK_ENV=production" >> .env
+          echo "FLASK_ENV=development" >> .env
+          echo "DEBUG=True" >> .env
+          echo "LOG_LEVEL=DEBUG" >> .env
 
       - name: Create deployment package
         run: |
@@ -89,6 +91,15 @@ jobs:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_27DF159E9A0844BB97B6CAC22D245012 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F923D691F2CF4C72B36E641F24BA0BCA }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_C96D4689E28244EA98C68688C48ECF1B }}
+
+      - name: Disable Azure App Service Authentication
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az webapp auth update \
+              --resource-group prima-pizza-rg-west \
+              --name prima-pizza-backend-west \
+              --enabled false
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
