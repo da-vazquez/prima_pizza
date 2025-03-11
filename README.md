@@ -1,3 +1,13 @@
+## Deployed Azure Site:
+
+https://white-forest-0d702341e.6.azurestaticapps.net/
+
+## Frontend Documentation
+https://github.com/da-vazquez/prima_pizza/blob/main/frontend/prima_pizza/README.md
+
+## Backend Documentation
+https://github.com/da-vazquez/prima_pizza/blob/main/backend/README.md
+
 ## Code Challenge Requirements
 
 ### Manage Toppings
@@ -30,9 +40,9 @@
 | Category   | Technologies |
 |------------|-------------|
 | Frontend   | Next.js + React, Docusaurus |
-| Backend    | Flask |
+| Backend    | Python w/ Flask (gunicorn for prod)|
 | Database   | MongoDB |
-| Deployment | Linode or Rasp Pi self-hosted |
+| Deployment | Azure App Services (backend) & Azure Static Web Apps (frontend)|
 | Tools      | Docker, pytest, python black, GitHub Actions |
 
 
