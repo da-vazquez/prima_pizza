@@ -16,12 +16,22 @@ class Topping(BaseModel):
     topping_type: str = Field(..., min_length=1)
     date_added: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-    class Config:
-        json_encoders = {datetime: lambda v: v.isoformat()}
+    model_config = ConfigDict(
+        extra="ignore",
+        json_schema_extra={
+            "example": {"name": "Pepperoni", "price": 1.50, "topping_type": "meat"}
+        },
+    )
 
     def __init__(self, **data):
         super().__init__(**data)
         object.__setattr__(self, "logger", logger)
+
+    def model_dump(self, **kwargs):
+        data = super().model_dump(**kwargs)
+        if "date_added" in data and isinstance(data["date_added"], datetime):
+            data["date_added"] = data["date_added"].isoformat()
+        return data
 
 
 class Pizza(BaseModel):
@@ -33,12 +43,20 @@ class Pizza(BaseModel):
     price: Dict[str, float] = Field(default_factory=dict)
     date_added: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-    class Config:
-        json_encoders = {datetime: lambda v: v.isoformat()}
+    model_config = ConfigDict(
+        extra="ignore",
+        json_schema_extra={"example": {"name": "Margherita", "toppings": ["Basil"]}},
+    )
 
     def __init__(self, **data):
         super().__init__(**data)
         object.__setattr__(self, "logger", logger)
+
+    def model_dump(self, **kwargs):
+        data = super().model_dump(**kwargs)
+        if "date_added" in data and isinstance(data["date_added"], datetime):
+            data["date_added"] = data["date_added"].isoformat()
+        return data
 
 
 class User(BaseModel):
@@ -46,8 +64,10 @@ class User(BaseModel):
     password_hash: str = Field(..., min_length=1)
     role: str = Field(..., min_length=1)
 
-    class Config:
-        json_encoders = {datetime: lambda v: v.isoformat()}
+    model_config = ConfigDict(
+        extra="ignore",
+        json_schema_extra={"example": {"username": "john_doe", "role": "chef"}},
+    )
 
     def __init__(self, **data):
         super().__init__(**data)

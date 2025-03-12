@@ -53,7 +53,7 @@ def verify_password(stored_password, provided_password, salt):
 def register():
     try:
         data = request.get_json()
-        logger.info(f"Register request data: {data}")
+
         if users_collection.find_one({"username": data["username"]}):
             return jsonify({"message": "User already exists"}), 400
 
@@ -78,7 +78,6 @@ def login():
     try:
         logger.info(f"Request headers: {request.headers}")
         logger.info(f"Content type: {request.content_type}")
-        logger.info(f"Raw data: {request.get_data()}")
 
         if request.is_json:
             data = request.get_json()
@@ -88,11 +87,6 @@ def login():
             except:
                 logger.error("Failed to parse JSON manually")
                 return jsonify({"message": "Invalid JSON format"}), 400
-
-        logger.info(f"Parsed data: {data}")
-
-        logger.info(f"Login request data: {data}")
-        logger.info(f"Request headers: {request.headers}")
 
         if not data:
             logger.error("No JSON data in request")

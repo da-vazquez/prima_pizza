@@ -91,7 +91,7 @@ E   _pytest.outcomes.Exit: Tests can only be run in the TEST environment. Please
 
 #### 8. Start the application from /backend root
 ```bash
-python3 -m services.prima_pizza.app
+python3 app.py
 ```
 
 - The API will start on localhost:5005

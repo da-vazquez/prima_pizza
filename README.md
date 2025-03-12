@@ -36,7 +36,6 @@ https://github.com/da-vazquez/prima_pizza/blob/main/backend/README.md
 
 ## Tech Stack
 
-
 | Category   | Technologies |
 |------------|-------------|
 | Frontend   | Next.js + React, Docusaurus |
@@ -46,6 +45,16 @@ https://github.com/da-vazquez/prima_pizza/blob/main/backend/README.md
 | Tools      | Docker, pytest, python black, GitHub Actions |
 
 
-## Documentation
+## Site Preview
 
-Docusaurus Site Link Here- stretch goal
+### Login Page
+![Dashboard](images/login.png)
+
+### Main Dashboard Page 
+![Dashboard](images/dashboard.png)
+
+### Toppings Management
+![Toppings](images/toppings_dashboard.png)
+
+### Pizzas Management
+![Toppings](images/pizzas_dashboard.png)
