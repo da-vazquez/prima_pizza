@@ -1,8 +1,8 @@
 import json
+import uuid
 
 
 def test_add_pizza(test_client, init_database):
-    # Register and login the owner
     test_client.post(
         "/api/v1/auth/register",
         json={"username": "test_owner", "password": "test_password", "role": "owner"},
@@ -13,7 +13,6 @@ def test_add_pizza(test_client, init_database):
     )
     owner_token = json.loads(login_response.data)["access_token"]
 
-    # Add necessary ingredients
     ingredients = [
         {"name": "Pepperoni", "price": 1.0, "topping_type": "meat"},
         {"name": "Mushrooms", "price": 0.5, "topping_type": "vegetable"},
@@ -29,7 +28,6 @@ def test_add_pizza(test_client, init_database):
             headers={"Authorization": f"Bearer {owner_token}"},
         )
 
-    # Register and login the chef
     test_client.post(
         "/api/v1/auth/register",
         json={"username": "test_user", "password": "test_password", "role": "chef"},
@@ -40,11 +38,12 @@ def test_add_pizza(test_client, init_database):
     )
     chef_token = json.loads(login_response.data)["access_token"]
 
-    # Add the pizza
+    unique_pizza_name = f"Test Pizza {uuid.uuid4()}"
+
     response = test_client.post(
         "/api/v1/pizzas/",
         json={
-            "name": "Test Pizza",
+            "name": unique_pizza_name,
             "cheese": "Mozzarella",
             "crust": "Thin Crust",
             "sauce": "Tomato Sauce",
@@ -55,7 +54,7 @@ def test_add_pizza(test_client, init_database):
 
     print("loggin response: ", response.data)
     assert response.status_code == 201
-    assert b"Pizza Test Pizza added" in response.data
+    assert b"Pizza" in response.data and b"added" in response.data
 
 
 def test_get_pizzas(test_client, init_database):

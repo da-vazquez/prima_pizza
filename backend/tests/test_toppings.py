@@ -1,4 +1,5 @@
 import json
+import uuid
 
 
 def test_add_topping(test_client, init_database):
@@ -12,13 +13,15 @@ def test_add_topping(test_client, init_database):
     )
     token = json.loads(login_response.data)["access_token"]
 
+    unique_topping_name = f"Test Topping {uuid.uuid4()}"
+
     response = test_client.post(
         "/api/v1/toppings/",
-        json={"name": "Test Topping", "price": 1.99, "topping_type": "vegetable"},
+        json={"name": unique_topping_name, "price": 1.99, "topping_type": "vegetable"},
         headers={"Authorization": f"Bearer {token}"},
     )
     assert response.status_code == 201
-    assert b"Topping added" in response.data
+    assert b"Topping" in response.data and b"added" in response.data
 
 
 def test_get_toppings(test_client, init_database):

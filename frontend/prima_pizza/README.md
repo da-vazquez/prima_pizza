@@ -62,19 +62,21 @@ Method: GET
 Description: Displays the login page for user authentication.
 ```
 
-> Credentials for Demo
-> Casing is important! Enter exactly as shown below
+```
+Credentials for Demo
+Casing is important! Enter exactly as shown below
+```
 
 To login as an <b>OWNER</b>
 <ul>
-  <li>username = "Owner_Bob"
-  <li>password = "owner123"
+  <li>username = "owner"
+  <li>password = "owner"
 </ul>
 
 To login as a <b>CHEF</b>
 <ul>
-  <li>username = "Chef_Bob"
-  <li>password = "chef123"
+  <li>username = "chef"
+  <li>password = "chef"
 </ul>
 
 
@@ -192,7 +194,7 @@ headers: {
 3. CORS Considerations: The backend allows requests from any origin, but all API requests from the frontend go through Azure Static Web Apps' proxy configuration.
 
 
-### 9.3 Troubleshooting Frontend Deployment
+### 8.3 Troubleshooting Frontend Deployment
 
 1. API Connection Issues: Check the API URL format, ensure trailing slashes are used, and verify the staticwebapp.config.json is properly proxying requests.
 

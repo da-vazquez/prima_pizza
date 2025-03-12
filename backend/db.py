@@ -4,7 +4,6 @@ Default Imports
 from pymongo import MongoClient
 import os
 from dotenv import load_dotenv
-import ssl
 
 """
 Custom Imports
@@ -19,7 +18,6 @@ client = MongoClient(
     DATABASE_URL,
     tls=True,
     tlsAllowInvalidCertificates=True,
-    ssl_cert_reqs=ssl.CERT_NONE,
 )
 
 db = client.get_database()
@@ -37,6 +35,24 @@ def get_toppings_collection():
     return db.get_collection("toppings")
 
 
+def get_test_users_collection():
+    return db.get_collection("test_users")
+
+
+def get_test_toppings_collection():
+    return db.get_collection("test_toppings")
+
+
+def get_test_pizzas_collection():
+    return db.get_collection("test_pizzas")
+
+
+# Collections
 users_collection = get_users_collection()
 pizzas_collection = get_pizzas_collection()
 toppings_collection = get_toppings_collection()
+
+# Testing collections
+test_users_collection = get_test_users_collection()
+test_toppings_collection = get_test_toppings_collection()
+test_pizzas_collection = get_test_pizzas_collection()
